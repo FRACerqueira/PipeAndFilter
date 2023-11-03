@@ -424,7 +424,7 @@ namespace PipeAndFilter
                     var isvalidtask = true;
                     if (tasks[i].TaskCondition.HasValue)
                     {
-                        var sta = TaskStatus.WaitingForActivation;
+                        TaskStatus sta;
                         string? aliasprev = null;
                         if (!string.IsNullOrEmpty(_prevPipe))
                         {
