@@ -13,6 +13,7 @@ namespace PipeAndFilter
         /// <summary>
         /// Create Pipeline control
         /// </summary>
+        /// <param name="cts"><see cref="CancellationToken"/></param>
         /// <typeparam name="T">Type of return</typeparam>
         /// <returns><see cref="IPipelineInit{T}"/></returns>
         public static IPipelineInit<T> Create<T>(CancellationToken? cts = null) where T : class

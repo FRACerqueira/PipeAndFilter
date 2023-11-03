@@ -50,12 +50,12 @@ namespace PipeAndFilter
         public bool Aborted { get; }
 
         /// <summary>
-        /// The exception in condition or command pipe.
+        /// The last exception in step (pipe,condition or task).
         /// </summary>
         public Exception? PipeException { get; }
 
         /// <summary>
-        /// StatusDetails of all pipes
+        /// Status details of all pipes
         /// </summary>
         public ImmutableArray<PipeRanStatus> Status { get; }
 

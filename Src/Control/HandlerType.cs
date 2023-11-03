@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents a HandlerType 
+    /// Represents a handler type
     /// </summary>
     public enum HandlerType
     {

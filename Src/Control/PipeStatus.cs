@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents the status of the pipe or task
+    /// Represents the status of step (pipe, condition or task)
     /// </summary>
     public readonly struct PipeStatus
     {
@@ -47,7 +47,7 @@ namespace PipeAndFilter
         public TaskStatus Value { get; }
 
         /// <summary>
-        /// Get Elapsedtime
+        /// Get the elapsed time
         /// </summary>
         public TimeSpan Elapsedtime { get; }
 

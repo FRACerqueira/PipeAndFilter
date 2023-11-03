@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents a EventPipe 
+    /// Represents a pipe/task event with parameters, values ​​and commands
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public class EventPipe<T> where T : class
@@ -61,6 +61,9 @@ namespace PipeAndFilter
         /// <br>The values ​​are serialized in json</br>
         /// <br>Null result may exist</br>
         /// </summary>
+        /// <remarks>
+        /// Data only exists when executed by an aggregator pipe
+        /// </remarks>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedTasks { get; }
 
         /// <summary>
@@ -97,6 +100,10 @@ namespace PipeAndFilter
         /// Change value contract
         /// </summary>
         /// <param name="action"></param>
+        /// <remarks>
+        /// The action will only be executed if the contract exists.
+        /// <br><see cref="IPipelineInit{T}.Init(T)"/></br>
+        /// </remarks>
         public void ChangeContract(Action<T> action)
         {
             _changecontract(action!);
@@ -104,10 +111,12 @@ namespace PipeAndFilter
 
         /// <summary>
         /// Save/overwrite a value associated with this pipe or task 
-        /// <br>The values ​​will serialize into json</br>
         /// </summary>
         /// <typeparam name="T1">Type value to save</typeparam>
         /// <param name="value">The value to save</param>
+        /// <remarks>
+        /// The values ​​will serialize into json
+        /// </remarks>
         public void SaveValue<T1>(T1  value)
         {
             IsSaved = true;

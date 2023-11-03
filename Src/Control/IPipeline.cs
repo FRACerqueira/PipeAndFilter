@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents Pipeline commands
+    /// Represents Pipeline control commands for pipe
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public interface IPipeline<T> where T : class

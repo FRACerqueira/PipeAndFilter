@@ -65,7 +65,7 @@ namespace PipeAndFilter
         public readonly int Count => StatusDetails.Count(x => x.TypeExec == HandlerType.Pipe);
 
         /// <summary>
-        /// Get detailed status for each step
+        /// Get detailed status for each step(pipe,conditions and tasks)
         /// </summary>
         public IEnumerable<PipeStatus> StatusDetails { get; }
 

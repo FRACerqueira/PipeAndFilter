@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents Conditions commands
+    /// Represents Pipeline control commands for conditions
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public interface IPipelineConditions<T> where T : class
@@ -22,7 +22,7 @@ namespace PipeAndFilter
         IPipeline<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
 
         /// <summary>
-        /// Add new condition for run this pipe or task
+        /// Add new condition for run this pipe
         /// </summary>
         /// <param name="condition">The handle condition to execute</param>
         /// <param name="aliasgoto">The alias go to handle.

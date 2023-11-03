@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents Task commands
+    /// Represents Pipeline control commands for task
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public interface IPipelineTasks<T> where T : class
