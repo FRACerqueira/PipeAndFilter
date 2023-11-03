@@ -39,7 +39,7 @@ public bool Aborted { get; }
 
 ### <a id="properties-pipeexception"/>**PipeException**
 
-The exception in condition or command pipe.
+The last exception in step (pipe,condition or task).
 
 ```csharp
 public Exception PipeException { get; }
@@ -51,7 +51,7 @@ public Exception PipeException { get; }
 
 ### <a id="properties-status"/>**Status**
 
-StatusDetails of all pipes
+Status details of all pipes
 
 ```csharp
 public ImmutableArray<PipeRanStatus> Status { get; }

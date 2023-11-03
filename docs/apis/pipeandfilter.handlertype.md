@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents a HandlerType
+Represents a handler type
 
 ```csharp
 public enum HandlerType

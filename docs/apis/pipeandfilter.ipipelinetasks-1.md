@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents Task commands
+Represents Pipeline control commands for task
 
 ```csharp
 public interface IPipelineTasks<T>

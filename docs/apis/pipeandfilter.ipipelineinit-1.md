@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents Pipeline start config
+Represents pipeline control commands for initialization
 
 ```csharp
 public interface IPipelineInit<T>
@@ -26,7 +26,7 @@ Type of contract
 
 ### <a id="methods-addpipe"/>**AddPipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
-Add the pipe
+Add new pipe
 
 ```csharp
 IPipeline<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)

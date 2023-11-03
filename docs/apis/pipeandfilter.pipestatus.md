@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents the status of the pipe or task
+Represents the status of step (pipe, condition or task)
 
 ```csharp
 public struct PipeStatus
@@ -47,7 +47,7 @@ public bool Condition { get; }
 
 ### <a id="properties-elapsedtime"/>**Elapsedtime**
 
-Get Elapsedtime
+Get the elapsed time
 
 ```csharp
 public TimeSpan Elapsedtime { get; }

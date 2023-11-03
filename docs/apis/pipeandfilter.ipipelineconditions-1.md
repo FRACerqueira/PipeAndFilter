@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents Conditions commands
+Represents Pipeline control commands for conditions
 
 ```csharp
 public interface IPipelineConditions<T>
@@ -59,7 +59,7 @@ ValueTask<ResultPipeline<T>> Run()
 
 ### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
 
-Add new condition for run this pipe or task
+Add new condition for run this pipe
 
 ```csharp
 IPipelineConditions<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)

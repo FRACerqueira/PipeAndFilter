@@ -37,6 +37,7 @@ Type of return
 #### Parameters
 
 `cts` [Nullable&lt;CancellationToken&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.nullable-1)<br>
+[CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken)
 
 #### Returns
 

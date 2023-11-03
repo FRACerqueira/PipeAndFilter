@@ -71,7 +71,7 @@ public PipeStatus Status { get; }
 
 ### <a id="properties-statusdetails"/>**StatusDetails**
 
-Get detailed status for each step
+Get detailed status for each step(pipe,conditions and tasks)
 
 ```csharp
 public IEnumerable<PipeStatus> StatusDetails { get; }

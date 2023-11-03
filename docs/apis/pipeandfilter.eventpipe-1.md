@@ -11,7 +11,7 @@
 
 Namespace: PipeAndFilter
 
-Represents a EventPipe
+Represents a pipe/task event with parameters, values ​​and commands
 
 ```csharp
 public class EventPipe<T>
@@ -100,6 +100,10 @@ public ImmutableArray<ValueTuple<String, String, String>> SavedTasks { get; }
 
 ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
 
+**Remarks:**
+
+Data only exists when executed by an aggregator pipe
+
 ## Constructors
 
 ### <a id="constructors-.ctor"/>**EventPipe(Action&lt;Action&lt;T&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, String, String, String, String)**
@@ -147,6 +151,11 @@ public void ChangeContract(Action<T> action)
 
 `action` Action&lt;T&gt;<br>
 
+**Remarks:**
+
+The action will only be executed if the contract exists.
+ <br>
+
 ### <a id="methods-endpipeline"/>**EndPipeline()**
 
 End EndPipeline control
@@ -165,8 +174,7 @@ public void RemoveSavedValue()
 
 ### <a id="methods-savevalue"/>**SaveValue&lt;T1&gt;(T1)**
 
-Save/overwrite a value associated with this pipe or task 
- <br>The values ​​will serialize into json
+Save/overwrite a value associated with this pipe or task
 
 ```csharp
 public void SaveValue<T1>(T1 value)
@@ -181,6 +189,10 @@ Type value to save
 
 `value` T1<br>
 The value to save
+
+**Remarks:**
+
+The values ​​will serialize into json
 
 
 - - -
