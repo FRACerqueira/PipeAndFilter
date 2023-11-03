@@ -1,0 +1,4 @@
+description: Pipeline control for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.
+show_downloads: false
+google_analytics:
+theme: jekyll-theme-cayman

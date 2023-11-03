@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;net6.0;netstandard2.1</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<NeutralLanguage>en</NeutralLanguage>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Configurations>Debug;Release;local</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>Fernando Cerqueira</Authors>
+		<Description>Pipeline control for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.
+		</Description>
+		<PackageReleaseNotes>https://github.com/FRACerqueira/PipeAndFilter/releases</PackageReleaseNotes>
+		<PackageTags>csharp;dotnet;Pipeline</PackageTags>
+		<RepositoryUrl>https://github.com/FRACerqueira/PipeAndFilter</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageId>PipeAndFilter</PackageId>
+		<PackageReadmeFile>NugetREADME.md</PackageReadmeFile>
+		<PackageProjectUrl>https://fracerqueira.github.io/PipeAndFilter</PackageProjectUrl>
+		<Version>1.0.0</Version>
+		<PackageIcon>icon.png</PackageIcon>
+		<Copyright>© 2023 - Fernando Cerqueira </Copyright>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<Title>PipeAndFilter</Title>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+		
+	<ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
+	  <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+	  <PackageReference Include="System.Text.Json" Version="7.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="README.txt">
+			<Pack>true</Pack>
+			<PackagePath>README.txt</PackagePath>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="NugetREADME.md" Pack="true" PackagePath="\" />
+		<None Include="..\icon.png" Pack="true" PackagePath="\" />
+		<None Include="..\README.md" Pack="false" />
+	</ItemGroup>
+	
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)|$(TargetFramework)'=='local|net7.0'">
+		<Exec Command="xmldoc2md $(SolutionDir)Src\bin\local\net7.0\PipeAndFilter.dll $(SolutionDir)docs\apis --templatefile $(SolutionDir)docapitemplate.md  --excludeinternal --index-page-name apis --back-button &quot;Back to List Api&quot; --link-back-button &quot;./apis.md&quot; --back-index-button &quot;Main&quot; --link-backindex-button &quot;../index.md#table-of-contents&quot;" />
+	</Target>
+</Project>

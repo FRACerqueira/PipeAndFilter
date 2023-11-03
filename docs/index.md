@@ -1,14 +1,15 @@
-# <img align="left" width="100" height="100" src="./docs/images/icon.png">Welcome to PipeAndFilter
+# <img align="left" width="100" height="100" src="./images/icon.png">Welcome to PipeAndFilter
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
 [![NuGet](https://img.shields.io/nuget/v/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 [![Downloads](https://img.shields.io/nuget/dt/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 
 
-### **Pipeline control for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.**
+**Pipeline control for .NET Core with flexible conditions for each step (pipe)
+and the ability to parallel execute tasks over a pipe.
+.**
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
-
 **[Visit the official page for more documentation of PipeAndFilter](https://fracerqueira.github.io/PipeAndFilter)**
 
 ## Table of Contents
@@ -212,4 +213,3 @@ See the [Contributing guide](CONTRIBUTING.md) for developer documentation.
 Copyright 2023 @ Fernando Cerqueira
 
 PipeAndFilter is licensed under the MIT license. See [LICENSE](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE).
-
