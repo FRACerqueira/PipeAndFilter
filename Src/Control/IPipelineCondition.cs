@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents Pipeline control commands for conditions
+    /// Represents control commands for for conditions
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public interface IPipelineConditions<T> where T : class

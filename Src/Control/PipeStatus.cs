@@ -11,7 +11,7 @@ namespace PipeAndFilter
     public readonly struct PipeStatus
     {
         /// <summary>
-        /// Create PipeStatus
+        /// Create Pipe Status
         /// </summary>
         /// <remarks>
         /// Do not use this constructor!
@@ -23,14 +23,14 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Create instance
+        /// Create instance (Only internal use or Unit-Test)
         /// </summary>
         /// <param name="typeExec"><see cref="HandlerType"/></param>
         /// <param name="value"><see cref="TaskStatus"/></param>
         /// <param name="elapsedtime"><see cref="TimeSpan"/></param>
-        /// <param name="alias">The alias</param>
-        /// <param name="gotoAlias">the go to alias</param>
-        /// <param name="condition">if Status is condition handle</param>
+        /// <param name="alias">The execution alias</param>
+        /// <param name="gotoAlias">The Alias ​​of go to</param>
+        /// <param name="condition">if the result of the condition is true</param>
         public PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string? alias, string? gotoAlias, bool condition)
         {
             TypeExec = typeExec;
@@ -42,32 +42,32 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Get status execution
+        /// The running status
         /// </summary>
         public TaskStatus Value { get; }
 
         /// <summary>
-        /// Get the elapsed time
+        /// The elapsed time
         /// </summary>
         public TimeSpan Elapsedtime { get; }
 
         /// <summary>
-        /// Get Type execution
+        /// The Handler Type
         /// </summary>
         public HandlerType TypeExec { get; }
 
         /// <summary>
-        /// Get execution alias
+        /// The execution alias
         /// </summary>
         public string? Alias { get; }
 
         /// <summary>
-        /// Get go to Alias
+        /// The Alias ​​of go to
         /// </summary>
         public string? GotoAlias { get; }
 
         /// <summary>
-        /// Get condition result
+        /// The condition result
         /// </summary>
         public bool Condition { get; }
 

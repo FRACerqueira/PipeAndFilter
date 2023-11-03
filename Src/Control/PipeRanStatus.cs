@@ -23,10 +23,10 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Create PipeRanStatus
+        /// Create PipeRanStatus (Only internal use or Unit-Test)
         /// </summary>
         /// <param name="id">The id pipe</param>
-        /// <param name="alias">The alias pipe</param>
+        /// <param name="alias">The pipe alias</param>
         /// <param name="details">The detailed status of all runs</param>
         public PipeRanStatus(string id, string? alias, IEnumerable<PipeStatus> details)
         {
@@ -36,12 +36,12 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Get alias pipe
+        /// The pipe alias
         /// </summary>
         public string? Alias { get; }
 
         /// <summary>
-        /// Get last pipe status handle run
+        /// The last execution status of the pipe
         /// </summary>
         public PipeStatus Status
         {
@@ -60,17 +60,17 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Get number of times the pipe was executed
+        /// The number of times the pipe has been executed
         /// </summary>
         public readonly int Count => StatusDetails.Count(x => x.TypeExec == HandlerType.Pipe);
 
         /// <summary>
-        /// Get detailed status for each step(pipe,conditions and tasks)
+        /// The detailed status of each step (pipe, conditions and tasks)
         /// </summary>
         public IEnumerable<PipeStatus> StatusDetails { get; }
 
         /// <summary>
-        /// Get pipe Id
+        /// The pipe Id
         /// </summary>
         public string Id { get; }
     }

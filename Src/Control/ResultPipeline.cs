@@ -25,7 +25,7 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Create ResultPipeline
+        /// Create ResultPipeline (Only internal use or Unit-Test)
         /// </summary>
         /// <param name="value">The contract value</param>
         /// <param name="aborted">Pipeline aborted</param>
@@ -40,12 +40,12 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Contract contract pipeline 
+        /// The Contract of pipeline 
         /// </summary>
         public T? Value { get; }
 
         /// <summary>
-        /// Pipeline is aborted.
+        /// The pipeline was aborted.
         /// </summary>
         public bool Aborted { get; }
 
@@ -55,7 +55,7 @@ namespace PipeAndFilter
         public Exception? PipeException { get; }
 
         /// <summary>
-        /// Status details of all pipes
+        /// The status detail of all pipes
         /// </summary>
         public ImmutableArray<PipeRanStatus> Status { get; }
 

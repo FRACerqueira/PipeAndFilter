@@ -50,40 +50,41 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Get values saved ​​associated with pipes
-        /// <br>The values ​​are serialized in json</br>
-        /// <br>Null result may exist</br>
+        /// The values saved ​​associated with pipes
         /// </summary>
+        /// <remarks>
+        /// The values ​​are serialized in json
+        /// <br>Null result may exist</br>
+        /// </remarks>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedPipes { get; }
 
         /// <summary>
-        /// Get values saved ​​associated with tasks
-        /// <br>The values ​​are serialized in json</br>
-        /// <br>Null result may exist</br>
-        /// </summary>
+        /// The values saved ​​associated with tasks
         /// <remarks>
         /// Data only exists when executed by an aggregator pipe
+        /// <br>The values ​​are serialized in json</br>
+        /// <br>Null result may exist</br>
         /// </remarks>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedTasks { get; }
 
         /// <summary>
-        /// Get current Id
+        /// The current Id
         /// </summary>
         public string CurrentId { get; }
 
         /// <summary>
-        /// Get from Id
+        /// The previous Id
         /// </summary>
         public string? FromId { get; }
 
         /// <summary>
-        /// Get current Alias
+        /// The current Alias
         /// </summary>
         public string? CurrentAlias { get; }
 
 
         /// <summary>
-        /// Get from Alias
+        /// The previous Alias
         /// </summary>
         public string? FromAlias { get; }
 
@@ -99,7 +100,7 @@ namespace PipeAndFilter
         /// <summary>
         /// Change value contract
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="action">The action to change value</param>
         /// <remarks>
         /// The action will only be executed if the contract exists.
         /// <br><see cref="IPipelineInit{T}.Init(T)"/></br>

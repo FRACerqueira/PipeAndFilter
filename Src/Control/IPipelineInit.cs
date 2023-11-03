@@ -6,7 +6,7 @@
 namespace PipeAndFilter
 {
     /// <summary>
-    /// Represents pipeline control commands for initialization
+    /// Represents control commands for initialization
     /// </summary>
     /// <typeparam name="T">Type of contract</typeparam>
     public interface IPipelineInit<T> where T : class
