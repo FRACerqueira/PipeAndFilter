@@ -439,7 +439,7 @@ namespace PipeAndFilter
                             _prevPipe,
                             _currentPipe!,
                             aliasprev, aliascur);
-                        var execid = _currentPipe;
+
                         var elapsed = TimeSpan.Zero;
                         var tm = Stopwatch.StartNew();
                         try
@@ -599,11 +599,7 @@ namespace PipeAndFilter
                         _prevPipe,
                         _currentPipe!,
                         aliasprev, aliascur);
-                    var execid = _currentPipe;
-                    if (!string.IsNullOrEmpty(itemcond.GotoId))
-                    {
-                        execid = _aliasToId[itemcond.GotoId];
-                    }
+
                     var elapsed = TimeSpan.Zero;
                     var tm = Stopwatch.StartNew();
                     try
