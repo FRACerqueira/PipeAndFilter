@@ -37,17 +37,17 @@ public bool Aborted { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
-### <a id="properties-pipeexception"/>**PipeException**
+### <a id="properties-exception"/>**Exception**
 
-The last exception (pipe,condition or task).
+The exception (pipe,condition or task), if any.
 
 ```csharp
-public Exception PipeException { get; }
+public PipeAndFilterException Exception { get; }
 ```
 
 #### Property Value
 
-[Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
+[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
 
 ### <a id="properties-status"/>**Status**
 
@@ -92,12 +92,12 @@ Message error
 
 Do not use this constructor!
 
-### <a id="constructors-.ctor"/>**ResultPipeAndFilter(T, Boolean, Exception, ImmutableArray&lt;PipeRanStatus&gt;)**
+### <a id="constructors-.ctor"/>**ResultPipeAndFilter(T, Boolean, PipeAndFilterException, ImmutableArray&lt;PipeRanStatus&gt;)**
 
 Create Result of PipeAndFilter (Only internal use or Unit-Test).
 
 ```csharp
-ResultPipeAndFilter(T value, bool aborted, Exception exception, ImmutableArray<PipeRanStatus> status)
+ResultPipeAndFilter(T value, bool aborted, PipeAndFilterException exception, ImmutableArray<PipeRanStatus> status)
 ```
 
 #### Parameters
@@ -106,10 +106,10 @@ ResultPipeAndFilter(T value, bool aborted, Exception exception, ImmutableArray<P
 The contract value.
 
 `aborted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-Pipeline aborted.
+If aborted.
 
-`exception` [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
-The last exception.
+`exception` [PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+The exception, if any.
 
 `status` ImmutableArray&lt;PipeRanStatus&gt;<br>
 Detailed running status of all pipes.
