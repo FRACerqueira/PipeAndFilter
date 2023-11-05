@@ -9,7 +9,7 @@
 
 # ResultPipeAndFilter&lt;T&gt;
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents the result of PipeAndFilter
 
@@ -21,7 +21,7 @@ public struct ResultPipeAndFilter<T>
 
 `T`<br>
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [ResultPipeAndFilter&lt;T&gt;](./pipefilterplus.resultpipeandfilter-1.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
 
 ## Properties
 
@@ -47,7 +47,7 @@ public PipeAndFilterException Exception { get; }
 
 #### Property Value
 
-[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+[PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 
 ### <a id="properties-status"/>**Status**
 
@@ -85,7 +85,7 @@ ResultPipeAndFilter()
 
 #### Exceptions
 
-[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+[PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error
 
 **Remarks:**
@@ -108,7 +108,7 @@ The contract value.
 `aborted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 If aborted.
 
-`exception` [PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+`exception` [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 The exception, if any.
 
 `status` ImmutableArray&lt;PipeRanStatus&gt;<br>

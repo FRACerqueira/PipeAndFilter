@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterInit<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilter<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,20 +7,20 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterInit&lt;T&gt;
+# IPipeAndFilter&lt;T&gt;
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
-Represents command for initialization
+Represents the commands for pipe.
 
 ```csharp
-public interface IPipeAndFilterInit<T>
+public interface IPipeAndFilter<T>
 ```
 
 #### Type Parameters
 
 `T`<br>
-Type of contract
+Type of contract.
 
 ## Methods
 
@@ -43,7 +43,7 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefilterplus.ipipeandfilter-1.md)
+[IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
 
 **Remarks:**
 
@@ -69,83 +69,47 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefilterplus.ipipeandfilter-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 **Remarks:**
 
 Alias ​​is used to reference in another pipe.
 
-### <a id="methods-correlationid"/>**CorrelationId(String)**
+### <a id="methods-run"/>**Run()**
 
-The Correlation Id
+Execute PipeAndFilter.
 
 ```csharp
-IPipeAndFilterInit<T> CorrelationId(string value)
+ValueTask<ResultPipeAndFilter<T>> Run()
+```
+
+#### Returns
+
+[ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
+
+### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
+
+Add new condition.
+
+```csharp
+IPipeAndFilterConditions<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
 ```
 
 #### Parameters
 
-`value` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-Correlation Id value
+`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
+The handle condition to execute.
+
+`aliasgoto` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The alias to another pipe.
+ <br>If condition not have link to another pipe, the value must be null.
+
+`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterInit&lt;T&gt;](./pipefilterplus.ipipeandfilterinit-1.md)
-
-### <a id="methods-init"/>**Init(T)**
-
-Initial contract value.
-
-```csharp
-IPipeAndFilterInit<T> Init(T contract)
-```
-
-#### Parameters
-
-`contract` T<br>
-The contract.
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefilterplus.ipipeandfilterinit-1.md)
-
-### <a id="methods-logger"/>**Logger(ILogger)**
-
-The logger handler
-
-```csharp
-IPipeAndFilterInit<T> Logger(ILogger value)
-```
-
-#### Parameters
-
-`value` ILogger<br>
-logger handler value
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefilterplus.ipipeandfilterinit-1.md)
-
-### <a id="methods-maxdegreeprocess"/>**MaxDegreeProcess(Int32)**
-
-Maximum number of concurrent tasks enable.
-
-```csharp
-IPipeAndFilterInit<T> MaxDegreeProcess(int value)
-```
-
-#### Parameters
-
-`value` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-Number of concurrent tasks.
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefilterplus.ipipeandfilterinit-1.md)
-
-**Remarks:**
-
-The default value is number of processors.
+[IPipeAndFilterConditions&lt;T&gt;](./pipefiltercore.ipipeandfilterconditions-1.md)
 
 
 - - -

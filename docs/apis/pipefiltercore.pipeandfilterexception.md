@@ -9,7 +9,7 @@
 
 # PipeAndFilterException
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents a exception for Pipeline control.
 
@@ -17,7 +17,7 @@ Represents a exception for Pipeline control.
 public class PipeAndFilterException : System.Exception, System.Runtime.Serialization.ISerializable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception) → [PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception) → [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Implements [ISerializable](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.serialization.iserializable)
 
 ## Fields
@@ -136,7 +136,7 @@ public PipeAndFilterException(PipeStatus status, string message)
 
 #### Parameters
 
-`status` [PipeStatus](./pipefilterplus.pipestatus.md)<br>
+`status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
 The status of step (pipe, condition or task)
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
@@ -152,7 +152,7 @@ public PipeAndFilterException(PipeStatus status, string message, Exception inner
 
 #### Parameters
 
-`status` [PipeStatus](./pipefilterplus.pipestatus.md)<br>
+`status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
 The status of step (pipe, condition or task)
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>

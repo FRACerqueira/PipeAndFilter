@@ -9,7 +9,7 @@
 
 # EventPipe&lt;T&gt;
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents a pipe/task event with parameters, values ​​and commands.
 
@@ -22,7 +22,7 @@ public class EventPipe<T>
 `T`<br>
 Type of contract.
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [EventPipe&lt;T&gt;](./pipefilterplus.eventpipe-1.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [EventPipe&lt;T&gt;](./pipefiltercore.eventpipe-1.md)
 
 ## Properties
 

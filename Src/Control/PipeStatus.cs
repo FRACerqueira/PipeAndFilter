@@ -3,7 +3,7 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     /// <summary>
     /// Represents the status of step (pipe, condition or task).

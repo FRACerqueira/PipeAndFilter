@@ -9,7 +9,7 @@
 
 # PipeAndFilter
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents PipeAndFilter Extension.
 
@@ -17,7 +17,7 @@ Represents PipeAndFilter Extension.
 public static class PipeAndFilter
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PipeAndFilter](./pipefilterplus.pipeandfilter.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PipeAndFilter](./pipefiltercore.pipeandfilter.md)
 
 ## Methods
 
@@ -41,7 +41,7 @@ The [CancellationToken](https://docs.microsoft.com/en-us/dotnet/api/system.threa
 
 #### Returns
 
-[IPipeAndFilterInit&lt;T&gt;](./pipefilterplus.ipipeandfilterinit-1.md)
+[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
 **Remarks:**
 

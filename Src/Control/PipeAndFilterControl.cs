@@ -8,7 +8,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     internal class PipeAndFilterControl<T> : IDisposable, IPipeAndFilterInit<T>, IPipeAndFilter<T>, IPipeAndFilterConditions<T>, IPipeAndFilterTasks<T> where T : class
     {
@@ -33,10 +33,10 @@ namespace PipeFilterPlus
         private string? _currentPipe;
         private string? _prevPipe;
 
-        private bool _abortPipeline;
-        private bool _finishedPipeline;
+        private bool _abort;
+        private bool _finished;
 
-        private bool IsEndPipeline => _finishedPipeline || _abortPipeline || _pipects!.IsCancellationRequested;
+        private bool IsEnd => _finished || _abort || _pipects!.IsCancellationRequested;
 
         private CancellationTokenSource? _pipects;
 
@@ -65,7 +65,7 @@ namespace PipeFilterPlus
 
         #endregion
 
-        #region IPipelineInit
+        #region IPipeAndFilterInit
 
         IPipeAndFilterInit<T> IPipeAndFilterInit<T>.Logger(ILogger? value)
         {
@@ -111,7 +111,7 @@ namespace PipeFilterPlus
 
         #endregion
 
-        #region IPipeline
+        #region IPipeAndFilter
 
         IPipeAndFilter<T> IPipeAndFilter<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
@@ -138,7 +138,7 @@ namespace PipeFilterPlus
 
         #endregion
 
-        #region IPipelineConditions
+        #region IPipeAndFilterConditions
 
         IPipeAndFilter<T> IPipeAndFilterConditions<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
@@ -159,7 +159,7 @@ namespace PipeFilterPlus
 
         #endregion
 
-        #region IPipelineTasks
+        #region IPipeAndFilterTasks
 
         IPipeAndFilter<T> IPipeAndFilterTasks<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
@@ -361,10 +361,10 @@ namespace PipeFilterPlus
         {
             _currentPipeIndex = 0;
             _currentPipe = _sequencePipes[0];
-            while (!IsEndPipeline)
+            while (!IsEnd)
             {
                 await NextPipe();
-                if (!IsEndPipeline)
+                if (!IsEnd)
                 {
                     var tm = Stopwatch.StartNew();
                     var elapsed = TimeSpan.Zero;
@@ -376,7 +376,7 @@ namespace PipeFilterPlus
                         {
                             await ExecuteTasksPipes(_pipes[_currentPipe!].tasks!);
                         }
-                        if (!IsEndPipeline)
+                        if (!IsEnd)
                         {
                             string? aliasprev = null;
                             if (!string.IsNullOrEmpty(_prevPipe))
@@ -403,7 +403,7 @@ namespace PipeFilterPlus
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Canceled;
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                     catch (Exception ex)
                     {
@@ -418,8 +418,8 @@ namespace PipeFilterPlus
                                 null, true),
                             "Error handler Pipe",
                             ex);
-                        _abortPipeline = true;
-                        _finishedPipeline = true;
+                        _abort = true;
+                        _finished = true;
                     }
                     tm.Stop();
                     _pipes[_currentPipe!].status.Add(new PipeStatus(
@@ -434,7 +434,7 @@ namespace PipeFilterPlus
                 {
                     _pipects!.Cancel();
                 }
-                if (!IsEndPipeline)
+                if (!IsEnd)
                 {
                     _currentPipeIndex++;
                     if (_currentPipeIndex < _sequencePipes.Count)
@@ -444,13 +444,13 @@ namespace PipeFilterPlus
                     }
                     else
                     {
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                 }
             }
             return new ResultPipeAndFilter<T>(
                 _contract,
-                _abortPipeline,
+                _abort,
                 _lastexception,
                 _pipes.Select(x =>
                     new PipeRanStatus(
@@ -504,7 +504,7 @@ namespace PipeFilterPlus
                         {
                             elapsed = tm.Elapsed;
                             sta = TaskStatus.Canceled;
-                            _finishedPipeline = true;
+                            _finished = true;
                         }
                         catch (Exception ex)
                         {
@@ -519,8 +519,8 @@ namespace PipeFilterPlus
                                     null, isvalidtask),
                                 "Error handler Condition Task",
                                 ex); 
-                            _abortPipeline = true;
-                            _finishedPipeline = true;
+                            _abort = true;
+                            _finished = true;
                             _pipects!.Cancel(false);
                         }
                         tm.Stop();
@@ -530,7 +530,7 @@ namespace PipeFilterPlus
                             elapsed,
                             tasks[i].NameTask,
                             null, isvalidtask));
-                        if (IsEndPipeline)
+                        if (IsEnd)
                         {
                             isvalidtask = false;
                         }
@@ -582,7 +582,7 @@ namespace PipeFilterPlus
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
-                                    _finishedPipeline = true;
+                                    _finished = true;
                                 }
                             }
                             catch (Exception ex)
@@ -601,8 +601,8 @@ namespace PipeFilterPlus
                                             null, isvalidtask),
                                         "Error handler Task",
                                         ex);
-                                    _abortPipeline = true;
-                                    _finishedPipeline = true;
+                                    _abort = true;
+                                    _finished = true;
                                 }
                             }
                             tm.Stop();
@@ -623,8 +623,8 @@ namespace PipeFilterPlus
                         degreecount++;
                     }
                     i++;
-                } while (!IsEndPipeline && i < tasks.Count && degreecount < _maxDegreeProcess);
-                if (!IsEndPipeline)
+                } while (!IsEnd && i < tasks.Count && degreecount < _maxDegreeProcess);
+                if (!IsEnd)
                 {
                     try
                     {
@@ -642,12 +642,12 @@ namespace PipeFilterPlus
                         //none
                     }
                 }
-            } while (!IsEndPipeline && i < tasks.Count);
+            } while (!IsEnd && i < tasks.Count);
         }
 
         private async Task NextPipe()
         {
-            while (!IsEndPipeline)
+            while (!IsEnd)
             {
                 var isok = true;
                 foreach (var itemcond in _pipes[_currentPipe!].precondhandle)
@@ -683,7 +683,7 @@ namespace PipeFilterPlus
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Canceled;
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                     catch (Exception ex)
                     {
@@ -698,8 +698,8 @@ namespace PipeFilterPlus
                                  itemcond.GotoId, isok),
                              "Error handler condition",
                              ex);
-                        _abortPipeline = true;
-                        _finishedPipeline = true;
+                        _abort = true;
+                        _finished = true;
                         _pipects!.Cancel(false);
                     }
                     tm.Stop();
@@ -709,7 +709,7 @@ namespace PipeFilterPlus
                         elapsed,
                         itemcond.Name,
                         itemcond.GotoId, isok));
-                    if (!IsEndPipeline)
+                    if (!IsEnd)
                     {
                         if ((!isok && condpipeType == HandlerType.Condition) || (isok && condpipeType == HandlerType.ConditionGoto))
                         {
@@ -728,7 +728,7 @@ namespace PipeFilterPlus
                             }
                             else
                             {
-                                _finishedPipeline = true;
+                                _finished = true;
                             }
                             return;
                         }
@@ -745,7 +745,7 @@ namespace PipeFilterPlus
         {
             if (eventPipe.FinishedPipeAndFilter)
             {
-                _finishedPipeline = true;
+                _finished = true;
             }
             var alias = _idToAlias[idpipe];
             if (eventPipe.ToRemove)
@@ -776,7 +776,7 @@ namespace PipeFilterPlus
             {
                 if (eventPipe.FinishedPipeAndFilter)
                 {
-                    _finishedPipeline = true;
+                    _finished = true;
                 }
                 if (eventPipe.ToRemove)
                 {

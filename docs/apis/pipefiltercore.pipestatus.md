@@ -9,7 +9,7 @@
 
 # PipeStatus
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents the status of step (pipe, condition or task).
 
@@ -17,7 +17,7 @@ Represents the status of step (pipe, condition or task).
 public struct PipeStatus
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeStatus](./pipefilterplus.pipestatus.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeStatus](./pipefiltercore.pipestatus.md)
 
 ## Properties
 
@@ -79,7 +79,7 @@ public HandlerType TypeExec { get; }
 
 #### Property Value
 
-[HandlerType](./pipefilterplus.handlertype.md)<br>
+[HandlerType](./pipefiltercore.handlertype.md)<br>
 
 ### <a id="properties-value"/>**Value**
 
@@ -105,7 +105,7 @@ PipeStatus()
 
 #### Exceptions
 
-[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+[PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error.
 
 **Remarks:**
@@ -122,8 +122,8 @@ PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string 
 
 #### Parameters
 
-`typeExec` [HandlerType](./pipefilterplus.handlertype.md)<br>
-Type handle. See [HandlerType](./pipefilterplus.handlertype.md).
+`typeExec` [HandlerType](./pipefiltercore.handlertype.md)<br>
+Type handle. See [HandlerType](./pipefiltercore.handlertype.md).
 
 `value` [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus)<br>
 The Status. See [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus).

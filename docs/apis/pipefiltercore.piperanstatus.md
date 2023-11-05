@@ -9,7 +9,7 @@
 
 # PipeRanStatus
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents the ran status of the pipe.
 
@@ -17,7 +17,7 @@ Represents the ran status of the pipe.
 public struct PipeRanStatus
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeRanStatus](./pipefilterplus.piperanstatus.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeRanStatus](./pipefiltercore.piperanstatus.md)
 
 ## Properties
 
@@ -55,7 +55,7 @@ public PipeStatus Status { get; }
 
 #### Property Value
 
-[PipeStatus](./pipefilterplus.pipestatus.md)<br>
+[PipeStatus](./pipefiltercore.pipestatus.md)<br>
 
 ### <a id="properties-statusdetails"/>**StatusDetails**
 
@@ -81,7 +81,7 @@ PipeRanStatus()
 
 #### Exceptions
 
-[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
+[PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error
 
 **Remarks:**

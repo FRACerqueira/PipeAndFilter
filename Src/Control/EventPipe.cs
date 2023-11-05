@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     /// <summary>
     /// Represents a pipe/task event with parameters, values ​​and commands.

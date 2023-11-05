@@ -5,11 +5,11 @@
 
 using System.Runtime.Serialization;
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     ///<inheritdoc cref="Exception"/>
     /// <summary>
-    /// Represents a exception for Pipeline control.
+    /// Represents a exception for PipeAndFilter.
     /// </summary>
     [Serializable]
     public class PipeAndFilterException : Exception

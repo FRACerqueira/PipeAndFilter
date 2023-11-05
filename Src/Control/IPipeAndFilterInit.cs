@@ -5,7 +5,7 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     /// <summary>
     /// Represents command for initialization

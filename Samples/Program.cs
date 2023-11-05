@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
-using PipeFilterPlus;
+﻿using PipeFilterCore;
 
-namespace PipeFilterPlusSamples
+namespace PipeFilterCoreSamples
 {
     class Program
     {

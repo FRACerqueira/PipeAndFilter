@@ -11,12 +11,12 @@
 Welcome to PipeAndFilter
 ------------------------
 
-Pipeline control for .NET Core with flexible conditions for each step (pipe)
+PipeAndFilter component for .NET Core with flexible conditions for each step (pipe)
 and the ability to parallel execute tasks over a pipe.
 
 Key features
 ------------
-- Pipeline contract with thread safety for change values
+- Contract with thread safety for change values
 - Set the maximum amount of parallel execution
 - Add multiple preconditions to run a pipe
 - Add multiple link to the pipe to jump to another pipe
@@ -24,7 +24,7 @@ Key features
 - Have the detailed status (execution time, execution type, result of each executed condition) in each pipe
 - Save a result from each pipe to use when executing another pipe
 - Save a result from each task to use during the execution of the aggregation pipe
-- Terminate the pipeline on any task, condition or pipe
+- Terminate the PipeAndFilter on any task, condition or pipe
 - Simple and clear fluent syntax
 
 Visit the official page for complete documentation of PipeAndFilter:

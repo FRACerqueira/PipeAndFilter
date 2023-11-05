@@ -9,7 +9,7 @@
 
 # IPipeAndFilterTasks&lt;T&gt;
 
-Namespace: PipeFilterPlus
+Namespace: PipeFilterCore
 
 Represents commands for task
 
@@ -43,7 +43,7 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefilterplus.ipipeandfilter-1.md)
+[IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
 
 **Remarks:**
 
@@ -67,7 +67,7 @@ The name for task (optional).
 
 #### Returns
 
-[IPipeAndFilterTasks&lt;T&gt;](./pipefilterplus.ipipeandfiltertasks-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 ### <a id="methods-addtaskcondition"/>**AddTaskCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
 
@@ -93,7 +93,7 @@ The name for condition (optional).
 
 #### Returns
 
-[IPipeAndFilterTasks&lt;T&gt;](./pipefilterplus.ipipeandfiltertasks-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 ### <a id="methods-run"/>**Run()**
 
@@ -105,7 +105,7 @@ ValueTask<ResultPipeAndFilter<T>> Run()
 
 #### Returns
 
-[ResultPipeAndFilter&lt;T&gt;](./pipefilterplus.resultpipeandfilter-1.md)
+[ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
 
 ### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
 
@@ -129,7 +129,7 @@ The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterTasks&lt;T&gt;](./pipefilterplus.ipipeandfiltertasks-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 
 - - -

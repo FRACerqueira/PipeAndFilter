@@ -4,7 +4,7 @@
 		<TargetFrameworks>net7.0;net6.0;netstandard2.1</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
 		<NeutralLanguage>en</NeutralLanguage>
-		<RootNamespace>PipeFilterPlus</RootNamespace>
+		<RootNamespace>PipeFilterCore</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<Configurations>Debug;Release;local</Configurations>
@@ -17,10 +17,10 @@
 	<PropertyGroup>
 		<Authors>Fernando Cerqueira</Authors>
 		<Description>
-			Pipeline control for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.
+			PipeAndFilter component for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.
 		</Description>
 		<PackageReleaseNotes>https://github.com/FRACerqueira/PipeAndFilter/releases</PackageReleaseNotes>
-		<PackageTags>csharp;dotnet;Pipeline</PackageTags>
+		<PackageTags>csharp;dotnet;Pipeline;Pipe;PipeAndFilter</PackageTags>
 		<RepositoryUrl>https://github.com/FRACerqueira/PipeAndFilter</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageId>PipeAndFilter</PackageId>

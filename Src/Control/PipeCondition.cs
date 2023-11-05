@@ -3,7 +3,7 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     internal readonly struct PipeCondition<T> where T : class
     {

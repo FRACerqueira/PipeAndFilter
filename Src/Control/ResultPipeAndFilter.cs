@@ -5,7 +5,7 @@
 
 using System.Collections.Immutable;
 
-namespace PipeFilterPlus
+namespace PipeFilterCore
 {
     /// <summary>
     /// Represents the result of PipeAndFilter
@@ -23,7 +23,7 @@ namespace PipeFilterPlus
         {
             throw new PipeAndFilterException(
                 PipeAndFilterException.StatusInit,
-                "Invalid ctor ResultPipeline");
+                "Invalid ctor ResultPipeAndFilter");
         }
 
         /// <summary>
