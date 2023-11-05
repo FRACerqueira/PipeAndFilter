@@ -53,10 +53,12 @@ public class MyClass
 
 var contract = new MyClass { MyProperty = 10 };
 
-var result = await Pipeline
+var result = await PipeAndFilter
     .Create<MyClass>()
     .Init(contract)
     .MaxDegreeProcess(4)
+    .CorrelationId(null)
+    .Logger(null)
     .AddPipe(ExecPipe1)
     .AddPipe(ExecPipe2)
         .WithCondition(CondFalse, "LastPipe")

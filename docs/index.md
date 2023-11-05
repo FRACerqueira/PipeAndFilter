@@ -82,10 +82,12 @@ public class MyClass
 ```csharp
 var contract = new MyClass { MyProperty = 10 };
 
-var result = await Pipeline
+var result = await PipeAndFilter
     .Create<MyClass>()
     .Init(contract)
     .MaxDegreeProcess(4)
+    .CorrelationId(null)
+    .Logger(null)
     .AddPipe(ExecPipe1)
     .AddPipe(ExecPipe2)
         .WithCondition(CondFalse, "LastPipe")
@@ -102,7 +104,7 @@ var result = await Pipeline
 Console.WriteLine($"Contract value : {contract.MyProperty}");
 foreach (var item in pl.Status)
 {
-    Console.WriteLine($"{item.Alias ?? item.Id}:{item.Status.Value} => {item.Status.Elapsedtime}");
+    Console.WriteLine($"{item.Alias}:{item.Status.Value} => {item.Status.Elapsedtime}");
     foreach (var det in item.StatusDetails)
     {
         Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");

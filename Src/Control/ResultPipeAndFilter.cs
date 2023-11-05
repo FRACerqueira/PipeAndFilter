@@ -5,33 +5,35 @@
 
 using System.Collections.Immutable;
 
-namespace PipeAndFilter
+namespace PipeFilterPlus
 {
     /// <summary>
-    /// Represents the result of pipeline
+    /// Represents the result of PipeAndFilter
     /// </summary>
-    public readonly struct ResultPipeline<T> where T : class
+    public readonly struct ResultPipeAndFilter<T> where T : class
     {
         /// <summary>
-        /// Create ResultPipeline
+        /// Create Result of PipeAndFilter
         /// </summary>
         /// <remarks>
         /// Do not use this constructor!
         /// </remarks>
         /// <exception cref="PipeAndFilterException">Message error</exception>
-        public ResultPipeline()
+        public ResultPipeAndFilter()
         {
-            throw new PipeAndFilterException("Invalid ctor ResultPipeline");
+            throw new PipeAndFilterException(
+                PipeAndFilterException.StatusInit,
+                "Invalid ctor ResultPipeline");
         }
 
         /// <summary>
-        /// Create ResultPipeline (Only internal use or Unit-Test)
+        /// Create Result of PipeAndFilter (Only internal use or Unit-Test).
         /// </summary>
-        /// <param name="value">The contract value</param>
-        /// <param name="aborted">Pipeline aborted</param>
-        /// <param name="exception">The last exception</param>
-        /// <param name="status">Detailed running status of all pipes</param>
-        public ResultPipeline(T? value, bool aborted, Exception? exception, ImmutableArray<PipeRanStatus> status)
+        /// <param name="value">The contract value.</param>
+        /// <param name="aborted">Pipeline aborted.</param>
+        /// <param name="exception">The last exception.</param>
+        /// <param name="status">Detailed running status of all pipes.</param>
+        public ResultPipeAndFilter(T? value, bool aborted, Exception? exception, ImmutableArray<PipeRanStatus> status)
         {
             Value = value;
             Aborted = aborted;
@@ -40,22 +42,22 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// The Contract of pipeline 
+        /// The Contract value
         /// </summary>
         public T? Value { get; }
 
         /// <summary>
-        /// The pipeline was aborted.
+        /// If aborted.
         /// </summary>
         public bool Aborted { get; }
 
         /// <summary>
-        /// The last exception in step (pipe,condition or task).
+        /// The last exception (pipe,condition or task).
         /// </summary>
         public Exception? PipeException { get; }
 
         /// <summary>
-        /// The status detail of all pipes
+        /// The status details of all pipes
         /// </summary>
         public ImmutableArray<PipeRanStatus> Status { get; }
 

@@ -3,35 +3,39 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeAndFilter
+namespace PipeFilterPlus
 {
     /// <summary>
-    /// Represents a handler type
+    /// Represents a handler type.
     /// </summary>
     public enum HandlerType
     {
         /// <summary>
-        /// Execution condition handler
+        /// No Type, Runtime Initialize
+        /// </summary>
+        None,
+        /// <summary>
+        /// Type condition.
         /// </summary>
         Condition,
         /// <summary>
-        /// Execution condition with goto handler
+        /// Type condition with link to another pipe.
         /// </summary>
         ConditionGoto,
         /// <summary>
-        /// Execution pipe handler
+        /// Type pipe.
         /// </summary>
         Pipe,
         /// <summary>
-        /// Execution task handler
+        /// Type task.
         /// </summary>
         Task,
         /// <summary>
-        /// Execution aggregate task handler
+        /// Type aggregate task.
         /// </summary>
         AggregateTask,
         /// <summary>
-        /// Execution condition task handler
+        /// Type condition task.
         /// </summary>
         ConditionTask,
     }

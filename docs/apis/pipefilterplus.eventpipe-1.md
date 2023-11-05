@@ -9,9 +9,9 @@
 
 # EventPipe&lt;T&gt;
 
-Namespace: PipeAndFilter
+Namespace: PipeFilterPlus
 
-Represents a pipe/task event with parameters, values ​​and commands
+Represents a pipe/task event with parameters, values ​​and commands.
 
 ```csharp
 public class EventPipe<T>
@@ -20,15 +20,27 @@ public class EventPipe<T>
 #### Type Parameters
 
 `T`<br>
-Type of contract
+Type of contract.
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [EventPipe&lt;T&gt;](./pipeandfilter.eventpipe-1.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [EventPipe&lt;T&gt;](./pipefilterplus.eventpipe-1.md)
 
 ## Properties
 
+### <a id="properties-correlationid"/>**CorrelationId**
+
+The Correlation Id
+
+```csharp
+public string CorrelationId { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ### <a id="properties-currentalias"/>**CurrentAlias**
 
-Get current Alias
+The current Alias.
 
 ```csharp
 public string CurrentAlias { get; }
@@ -38,21 +50,9 @@ public string CurrentAlias { get; }
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-### <a id="properties-currentid"/>**CurrentId**
-
-Get current Id
-
-```csharp
-public string CurrentId { get; }
-```
-
-#### Property Value
-
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-
 ### <a id="properties-fromalias"/>**FromAlias**
 
-Get from Alias
+The previous Alias.
 
 ```csharp
 public string FromAlias { get; }
@@ -62,22 +62,21 @@ public string FromAlias { get; }
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
-### <a id="properties-fromid"/>**FromId**
+### <a id="properties-logger"/>**Logger**
 
-Get from Id
+The log handler
 
 ```csharp
-public string FromId { get; }
+public ILogger Logger { get; }
 ```
 
 #### Property Value
 
-[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+ILogger<br>
 
 ### <a id="properties-savedpipes"/>**SavedPipes**
 
-Get values saved ​​associated with pipes
- <br>The values ​​are serialized in json<br>Null result may exist
+The values saved ​​associated with pipes
 
 ```csharp
 public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
@@ -87,10 +86,14 @@ public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
 
 ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
 
+**Remarks:**
+
+The values ​​are serialized in json.
+ <br>Null result may exist.
+
 ### <a id="properties-savedtasks"/>**SavedTasks**
 
-Get values saved ​​associated with tasks
- <br>The values ​​are serialized in json<br>Null result may exist
+The values saved ​​associated with tasks.
 
 ```csharp
 public ImmutableArray<ValueTuple<String, String, String>> SavedTasks { get; }
@@ -102,46 +105,53 @@ ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
 
 **Remarks:**
 
-Data only exists when executed by an aggregator pipe
+Data only exists when executed by an aggregator pipe.
+ <br>The values ​​are serialized in json.<br>Null result may exist.
 
 ## Constructors
 
-### <a id="constructors-.ctor"/>**EventPipe(Action&lt;Action&lt;T&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, String, String, String, String)**
+### <a id="constructors-.ctor"/>**EventPipe(String, ILogger, Action&lt;Action&lt;T&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, String, String, String, String)**
 
-Create instance of EventPipe (Only internal use or Unit-Test)
+Create instance of Event-Pipe (Only internal use or Unit-Test).
 
 ```csharp
-public EventPipe(Action<Action<T>> changecontract, ImmutableArray<ValueTuple<String, String, String>> savedpipes, ImmutableArray<ValueTuple<String, String, String>> savedtasks, string fromId, string currentId, string fromAlias, string currentAlias)
+public EventPipe(string cid, ILogger logger, Action<Action<T>> changecontract, ImmutableArray<ValueTuple<String, String, String>> savedpipes, ImmutableArray<ValueTuple<String, String, String>> savedtasks, string fromId, string currentId, string fromAlias, string currentAlias)
 ```
 
 #### Parameters
 
+`cid` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The correlation Id.
+
+`logger` ILogger<br>
+Handle of log.
+
 `changecontract` Action&lt;Action&lt;T&gt;&gt;<br>
-Handle of changecontract control
+Handle of changecontract.
 
 `savedpipes` ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-The values saved by pipe
+The values saved by pipe.
 
 `savedtasks` ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-The values saved by tasks
+The values saved by tasks.
 
 `fromId` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The came from Id
+The previous Id.
 
 `currentId` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The current Id
+The current Id.
 
 `fromAlias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The alias came from Id
+The previous alias.
 
 `currentAlias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The alias current Id
+The current alias.
 
 ## Methods
 
 ### <a id="methods-changecontract"/>**ChangeContract(Action&lt;T&gt;)**
 
-Change value contract
+Change value contract.
 
 ```csharp
 public void ChangeContract(Action<T> action)
@@ -150,23 +160,24 @@ public void ChangeContract(Action<T> action)
 #### Parameters
 
 `action` Action&lt;T&gt;<br>
+The action to change value.
 
 **Remarks:**
 
 The action will only be executed if the contract exists.
- <br>
+ <br>See .
 
-### <a id="methods-endpipeline"/>**EndPipeline()**
+### <a id="methods-endpipeandfilter"/>**EndPipeAndFilter()**
 
-End EndPipeline control
+End PipeAndFilter.
 
 ```csharp
-public void EndPipeline()
+public void EndPipeAndFilter()
 ```
 
 ### <a id="methods-removesavedvalue"/>**RemoveSavedValue()**
 
-Remove a value associated with this pipe or task
+Remove a value associated with this pipe or task .
 
 ```csharp
 public void RemoveSavedValue()
@@ -174,7 +185,7 @@ public void RemoveSavedValue()
 
 ### <a id="methods-savevalue"/>**SaveValue&lt;T1&gt;(T1)**
 
-Save/overwrite a value associated with this pipe or task
+Save/overwrite a value associated with this pipe or task.
 
 ```csharp
 public void SaveValue<T1>(T1 value)
@@ -183,16 +194,16 @@ public void SaveValue<T1>(T1 value)
 #### Type Parameters
 
 `T1`<br>
-Type value to save
+Type value to save.
 
 #### Parameters
 
 `value` T1<br>
-The value to save
+The value to save.
 
 **Remarks:**
 
-The values ​​will serialize into json
+The values ​​will serialize into json.
 
 
 - - -

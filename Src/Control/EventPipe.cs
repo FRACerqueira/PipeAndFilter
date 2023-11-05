@@ -5,42 +5,49 @@
 
 using System.Collections.Immutable;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
-namespace PipeAndFilter
+namespace PipeFilterPlus
 {
     /// <summary>
-    /// Represents a pipe/task event with parameters, values ​​and commands
+    /// Represents a pipe/task event with parameters, values ​​and commands.
     /// </summary>
-    /// <typeparam name="T">Type of contract</typeparam>
+    /// <typeparam name="T">Type of contract.</typeparam>
     public class EventPipe<T> where T : class
     {
         private readonly Action<Action<T?>> _changecontract;
 
         /// <summary>
-        /// Create EventPipe
+        /// Create Event-Pipe.
         /// </summary>
         /// <remarks>
         /// Do not use this constructor!
         /// </remarks>
-        /// <exception cref="PipeAndFilterException">Message error</exception>
+        /// <exception cref="PipeAndFilterException">Message error.</exception>
         private EventPipe()
         {
-            throw new PipeAndFilterException("Invalid ctor EventPipe");
+            throw new PipeAndFilterException(
+                PipeAndFilterException.StatusInit,
+                "Invalid ctor EventPipe");
         }
 
         /// <summary>
-        /// Create instance of EventPipe (Only internal use or Unit-Test)
+        /// Create instance of Event-Pipe (Only internal use or Unit-Test).
         /// </summary>
-        /// <param name="changecontract">Handle of changecontract control</param>
-        /// <param name="savedpipes">The values saved by pipe</param>
-        /// <param name="savedtasks">The values saved by tasks</param>
-        /// <param name="fromId">The came from Id</param>
-        /// <param name="currentId">The current Id</param>
-        /// <param name="fromAlias">The alias came from Id</param>
-        /// <param name="currentAlias">The alias current Id</param>
-        public EventPipe(Action<Action<T>> changecontract, ImmutableArray<(string? Alias, string Id,string? Result)> savedpipes, ImmutableArray<(string? Alias, string Id, string? Result)> savedtasks, string? fromId, string currentId, string? fromAlias, string? currentAlias)
+        /// <param name="cid">The correlation Id.</param>
+        /// <param name="logger">Handle of log.</param>
+        /// <param name="changecontract">Handle of changecontract.</param>
+        /// <param name="savedpipes">The values saved by pipe.</param>
+        /// <param name="savedtasks">The values saved by tasks.</param>
+        /// <param name="fromId">The previous Id.</param>
+        /// <param name="currentId">The current Id.</param>
+        /// <param name="fromAlias">The previous alias.</param>
+        /// <param name="currentAlias">The current alias.</param>
+        public EventPipe(string? cid, ILogger logger, Action<Action<T?>> changecontract, ImmutableArray<(string? Alias, string Id,string? Result)> savedpipes, ImmutableArray<(string? Alias, string Id, string? Result)> savedtasks, string? fromId, string currentId, string? fromAlias, string? currentAlias)
         {
             _changecontract = changecontract;
+            CorrelationId = cid;
+            Logger = logger; 
             SavedPipes = savedpipes;
             SavedTasks = savedtasks;
             FromAlias = fromAlias;
@@ -53,57 +60,58 @@ namespace PipeAndFilter
         /// The values saved ​​associated with pipes
         /// </summary>
         /// <remarks>
-        /// The values ​​are serialized in json
-        /// <br>Null result may exist</br>
-        /// </remarks>
+        /// The values ​​are serialized in json.
+        /// <br>Null result may exist.</br>
+        /// </remarks>.
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedPipes { get; }
 
         /// <summary>
-        /// The values saved ​​associated with tasks
+        /// The values saved ​​associated with tasks.
+        /// </summary>
         /// <remarks>
-        /// Data only exists when executed by an aggregator pipe
-        /// <br>The values ​​are serialized in json</br>
-        /// <br>Null result may exist</br>
+        /// Data only exists when executed by an aggregator pipe.
+        /// <br>The values ​​are serialized in json.</br>
+        /// <br>Null result may exist.</br>
         /// </remarks>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedTasks { get; }
 
         /// <summary>
-        /// The current Id
-        /// </summary>
-        public string CurrentId { get; }
-
-        /// <summary>
-        /// The previous Id
-        /// </summary>
-        public string? FromId { get; }
-
-        /// <summary>
-        /// The current Alias
+        /// The current Alias.
         /// </summary>
         public string? CurrentAlias { get; }
 
 
         /// <summary>
-        /// The previous Alias
+        /// The log handler
+        /// </summary>
+        public ILogger Logger { get; }
+
+        /// <summary>
+        /// The Correlation Id
+        /// </summary>
+        public string? CorrelationId { get; }
+
+        /// <summary>
+        /// The previous Alias.
         /// </summary>
         public string? FromAlias { get; }
 
- 
+
         /// <summary>
-        /// End EndPipeline control
+        /// End PipeAndFilter.
         /// </summary>
-        public void EndPipeline()
+        public void EndPipeAndFilter()
         {
-            FinishedPipeLine = true;
+            FinishedPipeAndFilter = true;
         }
 
         /// <summary>
-        /// Change value contract
+        /// Change value contract.
         /// </summary>
-        /// <param name="action">The action to change value</param>
+        /// <param name="action">The action to change value.</param>
         /// <remarks>
         /// The action will only be executed if the contract exists.
-        /// <br><see cref="IPipelineInit{T}.Init(T)"/></br>
+        /// <br>See <see cref="IPipeAndFilterInit{T}.Init(T)"/>.</br>
         /// </remarks>
         public void ChangeContract(Action<T> action)
         {
@@ -111,22 +119,22 @@ namespace PipeAndFilter
         }
 
         /// <summary>
-        /// Save/overwrite a value associated with this pipe or task 
+        /// Save/overwrite a value associated with this pipe or task.
         /// </summary>
-        /// <typeparam name="T1">Type value to save</typeparam>
-        /// <param name="value">The value to save</param>
+        /// <typeparam name="T1">Type value to save.</typeparam>
+        /// <param name="value">The value to save.</param>
         /// <remarks>
-        /// The values ​​will serialize into json
+        /// The values ​​will serialize into json.
         /// </remarks>
         public void SaveValue<T1>(T1  value)
         {
             IsSaved = true;
             ToRemove = false;
-            ValueToSave = JsonSerializer.Serialize<T1>(value);
+            ValueToSave = JsonSerializer.Serialize(value);
         }
 
         /// <summary>
-        /// Remove a value associated with this pipe or task 
+        /// Remove a value associated with this pipe or task .
         /// </summary>
         public void RemoveSavedValue()
         {
@@ -134,7 +142,9 @@ namespace PipeAndFilter
             ToRemove = true;
         }
 
-        internal bool FinishedPipeLine { get; set; }
+        internal string CurrentId { get; }
+        internal string? FromId { get; }
+        internal bool FinishedPipeAndFilter { get; set; }
         internal bool ToRemove { get; set; }
         internal bool IsSaved { get; set; }
         internal string? ValueToSave { get; set; }

@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:ResultPipeline<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:ResultPipeAndFilter<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,27 +7,27 @@
 
 [**Back to List Api**](./apis.md)
 
-# ResultPipeline&lt;T&gt;
+# ResultPipeAndFilter&lt;T&gt;
 
-Namespace: PipeAndFilter
+Namespace: PipeFilterPlus
 
-Represents the result of pipeline
+Represents the result of PipeAndFilter
 
 ```csharp
-public struct ResultPipeline<T>
+public struct ResultPipeAndFilter<T>
 ```
 
 #### Type Parameters
 
 `T`<br>
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [ResultPipeline&lt;T&gt;](./pipeandfilter.resultpipeline-1.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [ResultPipeAndFilter&lt;T&gt;](./pipefilterplus.resultpipeandfilter-1.md)
 
 ## Properties
 
 ### <a id="properties-aborted"/>**Aborted**
 
-Pipeline is aborted.
+If aborted.
 
 ```csharp
 public bool Aborted { get; }
@@ -39,7 +39,7 @@ public bool Aborted { get; }
 
 ### <a id="properties-pipeexception"/>**PipeException**
 
-The last exception in step (pipe,condition or task).
+The last exception (pipe,condition or task).
 
 ```csharp
 public Exception PipeException { get; }
@@ -51,7 +51,7 @@ public Exception PipeException { get; }
 
 ### <a id="properties-status"/>**Status**
 
-Status details of all pipes
+The status details of all pipes
 
 ```csharp
 public ImmutableArray<PipeRanStatus> Status { get; }
@@ -63,7 +63,7 @@ ImmutableArray&lt;PipeRanStatus&gt;<br>
 
 ### <a id="properties-value"/>**Value**
 
-Contract contract pipeline
+The Contract value
 
 ```csharp
 public T Value { get; }
@@ -75,44 +75,44 @@ T<br>
 
 ## Constructors
 
-### <a id="constructors-.ctor"/>**ResultPipeline()**
+### <a id="constructors-.ctor"/>**ResultPipeAndFilter()**
 
-Create ResultPipeline
+Create Result of PipeAndFilter
 
 ```csharp
-ResultPipeline()
+ResultPipeAndFilter()
 ```
 
 #### Exceptions
 
-[PipeAndFilterException](./pipeandfilter.pipeandfilterexception.md)<br>
+[PipeAndFilterException](./pipefilterplus.pipeandfilterexception.md)<br>
 Message error
 
 **Remarks:**
 
 Do not use this constructor!
 
-### <a id="constructors-.ctor"/>**ResultPipeline(T, Boolean, Exception, ImmutableArray&lt;PipeRanStatus&gt;)**
+### <a id="constructors-.ctor"/>**ResultPipeAndFilter(T, Boolean, Exception, ImmutableArray&lt;PipeRanStatus&gt;)**
 
-Create ResultPipeline
+Create Result of PipeAndFilter (Only internal use or Unit-Test).
 
 ```csharp
-ResultPipeline(T value, bool aborted, Exception exception, ImmutableArray<PipeRanStatus> status)
+ResultPipeAndFilter(T value, bool aborted, Exception exception, ImmutableArray<PipeRanStatus> status)
 ```
 
 #### Parameters
 
 `value` T<br>
-The contract value
+The contract value.
 
 `aborted` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-Pipeline aborted
+Pipeline aborted.
 
 `exception` [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
-The last exception
+The last exception.
 
 `status` ImmutableArray&lt;PipeRanStatus&gt;<br>
-Detailed running status of all pipes
+Detailed running status of all pipes.
 
 
 - - -
