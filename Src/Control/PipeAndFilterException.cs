@@ -15,7 +15,7 @@ namespace PipeFilterPlus
     public class PipeAndFilterException : Exception
     {
         /// <summary>
-        /// Default Status for initialize
+        /// The default status for initialize
         /// </summary>
         public static readonly PipeStatus StatusInit = new(HandlerType.Pipe,
             TaskStatus.Created,
@@ -26,19 +26,24 @@ namespace PipeFilterPlus
         /// </summary>
         public PipeStatus? Status { get; }
 
-        ///<inheritdoc cref="Exception"/>
-        public PipeAndFilterException()
+        private PipeAndFilterException()
         {
         }
 
-        ///<param name="status">status of step (pipe, condition or task)</param>
+        /// <summary>
+        /// Create PipeAndFilter-Exception
+        /// </summary>
+        ///<param name="status">The status of step (pipe, condition or task)</param>
         ///<param name="message">The message that describes the error.</param> 
         public PipeAndFilterException(PipeStatus status, string? message) : base(message)
         {
             Status = status;
         }
 
-        ///<param name="status">status of step (pipe, condition or task)</param>
+        /// <summary>
+        /// Create PipeAndFilter-Exception with innerException
+        /// </summary>
+        ///<param name="status">The status of step (pipe, condition or task)</param>
         ///<param name="message">The message that describes the error.</param> 
         ///<param name="innerException">The exception that is the cause of the current exception, or a null reference</param> 
         public PipeAndFilterException(PipeStatus status, string? message, Exception? innerException) : base(message, innerException)

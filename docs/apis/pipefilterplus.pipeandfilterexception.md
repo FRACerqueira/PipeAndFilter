@@ -24,7 +24,7 @@ Implements [ISerializable](https://docs.microsoft.com/en-us/dotnet/api/system.ru
 
 ### <a id="fields-statusinit"/>**StatusInit**
 
-Default Status for initialize
+The default status for initialize
 
 ```csharp
 public static PipeStatus StatusInit;
@@ -126,13 +126,9 @@ public MethodBase TargetSite { get; }
 
 ## Constructors
 
-### <a id="constructors-.ctor"/>**PipeAndFilterException()**
-
-```csharp
-public PipeAndFilterException()
-```
-
 ### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String)**
+
+Create PipeAndFilter-Exception
 
 ```csharp
 public PipeAndFilterException(PipeStatus status, string message)
@@ -141,12 +137,14 @@ public PipeAndFilterException(PipeStatus status, string message)
 #### Parameters
 
 `status` [PipeStatus](./pipefilterplus.pipestatus.md)<br>
-status of step (pipe, condition or task)
+The status of step (pipe, condition or task)
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The message that describes the error.
 
 ### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String, Exception)**
+
+Create PipeAndFilter-Exception with innerException
 
 ```csharp
 public PipeAndFilterException(PipeStatus status, string message, Exception innerException)
@@ -155,7 +153,7 @@ public PipeAndFilterException(PipeStatus status, string message, Exception inner
 #### Parameters
 
 `status` [PipeStatus](./pipefilterplus.pipestatus.md)<br>
-status of step (pipe, condition or task)
+The status of step (pipe, condition or task)
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The message that describes the error.
