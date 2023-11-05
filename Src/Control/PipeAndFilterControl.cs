@@ -5,10 +5,12 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace PipeAndFilter
+namespace PipeFilterCore
 {
-    internal class PipeAndFilterControl<T> : IDisposable, IPipelineInit<T>, IPipeline<T>, IPipelineConditions<T>, IPipelineTasks<T> where T : class
+    internal class PipeAndFilterControl<T> : IDisposable, IPipeAndFilterInit<T>, IPipeAndFilter<T>, IPipeAndFilterConditions<T>, IPipeAndFilterTasks<T> where T : class
     {
         private readonly List<Task> _tasks = new();
         private readonly object _lockObj = new();
@@ -19,8 +21,11 @@ namespace PipeAndFilter
         private readonly Dictionary<string, string?> _idToAlias = new();
         private readonly List<string> _sequencePipes = new();
 
+        private ILogger _logger = NullLogger.Instance;
+        private string? _cid;
+
         private bool _disposed;
-        private Exception? _lastexception;
+        private PipeAndFilterException? _lastexception;
 
         private int _maxDegreeProcess = Environment.ProcessorCount;
         private T? _contract;
@@ -28,10 +33,10 @@ namespace PipeAndFilter
         private string? _currentPipe;
         private string? _prevPipe;
 
-        private bool _abortPipeline;
-        private bool _finishedPipeline;
+        private bool _abort;
+        private bool _finished;
 
-        private bool IsEndPipeline => _finishedPipeline || _abortPipeline || _pipects!.IsCancellationRequested;
+        private bool IsEnd => _finished || _abort || _pipects!.IsCancellationRequested;
 
         private CancellationTokenSource? _pipects;
 
@@ -48,7 +53,9 @@ namespace PipeAndFilter
 
         private PipeAndFilterControl()
         {
-            throw new PipeAndFilterException("Invalid ctor PipeAndFilterControl");
+            throw new PipeAndFilterException(
+                PipeAndFilterException.StatusInit,
+                "Invalid ctor PipeAndFilterControl");
         }
 
         public PipeAndFilterControl(CancellationToken cts)
@@ -58,31 +65,45 @@ namespace PipeAndFilter
 
         #endregion
 
-        #region IPipelineInit
+        #region IPipeAndFilterInit
 
-        IPipeline<T> IPipelineInit<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterInit<T> IPipeAndFilterInit<T>.Logger(ILogger? value)
+        {
+            _logger = value??NullLogger.Instance;
+            return this;
+        }
+
+        IPipeAndFilterInit<T> IPipeAndFilterInit<T>.CorrelationId(string? value)
+        {
+            _cid = value;
+            return this;
+        }
+
+        IPipeAndFilter<T> IPipeAndFilterInit<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, false);
             return this;
         }
 
-        IPipelineTasks<T> IPipelineInit<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterTasks<T> IPipeAndFilterInit<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, true);
             return this;
         }
 
-        IPipelineInit<T> IPipelineInit<T>.Init(T contract)
+        IPipeAndFilterInit<T> IPipeAndFilterInit<T>.Init(T contract)
         {
             _contract = contract;
             return this;
         }
 
-        IPipelineInit<T> IPipelineInit<T>.MaxDegreeProcess(int value)
+        IPipeAndFilterInit<T> IPipeAndFilterInit<T>.MaxDegreeProcess(int value)
         {
             if (value < 0)
             {
-                throw new PipeAndFilterException("MaxDegreeProcess must be greater than zero");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "MaxDegreeProcess must be greater than zero");
             }
             _maxDegreeProcess = value;
             return this;
@@ -90,26 +111,26 @@ namespace PipeAndFilter
 
         #endregion
 
-        #region IPipeline
+        #region IPipeAndFilter
 
-        IPipeline<T> IPipeline<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilter<T> IPipeAndFilter<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, false);
             return this;
         }
 
-        IPipelineTasks<T> IPipeline<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterTasks<T> IPipeAndFilter<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, true);
             return this;
         }
 
-        async ValueTask<ResultPipeline<T>> IPipeline<T>.Run()
+        async ValueTask<ResultPipeAndFilter<T>> IPipeAndFilter<T>.Run()
         {
             return await SharedRun(_ctstoken);
         }
 
-        IPipelineConditions<T> IPipeline<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
+        IPipeAndFilterConditions<T> IPipeAndFilter<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
         {
             SharedWithCondition(condition, aliasgoto, namecondition);
             return this;
@@ -117,54 +138,54 @@ namespace PipeAndFilter
 
         #endregion
 
-        #region IPipelineConditions
+        #region IPipeAndFilterConditions
 
-        IPipeline<T> IPipelineConditions<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilter<T> IPipeAndFilterConditions<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, false);
             return this;
         }
 
-        IPipelineConditions<T> IPipelineConditions<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
+        IPipeAndFilterConditions<T> IPipeAndFilterConditions<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
         {
             SharedWithCondition(condition, aliasgoto, namecondition);
             return this;
         }
 
-        async ValueTask<ResultPipeline<T>> IPipelineConditions<T>.Run()
+        async ValueTask<ResultPipeAndFilter<T>> IPipeAndFilterConditions<T>.Run()
         {
             return await SharedRun(_ctstoken);
         }
 
         #endregion
 
-        #region IPipelineTasks
+        #region IPipeAndFilterTasks
 
-        IPipeline<T> IPipelineTasks<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilter<T> IPipeAndFilterTasks<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipe(command, alias, false);
             return this;
         }
 
-        IPipelineTasks<T> IPipelineTasks<T>.AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? name)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? name)
         {
             SharedAddTask(command,null, name, null);
             return this;
         }
 
-        IPipelineTasks<T> IPipelineTasks<T>.AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? nametask, string? namecondition)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? nametask, string? namecondition)
         {
             SharedAddTask(command, condition, nametask, namecondition);
             return this;
         }
 
-        IPipelineTasks<T> IPipelineTasks<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
         {
             SharedWithCondition(condition, aliasgoto, namecondition);
             return this;
         }
 
-        async ValueTask<ResultPipeline<T>> IPipelineTasks<T>.Run()
+        async ValueTask<ResultPipeAndFilter<T>> IPipeAndFilterTasks<T>.Run()
         {
             return await SharedRun(_ctstoken);
         }
@@ -198,7 +219,7 @@ namespace PipeAndFilter
 
         #endregion
 
-        private void ChangeContract(Action<T?> eventchange)
+        private void ChangeContract(Action<T> eventchange)
         {
             lock (_lockObj)
             {
@@ -215,7 +236,9 @@ namespace PipeAndFilter
             var id = Guid.NewGuid().ToString();
             if (command == null)
             {
-                throw new PipeAndFilterException("command cannot be null");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "command cannot be null");
             }
             if (alias == null) 
             {
@@ -229,13 +252,17 @@ namespace PipeAndFilter
             }
             if (!_aliasToId.TryAdd(alias, id))
             {
-                throw new PipeAndFilterException("Alias already exists");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "Alias already exists");
             }
             _idToAlias.Add(id, alias);
             
             if (!_pipes.TryAdd(id, (command, agregatetask, new(), new(), new())))
             {
-                throw new PipeAndFilterException("idpipe already exists");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "idpipe already exists");
             }
             _currentPipe = id;
         }
@@ -245,15 +272,21 @@ namespace PipeAndFilter
             var id = Guid.NewGuid().ToString();
             if (string.IsNullOrEmpty(_currentPipe))
             {
-                throw new PipeAndFilterException("Pipe not exist to add task");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "Pipe not exist to add task");
             }
             if (!_pipes[_currentPipe].aggregateTasks)
             {
-                throw new PipeAndFilterException("Pipe not aggregate tasks");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "Pipe not aggregate tasks");
             }
             if (command == null)
             {
-                throw new PipeAndFilterException("command cannot be null");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "command cannot be null");
             }
             if (condition != null && string.IsNullOrEmpty(namecond))
             {
@@ -275,7 +308,9 @@ namespace PipeAndFilter
         {
             if (condition == null)
             {
-                throw new PipeAndFilterException("condition cannot be null");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "condition cannot be null");
             }
             if (string.IsNullOrEmpty(namecondition))
             {
@@ -284,7 +319,7 @@ namespace PipeAndFilter
             _pipes[_currentPipe!].precondhandle.Add(new PipeCondition<T>(condition, aliasgoto, namecondition));
         }
 
-        private async ValueTask<ResultPipeline<T>> SharedRun(CancellationToken cts)
+        private async ValueTask<ResultPipeAndFilter<T>> SharedRun(CancellationToken cts)
         {
 
             _pipects = CancellationTokenSource.CreateLinkedTokenSource(cts);
@@ -302,7 +337,9 @@ namespace PipeAndFilter
         {
             if (_pipes.Count == 0)
             {
-                throw new PipeAndFilterException("Not pipes to run");
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit, 
+                    "Not pipes to run");
             }
             _sequencePipes.AddRange(_pipes.Keys.ToArray());
             foreach (var item in _pipes.Where(x => x.Value.precondhandle.Any()))
@@ -312,20 +349,22 @@ namespace PipeAndFilter
                     var id = _aliasToId[precond.GotoId!];
                     if (!_pipes.ContainsKey(id))
                     {
-                        throw new PipeAndFilterException($"Condition {precond.Name ?? ""} with invalid go to pipe Alias: {precond.GotoId}");
+                        throw new PipeAndFilterException(
+                            PipeAndFilterException.StatusInit,
+                            $"Condition {precond.Name ?? ""} with invalid go to pipe Alias: {precond.GotoId}");
                     }
                 }
             }
         }
 
-        private async ValueTask<ResultPipeline<T>> ExecutePipes()
+        private async ValueTask<ResultPipeAndFilter<T>> ExecutePipes()
         {
             _currentPipeIndex = 0;
             _currentPipe = _sequencePipes[0];
-            while (!IsEndPipeline)
+            while (!IsEnd)
             {
                 await NextPipe();
-                if (!IsEndPipeline)
+                if (!IsEnd)
                 {
                     var tm = Stopwatch.StartNew();
                     var elapsed = TimeSpan.Zero;
@@ -337,7 +376,7 @@ namespace PipeAndFilter
                         {
                             await ExecuteTasksPipes(_pipes[_currentPipe!].tasks!);
                         }
-                        if (!IsEndPipeline)
+                        if (!IsEnd)
                         {
                             string? aliasprev = null;
                             if (!string.IsNullOrEmpty(_prevPipe))
@@ -346,6 +385,8 @@ namespace PipeAndFilter
                             };
                             string? aliascur = _idToAlias[_currentPipe!];
                             var evt = new EventPipe<T>(
+                                _cid,
+                                _logger,
                                 ChangeContract!,
                                 _savedvalues.ToImmutableArray(),
                                 _savedtaskvalues.ToImmutableArray(),
@@ -362,15 +403,23 @@ namespace PipeAndFilter
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Canceled;
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                     catch (Exception ex)
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Faulted;
-                        _lastexception = ex;
-                        _abortPipeline = true;
-                        _finishedPipeline = true;
+                        _lastexception = new PipeAndFilterException(
+                            new PipeStatus(
+                                HandlerType.Pipe,
+                                sta,
+                                elapsed,
+                                _idToAlias[_currentPipe!],
+                                null, true),
+                            "Error handler Pipe",
+                            ex);
+                        _abort = true;
+                        _finished = true;
                     }
                     tm.Stop();
                     _pipes[_currentPipe!].status.Add(new PipeStatus(
@@ -385,7 +434,7 @@ namespace PipeAndFilter
                 {
                     _pipects!.Cancel();
                 }
-                if (!IsEndPipeline)
+                if (!IsEnd)
                 {
                     _currentPipeIndex++;
                     if (_currentPipeIndex < _sequencePipes.Count)
@@ -395,13 +444,13 @@ namespace PipeAndFilter
                     }
                     else
                     {
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                 }
             }
-            return new ResultPipeline<T>(
+            return new ResultPipeAndFilter<T>(
                 _contract,
-                _abortPipeline,
+                _abort,
                 _lastexception,
                 _pipes.Select(x =>
                     new PipeRanStatus(
@@ -433,6 +482,8 @@ namespace PipeAndFilter
                         string? aliascur = _idToAlias[_currentPipe!];
 
                         var evt = new EventPipe<T>(
+                            _cid,
+                            _logger,
                             ChangeContract!,
                             _savedvalues.ToImmutableArray(),
                             emptytask,
@@ -453,15 +504,23 @@ namespace PipeAndFilter
                         {
                             elapsed = tm.Elapsed;
                             sta = TaskStatus.Canceled;
-                            _finishedPipeline = true;
+                            _finished = true;
                         }
                         catch (Exception ex)
                         {
                             elapsed = tm.Elapsed;
                             sta = TaskStatus.Faulted;
-                            _lastexception = ex;
-                            _abortPipeline = true;
-                            _finishedPipeline = true;
+                            _lastexception = new PipeAndFilterException(
+                                new PipeStatus(
+                                    HandlerType.ConditionTask,
+                                    sta,
+                                    elapsed,
+                                    tasks[i].NameTask,
+                                    null, isvalidtask),
+                                "Error handler Condition Task",
+                                ex); 
+                            _abort = true;
+                            _finished = true;
                             _pipects!.Cancel(false);
                         }
                         tm.Stop();
@@ -471,7 +530,7 @@ namespace PipeAndFilter
                             elapsed,
                             tasks[i].NameTask,
                             null, isvalidtask));
-                        if (IsEndPipeline)
+                        if (IsEnd)
                         {
                             isvalidtask = false;
                         }
@@ -498,6 +557,8 @@ namespace PipeAndFilter
                                 };
                                 aliascur = _idToAlias[_currentPipe!];
                                 evt = new EventPipe<T>(
+                                    _cid,
+                                    _logger,
                                     ChangeContract!,
                                     _savedvalues.ToImmutableArray(),
                                     _savedtaskvalues.ToImmutableArray(),
@@ -521,7 +582,7 @@ namespace PipeAndFilter
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
-                                    _finishedPipeline = true;
+                                    _finished = true;
                                 }
                             }
                             catch (Exception ex)
@@ -531,9 +592,17 @@ namespace PipeAndFilter
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
-                                    _lastexception = ex;
-                                    _abortPipeline = true;
-                                    _finishedPipeline = true;
+                                    _lastexception = new PipeAndFilterException(
+                                        new PipeStatus(
+                                            HandlerType.ConditionTask,
+                                            sta,
+                                            elapsed,
+                                            taskname,
+                                            null, isvalidtask),
+                                        "Error handler Task",
+                                        ex);
+                                    _abort = true;
+                                    _finished = true;
                                 }
                             }
                             tm.Stop();
@@ -554,8 +623,8 @@ namespace PipeAndFilter
                         degreecount++;
                     }
                     i++;
-                } while (!IsEndPipeline && i < tasks.Count && degreecount < _maxDegreeProcess);
-                if (!IsEndPipeline)
+                } while (!IsEnd && i < tasks.Count && degreecount < _maxDegreeProcess);
+                if (!IsEnd)
                 {
                     try
                     {
@@ -573,12 +642,12 @@ namespace PipeAndFilter
                         //none
                     }
                 }
-            } while (!IsEndPipeline && i < tasks.Count);
+            } while (!IsEnd && i < tasks.Count);
         }
 
         private async Task NextPipe()
         {
-            while (!IsEndPipeline)
+            while (!IsEnd)
             {
                 var isok = true;
                 foreach (var itemcond in _pipes[_currentPipe!].precondhandle)
@@ -593,6 +662,8 @@ namespace PipeAndFilter
                     string? aliascur = _idToAlias[_currentPipe!];
 
                     var evt = new EventPipe<T>(
+                        _cid,
+                        _logger,
                         ChangeContract!,
                         _savedvalues.ToImmutableArray(),
                         _savedtaskvalues.ToImmutableArray(),
@@ -612,15 +683,23 @@ namespace PipeAndFilter
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Canceled;
-                        _finishedPipeline = true;
+                        _finished = true;
                     }
                     catch (Exception ex)
                     {
                         elapsed = tm.Elapsed;
                         sta = TaskStatus.Faulted;
-                        _lastexception = ex;
-                        _abortPipeline = true;
-                        _finishedPipeline = true;
+                        _lastexception = new PipeAndFilterException(
+                             new PipeStatus(
+                                 condpipeType,
+                                 sta,
+                                 elapsed,
+                                 itemcond.Name,
+                                 itemcond.GotoId, isok),
+                             "Error handler condition",
+                             ex);
+                        _abort = true;
+                        _finished = true;
                         _pipects!.Cancel(false);
                     }
                     tm.Stop();
@@ -630,7 +709,7 @@ namespace PipeAndFilter
                         elapsed,
                         itemcond.Name,
                         itemcond.GotoId, isok));
-                    if (!IsEndPipeline)
+                    if (!IsEnd)
                     {
                         if ((!isok && condpipeType == HandlerType.Condition) || (isok && condpipeType == HandlerType.ConditionGoto))
                         {
@@ -649,7 +728,7 @@ namespace PipeAndFilter
                             }
                             else
                             {
-                                _finishedPipeline = true;
+                                _finished = true;
                             }
                             return;
                         }
@@ -664,9 +743,9 @@ namespace PipeAndFilter
 
         private void EnsureResultEventPipe(string idpipe, EventPipe<T> eventPipe)
         {
-            if (eventPipe.FinishedPipeLine)
+            if (eventPipe.FinishedPipeAndFilter)
             {
-                _finishedPipeline = true;
+                _finished = true;
             }
             var alias = _idToAlias[idpipe];
             if (eventPipe.ToRemove)
@@ -695,9 +774,9 @@ namespace PipeAndFilter
         {
             lock (_lockObj)
             {
-                if (eventPipe.FinishedPipeLine)
+                if (eventPipe.FinishedPipeAndFilter)
                 {
-                    _finishedPipeline = true;
+                    _finished = true;
                 }
                 if (eventPipe.ToRemove)
                 {

@@ -9,16 +9,26 @@
 
 # PipeAndFilterException
 
-Namespace: PipeAndFilter
+Namespace: PipeFilterCore
 
-Represents a exception for Pipeline control
+Represents a exception for Pipeline control.
 
 ```csharp
 public class PipeAndFilterException : System.Exception, System.Runtime.Serialization.ISerializable
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception) → [PipeAndFilterException](./pipeandfilter.pipeandfilterexception.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception) → [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Implements [ISerializable](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.serialization.iserializable)
+
+## Fields
+
+### <a id="fields-statusinit"/>**StatusInit**
+
+The default status for initialize
+
+```csharp
+public static PipeStatus StatusInit;
+```
 
 ## Properties
 
@@ -92,6 +102,18 @@ public string StackTrace { get; }
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+### <a id="properties-status"/>**Status**
+
+The status of step (pipe, condition or task).
+
+```csharp
+public Nullable<PipeStatus> Status { get; }
+```
+
+#### Property Value
+
+[Nullable&lt;PipeStatus&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.nullable-1)<br>
+
 ### <a id="properties-targetsite"/>**TargetSite**
 
 ```csharp
@@ -104,33 +126,40 @@ public MethodBase TargetSite { get; }
 
 ## Constructors
 
-### <a id="constructors-.ctor"/>**PipeAndFilterException()**
+### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String)**
+
+Create PipeAndFilter-Exception
 
 ```csharp
-public PipeAndFilterException()
-```
-
-### <a id="constructors-.ctor"/>**PipeAndFilterException(String)**
-
-```csharp
-public PipeAndFilterException(string message)
+public PipeAndFilterException(PipeStatus status, string message)
 ```
 
 #### Parameters
 
-`message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+`status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
+The status of step (pipe, condition or task)
 
-### <a id="constructors-.ctor"/>**PipeAndFilterException(String, Exception)**
+`message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The message that describes the error.
+
+### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String, Exception)**
+
+Create PipeAndFilter-Exception with innerException
 
 ```csharp
-public PipeAndFilterException(string message, Exception innerException)
+public PipeAndFilterException(PipeStatus status, string message, Exception innerException)
 ```
 
 #### Parameters
 
+`status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
+The status of step (pipe, condition or task)
+
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The message that describes the error.
 
 `innerException` [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
+The exception that is the cause of the current exception, or a null reference
 
 
 - - -

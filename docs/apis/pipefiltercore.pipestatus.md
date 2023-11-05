@@ -9,21 +9,21 @@
 
 # PipeStatus
 
-Namespace: PipeAndFilter
+Namespace: PipeFilterCore
 
-Represents the status of step (pipe, condition or task)
+Represents the status of step (pipe, condition or task).
 
 ```csharp
 public struct PipeStatus
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeStatus](./pipeandfilter.pipestatus.md)
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [PipeStatus](./pipefiltercore.pipestatus.md)
 
 ## Properties
 
 ### <a id="properties-alias"/>**Alias**
 
-Get execution alias
+The alias execution.
 
 ```csharp
 public string Alias { get; }
@@ -35,7 +35,7 @@ public string Alias { get; }
 
 ### <a id="properties-condition"/>**Condition**
 
-Get condition result
+The result of the condition.
 
 ```csharp
 public bool Condition { get; }
@@ -47,7 +47,7 @@ public bool Condition { get; }
 
 ### <a id="properties-elapsedtime"/>**Elapsedtime**
 
-Get the elapsed time
+The elapsed time.
 
 ```csharp
 public TimeSpan Elapsedtime { get; }
@@ -59,7 +59,7 @@ public TimeSpan Elapsedtime { get; }
 
 ### <a id="properties-gotoalias"/>**GotoAlias**
 
-Get go to Alias
+The Alias ​​link.
 
 ```csharp
 public string GotoAlias { get; }
@@ -71,7 +71,7 @@ public string GotoAlias { get; }
 
 ### <a id="properties-typeexec"/>**TypeExec**
 
-Get Type execution
+The Type handle.
 
 ```csharp
 public HandlerType TypeExec { get; }
@@ -79,11 +79,11 @@ public HandlerType TypeExec { get; }
 
 #### Property Value
 
-[HandlerType](./pipeandfilter.handlertype.md)<br>
+[HandlerType](./pipefiltercore.handlertype.md)<br>
 
 ### <a id="properties-value"/>**Value**
 
-Get status execution
+The running status.
 
 ```csharp
 public TaskStatus Value { get; }
@@ -97,7 +97,7 @@ public TaskStatus Value { get; }
 
 ### <a id="constructors-.ctor"/>**PipeStatus()**
 
-Create PipeStatus
+Create Pipe Status.
 
 ```csharp
 PipeStatus()
@@ -105,8 +105,8 @@ PipeStatus()
 
 #### Exceptions
 
-[PipeAndFilterException](./pipeandfilter.pipeandfilterexception.md)<br>
-Message error
+[PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
+Message error.
 
 **Remarks:**
 
@@ -114,7 +114,7 @@ Do not use this constructor!
 
 ### <a id="constructors-.ctor"/>**PipeStatus(HandlerType, TaskStatus, TimeSpan, String, String, Boolean)**
 
-Create instance
+Create instance (Only internal use or Unit-Test).
 
 ```csharp
 PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string alias, string gotoAlias, bool condition)
@@ -122,23 +122,23 @@ PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string 
 
 #### Parameters
 
-`typeExec` [HandlerType](./pipeandfilter.handlertype.md)<br>
-[HandlerType](./pipeandfilter.handlertype.md)
+`typeExec` [HandlerType](./pipefiltercore.handlertype.md)<br>
+Type handle. See [HandlerType](./pipefiltercore.handlertype.md).
 
 `value` [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus)<br>
-[TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus)
+The Status. See [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus).
 
 `elapsedtime` [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)<br>
-[TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)
+The elapsed time. See [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan).
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The alias
+The alias execution.
 
 `gotoAlias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-the go to alias
+The alias link.
 
 `condition` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
-if Status is condition handle
+The result of the condition for execution.
 
 
 - - -

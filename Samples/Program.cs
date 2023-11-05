@@ -1,6 +1,6 @@
-﻿using PipeAndFilter;
+﻿using PipeFilterCore;
 
-namespace PipeAndFilterSamples
+namespace PipeFilterCoreSamples
 {
     class Program
     {
@@ -11,11 +11,13 @@ namespace PipeAndFilterSamples
 
         public static async Task<int> Main()
         {
-            ResultPipeline<MyClass> pl;
+            ResultPipeAndFilter<MyClass> pl;
 
             var contract = new MyClass { MyProperty = 10 };
-            pl = await Pipeline.Create<MyClass>()
+            pl = await PipeAndFilter.Create<MyClass>()
                 .Init(contract)
+                .CorrelationId(null)
+                .Logger(null)
                 .MaxDegreeProcess(4)
                 .AddPipe(ExecPipe)
                     .WithCondition(CondFalse, "LastPipe")
@@ -34,7 +36,7 @@ namespace PipeAndFilterSamples
             Console.WriteLine($"Contract value : {contract.MyProperty}");
             foreach (var item in pl.Status)
             {
-                Console.WriteLine($"{item.Alias ?? item.Id}:{item.Status.Value} => {item.Status.Elapsedtime}");
+                Console.WriteLine($"{item.Alias}:{item.Status.Value} => {item.Status.Elapsedtime}");
                 foreach (var det in item.StatusDetails)
                 {
                     Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");

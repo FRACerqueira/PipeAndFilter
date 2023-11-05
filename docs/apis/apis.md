@@ -9,29 +9,29 @@
 
 # Assembly PipeAndFilter
 
-## Namespace PipeAndFilter
+## Namespace PipeFilterCore
 
-- [EventPipe&lt;T&gt;](./pipeandfilter.eventpipe-1.md)
+- [EventPipe&lt;T&gt;](./pipefiltercore.eventpipe-1.md)
 
-- [HandlerType](./pipeandfilter.handlertype.md)
+- [HandlerType](./pipefiltercore.handlertype.md)
 
-- [IPipeline&lt;T&gt;](./pipeandfilter.ipipeline-1.md)
+- [IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
 
-- [IPipelineConditions&lt;T&gt;](./pipeandfilter.ipipelineconditions-1.md)
+- [IPipeAndFilterConditions&lt;T&gt;](./pipefiltercore.ipipeandfilterconditions-1.md)
 
-- [IPipelineInit&lt;T&gt;](./pipeandfilter.ipipelineinit-1.md)
+- [IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
-- [IPipelineTasks&lt;T&gt;](./pipeandfilter.ipipelinetasks-1.md)
+- [IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
-- [PipeAndFilterException](./pipeandfilter.pipeandfilterexception.md)
+- [PipeAndFilter](./pipefiltercore.pipeandfilter.md)
 
-- [Pipeline](./pipeandfilter.pipeline.md)
+- [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)
 
-- [PipeRanStatus](./pipeandfilter.piperanstatus.md)
+- [PipeRanStatus](./pipefiltercore.piperanstatus.md)
 
-- [PipeStatus](./pipeandfilter.pipestatus.md)
+- [PipeStatus](./pipefiltercore.pipestatus.md)
 
-- [ResultPipeline&lt;T&gt;](./pipeandfilter.resultpipeline-1.md)
+- [ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
 
 
 - - -

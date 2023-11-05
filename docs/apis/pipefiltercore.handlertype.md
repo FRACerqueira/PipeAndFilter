@@ -9,27 +9,28 @@
 
 # HandlerType
 
-Namespace: PipeAndFilter
+Namespace: PipeFilterCore
 
-Represents a handler type
+Represents a handler type.
 
 ```csharp
 public enum HandlerType
 ```
 
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [HandlerType](./pipeandfilter.handlertype.md)<br>
+Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [ValueType](https://docs.microsoft.com/en-us/dotnet/api/system.valuetype) → [Enum](https://docs.microsoft.com/en-us/dotnet/api/system.enum) → [HandlerType](./pipefiltercore.handlertype.md)<br>
 Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icomparable), [IFormattable](https://docs.microsoft.com/en-us/dotnet/api/system.iformattable), [IConvertible](https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible)
 
 ## Fields
 
 | Name | Value | Description |
 | --- | --: | --- |
-| Condition | 0 | Execution condition handler |
-| ConditionGoto | 1 | Execution condition with goto handler |
-| Pipe | 2 | Execution pipe handler |
-| Task | 3 | Execution task handler |
-| AggregateTask | 4 | Execution aggregate task handler |
-| ConditionTask | 5 | Execution condition task handler |
+| None | 0 | No Type, Runtime Initialize |
+| Condition | 1 | Type condition. |
+| ConditionGoto | 2 | Type condition with link to another pipe. |
+| Pipe | 3 | Type pipe. |
+| Task | 4 | Type task. |
+| AggregateTask | 5 | Type aggregate task. |
+| ConditionTask | 6 | Type condition task. |
 
 
 - - -

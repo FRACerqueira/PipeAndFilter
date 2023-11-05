@@ -3,13 +3,15 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeAndFilter
+namespace PipeFilterCore
 {
     internal readonly struct PipeCondition<T> where T : class
     {
         public PipeCondition()
         {
-            throw new PipeAndFilterException("Invalid ctor PipeCondition");
+            throw new PipeAndFilterException(
+                PipeAndFilterException.StatusInit, 
+                "Invalid ctor PipeCondition");
         }
         public PipeCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
         {

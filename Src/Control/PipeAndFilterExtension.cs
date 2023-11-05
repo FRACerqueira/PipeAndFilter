@@ -3,20 +3,23 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeAndFilter
+namespace PipeFilterCore
 {
     /// <summary>
-    /// Represents PipeAndFilter Extension
+    /// Represents PipeAndFilter Extension.
     /// </summary>
-    public static class Pipeline
+    public static class PipeAndFilter
     {
         /// <summary>
-        /// Create Pipeline control
+        /// Create PipeAndFilter.
         /// </summary>
-        /// <param name="cts"><see cref="CancellationToken"/></param>
-        /// <typeparam name="T">Type of return</typeparam>
-        /// <returns><see cref="IPipelineInit{T}"/></returns>
-        public static IPipelineInit<T> Create<T>(CancellationToken? cts = null) where T : class
+        /// <param name="cts">The <see cref="CancellationToken"/></param>
+        /// <typeparam name="T">Type of return.</typeparam>]
+        /// <remarks>
+        /// If <see cref="CancellationToken"/> ommited the value is 'CancellationToken.None'.
+        /// </remarks>
+        /// <returns><see cref="IPipeAndFilterInit{T}"/></returns>
+        public static IPipeAndFilterInit<T> Create<T>(CancellationToken? cts = null) where T : class
         {
             return new PipeAndFilterControl<T>(cts??CancellationToken.None);
         }
