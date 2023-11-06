@@ -37,6 +37,6 @@ namespace PipeFilterCore
         /// <summary>
         /// Type condition task.
         /// </summary>
-        ConditionTask,
+        ConditionTask
     }
 }

@@ -28,7 +28,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ### <a id="properties-correlationid"/>**CorrelationId**
 
-The Correlation Id
+The Correlation Id.
 
 ```csharp
 public string CorrelationId { get; }
@@ -64,7 +64,7 @@ public string FromAlias { get; }
 
 ### <a id="properties-logger"/>**Logger**
 
-The log handler
+The log handler.
 
 ```csharp
 public ILogger Logger { get; }
@@ -76,7 +76,7 @@ ILogger<br>
 
 ### <a id="properties-savedpipes"/>**SavedPipes**
 
-The values saved ​​associated with pipes
+The values saved ​​associated with pipes.
 
 ```csharp
 public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
@@ -165,7 +165,6 @@ The action to change value.
 **Remarks:**
 
 The action will only be executed if the contract exists.
- <br>See .
 
 ### <a id="methods-endpipeandfilter"/>**EndPipeAndFilter()**
 
@@ -177,7 +176,7 @@ public void EndPipeAndFilter()
 
 ### <a id="methods-removesavedvalue"/>**RemoveSavedValue()**
 
-Remove a value associated with this pipe or task .
+Remove a value associated with this pipe or task.
 
 ```csharp
 public void RemoveSavedValue()

@@ -11,7 +11,7 @@
 
 Namespace: PipeFilterCore
 
-Represents a exception for Pipeline control.
+Represents a exception for PipeAndFilter.
 
 ```csharp
 public class PipeAndFilterException : System.Exception, System.Runtime.Serialization.ISerializable
@@ -24,7 +24,7 @@ Implements [ISerializable](https://docs.microsoft.com/en-us/dotnet/api/system.ru
 
 ### <a id="fields-statusinit"/>**StatusInit**
 
-The default status for initialize
+The default status for initialize.
 
 ```csharp
 public static PipeStatus StatusInit;
@@ -128,7 +128,7 @@ public MethodBase TargetSite { get; }
 
 ### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String)**
 
-Create PipeAndFilter-Exception
+Create PipeAndFilter-Exception.
 
 ```csharp
 public PipeAndFilterException(PipeStatus status, string message)
@@ -137,14 +137,14 @@ public PipeAndFilterException(PipeStatus status, string message)
 #### Parameters
 
 `status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
-The status of step (pipe, condition or task)
+The status of step (pipe, condition or task).
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The message that describes the error.
 
 ### <a id="constructors-.ctor"/>**PipeAndFilterException(PipeStatus, String, Exception)**
 
-Create PipeAndFilter-Exception with innerException
+Create PipeAndFilter-Exception with innerException.
 
 ```csharp
 public PipeAndFilterException(PipeStatus status, string message, Exception innerException)
@@ -153,13 +153,13 @@ public PipeAndFilterException(PipeStatus status, string message, Exception inner
 #### Parameters
 
 `status` [PipeStatus](./pipefiltercore.pipestatus.md)<br>
-The status of step (pipe, condition or task)
+The status of step (pipe, condition or task).
 
 `message` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The message that describes the error.
 
 `innerException` [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
-The exception that is the cause of the current exception, or a null reference
+The exception that is the cause of the current exception, or a null reference.
 
 
 - - -

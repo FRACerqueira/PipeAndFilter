@@ -27,9 +27,9 @@ namespace PipeFilterCore
         /// <summary>
         /// Create PipeRanStatus (Only internal use or Unit-Test).
         /// </summary>
-        /// <param name="id">The pipe Id</param>
-        /// <param name="alias">The pipe alias</param>
-        /// <param name="details">The detailed status of all runs</param>
+        /// <param name="id">The pipe Id.</param>
+        /// <param name="alias">The pipe alias.</param>
+        /// <param name="details">The detailed status of all runs.</param>
         public PipeRanStatus(string id, string? alias, IEnumerable<PipeStatus> details)
         {
             Id = id;

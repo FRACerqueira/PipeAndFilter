@@ -8,17 +8,17 @@ using System.Collections.Immutable;
 namespace PipeFilterCore
 {
     /// <summary>
-    /// Represents the result of PipeAndFilter
+    /// Represents the result of PipeAndFilter.
     /// </summary>
     public readonly struct ResultPipeAndFilter<T> where T : class
     {
         /// <summary>
-        /// Create Result of PipeAndFilter
+        /// Create Result of PipeAndFilter.
         /// </summary>
         /// <remarks>
         /// Do not use this constructor!
         /// </remarks>
-        /// <exception cref="PipeAndFilterException">Message error</exception>
+        /// <exception cref="PipeAndFilterException">Message error.</exception>
         public ResultPipeAndFilter()
         {
             throw new PipeAndFilterException(
@@ -42,7 +42,7 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// The Contract value
+        /// The Contract value.
         /// </summary>
         public T? Value { get; }
 
@@ -57,7 +57,7 @@ namespace PipeFilterCore
         public PipeAndFilterException? Exception { get; }
 
         /// <summary>
-        /// The status details of all pipes
+        /// The status details of all pipes.
         /// </summary>
         public ImmutableArray<PipeRanStatus> Status { get; }
 

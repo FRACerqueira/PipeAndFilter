@@ -8,124 +8,85 @@
 
 - First Release
 
-## **PipeAndFilter - Sample Usage**
-```csharp
-public class MyClass
-{
-    public int MyProperty { get; set; }
-}
-```
+## Usage
+[**Top**](#table-of-contents)
+
+The **PipeAndFilter** use **fluent interface**; an object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility. The term was coined in 2005 by Eric Evans and Martin Fowler.
+
+### Sample-Console Usage
 
 ```csharp
-var contract = new MyClass { MyProperty = 10 };
-
-var result = await PipeAndFilter
-    .Create<MyClass>()
-    .Init(contract)
-    .MaxDegreeProcess(4)
-    .CorrelationId(null)
-    .Logger(null)
+var result = await PipeAndFilter.New<MyClass>()
     .AddPipe(ExecPipe1)
-    .AddPipe(ExecPipe2)
         .WithCondition(CondFalse, "LastPipe")
         .WithCondition(CondTrue, null)
         .WithCondition(CondTrue, null)
-     .AddPipeTasks(AgregateTask)
+    .AddPipe(ExecPipe2)
+    .AddPipe(ExecPipe3)
+    .AddPipeTasks(AgregateTask)
         .WithCondition(CondTrue, null)
-        .AddTask(Task50)
-        .AddTaskCondition(Task100, CondFalse)
-        .AddTask(Task150)
-     .AddPipe(ExecPipe, "LastPipe")
-     .Run();
+        .MaxDegreeProcess(4)
+        .AddTask(Task1)
+        .AddTaskCondition(Task2, CondFalse)
+        .AddTask(Task3)
+    .AddPipe(ExecPipe5, "LastPipe")
+    .BuildAndCreate()
+    .Init(contract)
+    .CorrelationId(null)
+    .Logger(null)
+    .Run();
+```
 
-Console.WriteLine($"Contract value : {contract.MyProperty}");
-foreach (var item in pl.Status)
+### Sample-api/webUsage
+[**Top**](#table-of-contents)
+
+```csharp
+builder.Services
+    .AddPipeAndFilter(
+        PipeAndFilter.New<WeatherForecast>()
+            .AddPipe(ExecPipe)
+            .Build());
+
+```
+
+```csharp
+private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    Console.WriteLine($"{item.Alias ?? item.Id}:{item.Status.Value} => {item.Status.Elapsedtime}");
-    foreach (var det in item.StatusDetails)
+    pipe.ChangeContract((contract) =>
     {
-        Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");
-    }
+        contract.TemperatureC += 10;
+    });
+    return Task.CompletedTask;
 }
 ```
 
 ```csharp
-private static async Task Task50(EventPipe<MyClass> pipe, CancellationToken token)
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
 {
-    pipe.ChangeContract((contract) =>
+    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IPipeAndFilterServiceBuild<WeatherForecast> _mypipe;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterServiceBuild<WeatherForecast> pipeAndFilter)
     {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(50, token);
-        pipe.SaveValue(50);
+        _logger = logger;
+        _mypipes = pipeAndFilter;
     }
-    catch (TaskCanceledException)
+
+    [HttpGet(Name = "GetWeatherForecast")]
+    public async Task<WeatherForecast> Get(CancellationToken cancellation)
     {
-        //none
+            var cid = Guid.NewGuid().ToString();
+
+            var pipe = await _mypipes.First(x => x.ServiceId == "opc1")
+                .Create()
+                .Logger(_logger)
+                .CorrelationId(cid)
+                .Init(new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now), Summary = "PipeAndFilter-Opc1", TemperatureC = 0 })
+                .Run(cancellation);
+            return pipe.Result.Value!
     }
-}
-private static async Task Task100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(100, token);
-        pipe.SaveValue(100);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async Task Task150(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(150, token);
-        pipe.SaveValue(150);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static Task ExecPipe(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved");
-    return Task.CompletedTask;
-}
-private static Task AgregateTask(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    return Task.CompletedTask;
-}
-private static async Task ExecPipe100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved0");
-    try
-    {
-        await Task.Delay(100, token);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async ValueTask<bool> CondFalse(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    return await Task.FromResult(false);
-}
-private static ValueTask<bool> CondTrue(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    ValueTask.FromResult(true);
 }
 ```
 ## Credits

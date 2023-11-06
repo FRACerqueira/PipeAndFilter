@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterInit<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterConditionsService<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,20 +7,22 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterInit&lt;T&gt;
+# IPipeAndFilterConditionsService&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents command for initialization
+Represents commands for conditions.
 
 ```csharp
-public interface IPipeAndFilterInit<T>
+public interface IPipeAndFilterConditionsService<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
 
 `T`<br>
-Type of contract
+Type of contract.
+
+Implements IPipeAndFilterBuild&lt;T&gt;
 
 ## Methods
 
@@ -29,7 +31,7 @@ Type of contract
 Add new pipe.
 
 ```csharp
-IPipeAndFilter<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterService<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -43,7 +45,7 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
+[IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
 
 **Remarks:**
 
@@ -54,7 +56,7 @@ Alias ​​is used to reference in another pipe.
 Add new pipe aggregate tasks.
 
 ```csharp
-IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterTasksService<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -69,83 +71,35 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
+[IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
 
 **Remarks:**
 
 Alias ​​is used to reference in another pipe.
 
-### <a id="methods-correlationid"/>**CorrelationId(String)**
+### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
 
-The Correlation Id
+Add new condition.
 
 ```csharp
-IPipeAndFilterInit<T> CorrelationId(string value)
+IPipeAndFilterConditionsService<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
 ```
 
 #### Parameters
 
-`value` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-Correlation Id value
+`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
+The handle condition to execute.
+
+`aliasgoto` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The alias to another pipe.
+ <br>If condition not have link to another pipe, the value must be null.
+
+`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
-
-### <a id="methods-init"/>**Init(T)**
-
-Initial contract value.
-
-```csharp
-IPipeAndFilterInit<T> Init(T contract)
-```
-
-#### Parameters
-
-`contract` T<br>
-The contract.
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
-
-### <a id="methods-logger"/>**Logger(ILogger)**
-
-The logger handler
-
-```csharp
-IPipeAndFilterInit<T> Logger(ILogger value)
-```
-
-#### Parameters
-
-`value` ILogger<br>
-logger handler value
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
-
-### <a id="methods-maxdegreeprocess"/>**MaxDegreeProcess(Int32)**
-
-Maximum number of concurrent tasks enable.
-
-```csharp
-IPipeAndFilterInit<T> MaxDegreeProcess(int value)
-```
-
-#### Parameters
-
-`value` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-Number of concurrent tasks.
-
-#### Returns
-
-[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
-
-**Remarks:**
-
-The default value is number of processors.
+[IPipeAndFilterConditionsService&lt;T&gt;](./pipefiltercore.ipipeandfilterconditionsservice-1.md)
 
 
 - - -

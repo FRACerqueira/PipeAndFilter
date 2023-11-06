@@ -14,11 +14,8 @@ namespace PipeFilterCoreSamples
             ResultPipeAndFilter<MyClass> pl;
 
             var contract = new MyClass { MyProperty = 10 };
-            pl = await PipeAndFilter.Create<MyClass>()
-                .Init(contract)
-                .CorrelationId(null)
-                .Logger(null)
-                .MaxDegreeProcess(4)
+
+            pl = await PipeAndFilter.New<MyClass>()
                 .AddPipe(ExecPipe)
                     .WithCondition(CondFalse, "LastPipe")
                     .WithCondition(CondTrue, null)
@@ -27,10 +24,15 @@ namespace PipeFilterCoreSamples
                 .AddPipe(ExecPipe100)
                 .AddPipeTasks(AgregateTask)
                     .WithCondition(CondTrue, null)
+                    .MaxDegreeProcess(4)
                     .AddTask(Task50)
                     .AddTaskCondition(Task100, CondFalse)
                     .AddTask(Task150)
                 .AddPipe(ExecPipe, "LastPipe")
+                .BuildAndCreate()
+                .Init(contract)
+                .CorrelationId(null)
+                .Logger(null)
                 .Run();
 
             Console.WriteLine($"Contract value : {contract.MyProperty}");

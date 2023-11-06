@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:PipeAndFilter 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterRun<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,35 +7,38 @@
 
 [**Back to List Api**](./apis.md)
 
-# PipeAndFilter
+# IPipeAndFilterRun&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents PipeAndFilter Creator.
+Represents the command for Run.
 
 ```csharp
-public static class PipeAndFilter
-```
-
-Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) → [PipeAndFilter](./pipefiltercore.pipeandfilter.md)
-
-## Methods
-
-### <a id="methods-new"/>**New&lt;T&gt;()**
-
-Create PipeAndFilter service.
-
-```csharp
-public static IPipeAndFilterCreateService<T> New<T>()
+public interface IPipeAndFilterRun<T>
 ```
 
 #### Type Parameters
 
 `T`<br>
+Type of contract.
+
+## Methods
+
+### <a id="methods-run"/>**Run(Nullable&lt;CancellationToken&gt;)**
+
+Execute PipeAndFilter.
+
+```csharp
+ValueTask<ResultPipeAndFilter<T>> Run(Nullable<CancellationToken> cancellation)
+```
+
+#### Parameters
+
+`cancellation` [Nullable&lt;CancellationToken&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.nullable-1)<br>
 
 #### Returns
 
-[IPipeAndFilterCreateService&lt;T&gt;](./pipefiltercore.ipipeandfiltercreateservice-1.md)
+[ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
 
 
 - - -

@@ -11,7 +11,7 @@
 
 Namespace: PipeFilterCore
 
-Represents the result of PipeAndFilter
+Represents the result of PipeAndFilter.
 
 ```csharp
 public struct ResultPipeAndFilter<T>
@@ -51,7 +51,7 @@ public PipeAndFilterException Exception { get; }
 
 ### <a id="properties-status"/>**Status**
 
-The status details of all pipes
+The status details of all pipes.
 
 ```csharp
 public ImmutableArray<PipeRanStatus> Status { get; }
@@ -63,7 +63,7 @@ ImmutableArray&lt;PipeRanStatus&gt;<br>
 
 ### <a id="properties-value"/>**Value**
 
-The Contract value
+The Contract value.
 
 ```csharp
 public T Value { get; }
@@ -77,7 +77,7 @@ T<br>
 
 ### <a id="constructors-.ctor"/>**ResultPipeAndFilter()**
 
-Create Result of PipeAndFilter
+Create Result of PipeAndFilter.
 
 ```csharp
 ResultPipeAndFilter()
@@ -86,7 +86,7 @@ ResultPipeAndFilter()
 #### Exceptions
 
 [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
-Message error
+Message error.
 
 **Remarks:**
 

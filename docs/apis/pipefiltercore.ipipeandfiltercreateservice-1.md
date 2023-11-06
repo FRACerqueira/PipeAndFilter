@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilter<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterCreateService<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,20 +7,22 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilter&lt;T&gt;
+# IPipeAndFilterCreateService&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents the commands for pipe.
+Represents the commands for Pipes.
 
 ```csharp
-public interface IPipeAndFilter<T>
+public interface IPipeAndFilterCreateService<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
 
 `T`<br>
 Type of contract.
+
+Implements IPipeAndFilterBuild&lt;T&gt;
 
 ## Methods
 
@@ -29,7 +31,7 @@ Type of contract.
 Add new pipe.
 
 ```csharp
-IPipeAndFilter<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterService<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -43,7 +45,7 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
+[IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
 
 **Remarks:**
 
@@ -54,7 +56,7 @@ Alias ​​is used to reference in another pipe.
 Add new pipe aggregate tasks.
 
 ```csharp
-IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterTasksService<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -69,47 +71,11 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
+[IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
 
 **Remarks:**
 
 Alias ​​is used to reference in another pipe.
-
-### <a id="methods-run"/>**Run()**
-
-Execute PipeAndFilter.
-
-```csharp
-ValueTask<ResultPipeAndFilter<T>> Run()
-```
-
-#### Returns
-
-[ResultPipeAndFilter&lt;T&gt;](./pipefiltercore.resultpipeandfilter-1.md)
-
-### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
-
-Add new condition.
-
-```csharp
-IPipeAndFilterConditions<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
-```
-
-#### Parameters
-
-`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
-The handle condition to execute.
-
-`aliasgoto` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The alias to another pipe.
- <br>If condition not have link to another pipe, the value must be null.
-
-`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The name for condition(optional).
-
-#### Returns
-
-[IPipeAndFilterConditions&lt;T&gt;](./pipefiltercore.ipipeandfilterconditions-1.md)
 
 
 - - -

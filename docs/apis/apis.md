@@ -15,17 +15,27 @@
 
 - [HandlerType](./pipefiltercore.handlertype.md)
 
-- [IPipeAndFilter&lt;T&gt;](./pipefiltercore.ipipeandfilter-1.md)
+- [IPipeAndFilterBuild&lt;T&gt;](./pipefiltercore.ipipeandfilterbuild-1.md)
 
-- [IPipeAndFilterConditions&lt;T&gt;](./pipefiltercore.ipipeandfilterconditions-1.md)
+- [IPipeAndFilterConditionsService&lt;T&gt;](./pipefiltercore.ipipeandfilterconditionsservice-1.md)
 
-- [IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
+- [IPipeAndFilterCreateService&lt;T&gt;](./pipefiltercore.ipipeandfiltercreateservice-1.md)
 
-- [IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
+- [IPipeAndFilterRun&lt;T&gt;](./pipefiltercore.ipipeandfilterrun-1.md)
+
+- [IPipeAndFilterRunService&lt;T&gt;](./pipefiltercore.ipipeandfilterrunservice-1.md)
+
+- [IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
+
+- [IPipeAndFilterServiceBuild&lt;T&gt;](./pipefiltercore.ipipeandfilterservicebuild-1.md)
+
+- [IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
 
 - [PipeAndFilter](./pipefiltercore.pipeandfilter.md)
 
 - [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)
+
+- [PipeAndFilterExtensions](./pipefiltercore.pipeandfilterextensions.md)
 
 - [PipeRanStatus](./pipefiltercore.piperanstatus.md)
 

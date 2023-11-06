@@ -41,125 +41,81 @@ PipeAndFilter was developed in C# with target frameworks:
 
 - First Release
 
-**PipeAndFilter Controls - Sample Usage**
------------------------------------------
-
-public class MyClass
-{
-    public int MyProperty { get; set; }
-}
-
-...
-
-var contract = new MyClass { MyProperty = 10 };
-
-var result = await PipeAndFilter
-    .Create<MyClass>()
-    .Init(contract)
-    .MaxDegreeProcess(4)
-    .CorrelationId(null)
-    .Logger(null)
+**PipeAndFilter Sample-console Usage**
+--------------------------------------
+var result = await PipeAndFilter.New<MyClass>()
     .AddPipe(ExecPipe1)
-    .AddPipe(ExecPipe2)
         .WithCondition(CondFalse, "LastPipe")
         .WithCondition(CondTrue, null)
         .WithCondition(CondTrue, null)
-     .AddPipeTasks(AgregateTask)
+    .AddPipe(ExecPipe2)
+    .AddPipe(ExecPipe3)
+    .AddPipeTasks(AgregateTask)
         .WithCondition(CondTrue, null)
-        .AddTask(Task50)
-        .AddTaskCondition(Task100, CondFalse)
-        .AddTask(Task150)
-     .AddPipe(ExecPipe, "LastPipe")
-     .Run();
+        .MaxDegreeProcess(4)
+        .AddTask(Task1)
+        .AddTaskCondition(Task2, CondFalse)
+        .AddTask(Task3)
+    .AddPipe(ExecPipe5, "LastPipe")
+    .BuildAndCreate()
+    .Init(contract)
+    .CorrelationId(null)
+    .Logger(null)
+    .Run();
 
-Console.WriteLine($"Contract value : {contract.MyProperty}");
-foreach (var item in pl.Status)
-{
-    Console.WriteLine($"{item.Alias ?? item.Id}:{item.Status.Value} => {item.Status.Elapsedtime}");
-    foreach (var det in item.StatusDetails)
-    {
-        Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");
-    }
-}
+**PipeAndFilter Sample-api/web Usage**
+--------------------------------------
 
+Program.cs
+----------
+
+builder.Services
+    .AddPipeAndFilter(
+        PipeAndFilter.New<WeatherForecast>()
+            .AddPipe(ExecPipe)
+            .Build());
+...
 ...
 
-private static async Task Task50(EventPipe<MyClass> pipe, CancellationToken token)
+private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
     pipe.ChangeContract((contract) =>
     {
-        contract.MyProperty++;
+        contract.TemperatureC += 10;
     });
-    try
-    {
-        await Task.Delay(50, token);
-        pipe.SaveValue(50);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async Task Task100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(100, token);
-        pipe.SaveValue(100);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async Task Task150(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(150, token);
-        pipe.SaveValue(150);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static Task ExecPipe(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved");
     return Task.CompletedTask;
 }
-private static Task AgregateTask(EventPipe<MyClass> pipe, CancellationToken token)
+
+
+WeatherForecastController.cs
+----------------------------
+    
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
 {
-    return Task.CompletedTask;
-}
-private static async Task ExecPipe100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved0");
-    try
+    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IPipeAndFilterServiceBuild<WeatherForecast> _mypipe;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterServiceBuild<WeatherForecast> pipeAndFilter)
     {
-        await Task.Delay(100, token);
+        _logger = logger;
+        _mypipes = pipeAndFilter;
     }
-    catch (TaskCanceledException)
+
+    [HttpGet(Name = "GetWeatherForecast")]
+    public async Task<WeatherForecast> Get(CancellationToken cancellation)
     {
-        //none
+            var cid = Guid.NewGuid().ToString();
+
+            var pipe = await _mypipes.First(x => x.ServiceId == "opc1")
+                .Create()
+                .Logger(_logger)
+                .CorrelationId(cid)
+                .Init(new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now), Summary = "PipeAndFilter-Opc1", TemperatureC = 0 })
+                .Run(cancellation);
+            return pipe.Result.Value!
     }
-}
-private static async ValueTask<bool> CondFalse(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    return await Task.FromResult(false);
-}
-private static ValueTask<bool> CondTrue(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    ValueTask.FromResult(true);
 }
 
 **License**

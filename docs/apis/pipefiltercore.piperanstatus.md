@@ -99,13 +99,13 @@ PipeRanStatus(string id, string alias, IEnumerable<PipeStatus> details)
 #### Parameters
 
 `id` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The pipe Id
+The pipe Id.
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The pipe alias
+The pipe alias.
 
 `details` [IEnumerable&lt;PipeStatus&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
-The detailed status of all runs
+The detailed status of all runs.
 
 
 - - -

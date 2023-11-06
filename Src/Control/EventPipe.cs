@@ -57,7 +57,7 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// The values saved ​​associated with pipes
+        /// The values saved ​​associated with pipes.
         /// </summary>
         /// <remarks>
         /// The values ​​are serialized in json.
@@ -82,12 +82,12 @@ namespace PipeFilterCore
 
 
         /// <summary>
-        /// The log handler
+        /// The log handler.
         /// </summary>
         public ILogger Logger { get; }
 
         /// <summary>
-        /// The Correlation Id
+        /// The Correlation Id.
         /// </summary>
         public string? CorrelationId { get; }
 
@@ -111,7 +111,6 @@ namespace PipeFilterCore
         /// <param name="action">The action to change value.</param>
         /// <remarks>
         /// The action will only be executed if the contract exists.
-        /// <br>See <see cref="IPipeAndFilterInit{T}.Init(T)"/>.</br>
         /// </remarks>
         public void ChangeContract(Action<T> action)
         {
@@ -134,7 +133,7 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// Remove a value associated with this pipe or task .
+        /// Remove a value associated with this pipe or task.
         /// </summary>
         public void RemoveSavedValue()
         {
