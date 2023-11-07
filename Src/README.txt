@@ -70,11 +70,9 @@ Program.cs
 ----------
 
 builder.Services
-    .AddPipeAndFilter(
-        PipeAndFilter.New<WeatherForecast>()
-            .AddPipe(ExecPipe)
-            .Build());
-...
+    .AddPipeAndFilter(PipeAndFilter.New<WeatherForecast>()
+        .AddPipe(ExecPipe)
+        .Build());
 ...
 
 private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
@@ -114,7 +112,7 @@ public class WeatherForecastController : ControllerBase
                 .CorrelationId(cid)
                 .Init(new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now), Summary = "PipeAndFilter-Opc1", TemperatureC = 0 })
                 .Run(cancellation);
-            return pipe.Result.Value!
+            return pipe.Value!
     }
 }
 
