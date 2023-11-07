@@ -6,37 +6,25 @@
 namespace PipeFilterCore
 {
     /// <summary>
-    /// Represents a handler type.
+    /// Represents a handler status.
     /// </summary>
-    public enum HandlerType
+    public enum HandlerStatus
     {
         /// <summary>
-        /// No Type, Runtime Initialize
+        /// Handler waiting to execute
         /// </summary>
-        None,
+        Created,
         /// <summary>
-        /// Type condition.
+        /// Handler Completed
         /// </summary>
-        Condition,
+        Completed,
         /// <summary>
-        /// Type condition with link to another pipe.
+        /// Handler Completed
         /// </summary>
-        ConditionGoto,
+        Canceled,
         /// <summary>
-        /// Type pipe.
+        /// Handler Faulted
         /// </summary>
-        Pipe,
-        /// <summary>
-        /// Type task.
-        /// </summary>
-        Task,
-        /// <summary>
-        /// Type aggregate task.
-        /// </summary>
-        AggregateTask,
-        /// <summary>
-        /// Type condition task.
-        /// </summary>
-        ConditionTask
+        Faulted
     }
 }

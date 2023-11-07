@@ -62,18 +62,19 @@ public PipeStatus Status { get; }
 The detailed status of each step (pipe, conditions and tasks).
 
 ```csharp
-public IEnumerable<PipeStatus> StatusDetails { get; }
+public ImmutableArray<PipeStatus> StatusDetails { get; }
 ```
 
 #### Property Value
 
-[IEnumerable&lt;PipeStatus&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
+ImmutableArray&lt;PipeStatus&gt;<br>
 
 ## Constructors
 
 ### <a id="constructors-.ctor"/>**PipeRanStatus()**
 
 Create PipeRanStatus.
+ <br>Do not use this constructor!
 
 ```csharp
 PipeRanStatus()
@@ -84,28 +85,24 @@ PipeRanStatus()
 [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error
 
-**Remarks:**
-
-Do not use this constructor!
-
-### <a id="constructors-.ctor"/>**PipeRanStatus(String, String, IEnumerable&lt;PipeStatus&gt;)**
+### <a id="constructors-.ctor"/>**PipeRanStatus(String, String, ImmutableArray&lt;PipeStatus&gt;)**
 
 Create PipeRanStatus (Only internal use or Unit-Test).
 
 ```csharp
-PipeRanStatus(string id, string alias, IEnumerable<PipeStatus> details)
+PipeRanStatus(string id, string alias, ImmutableArray<PipeStatus> details)
 ```
 
 #### Parameters
 
 `id` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The pipe Id
+The pipe Id.
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The pipe alias
+The pipe alias.
 
-`details` [IEnumerable&lt;PipeStatus&gt;](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1)<br>
-The detailed status of all runs
+`details` ImmutableArray&lt;PipeStatus&gt;<br>
+The detailed status of all runs.
 
 
 - - -

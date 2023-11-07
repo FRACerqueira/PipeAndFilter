@@ -13,6 +13,7 @@ namespace PipeFilterCore
                 PipeAndFilterException.StatusInit, 
                 "Invalid ctor PipeCondition");
         }
+
         public PipeCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
         {
             Handle = handle;

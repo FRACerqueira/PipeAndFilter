@@ -10,7 +10,6 @@ and the ability to parallel execute tasks over a pipe.
 .**
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
-**[Visit the official page for more documentation of PipeAndFilter](https://fracerqueira.github.io/PipeAndFilter)**
 
 ## Table of Contents
 
@@ -19,6 +18,7 @@ and the ability to parallel execute tasks over a pipe.
 - [Installing](#installing)
 - [Examples](#examples)
 - [Usage](#usage)
+- [Performance](#performance)
 - [Code of Conduct](#code-of-conduct)
 - [Contributing](#contributing)
 - [Credits](#credits)
@@ -40,7 +40,7 @@ and the ability to parallel execute tasks over a pipe.
 - Add multiple preconditions to run a pipe
 - Add multiple link to the pipe to jump to another pipe
 - Add tasks with a precondition
-- Have the detailed status (execution time, execution type, result of each executed condition) in each pipe
+- Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
 - Save a result from each pipe to use when executing another pipe
 - Save a result from each task to use during the execution of the aggregation pipe
 - Terminate the PipeAndFilter on any task, condition or pipe
@@ -71,126 +71,149 @@ dotnet run --project [name of sample]
 ## Usage
 [**Top**](#table-of-contents)
 
-The controls use **fluent interface**; an object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility. The term was coined in 2005 by Eric Evans and Martin Fowler.
-```csharp
-public class MyClass
-{
-    public int MyProperty { get; set; }
-}
-```
+The **PipeAndFilter** use **fluent interface**; an object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility. The term was coined in 2005 by Eric Evans and Martin Fowler.
+
+### Sample-Console Usage
 
 ```csharp
-var contract = new MyClass { MyProperty = 10 };
-
-var result = await PipeAndFilter
-    .Create<MyClass>()
-    .Init(contract)
-    .MaxDegreeProcess(4)
-    .CorrelationId(null)
-    .Logger(null)
+var result = await PipeAndFilter.New<MyClass>()
     .AddPipe(ExecPipe1)
-    .AddPipe(ExecPipe2)
         .WithCondition(CondFalse, "LastPipe")
         .WithCondition(CondTrue, null)
         .WithCondition(CondTrue, null)
-     .AddPipeTasks(AgregateTask)
+    .AddPipe(ExecPipe2)
+    .AddPipe(ExecPipe3)
+    .AddPipeTasks(AgregateTask)
         .WithCondition(CondTrue, null)
-        .AddTask(Task50)
-        .AddTaskCondition(Task100, CondFalse)
-        .AddTask(Task150)
-     .AddPipe(ExecPipe, "LastPipe")
-     .Run();
+        .MaxDegreeProcess(4)
+        .AddTask(Task1)
+        .AddTaskCondition(Task2, CondFalse)
+        .AddTask(Task3)
+    .AddPipe(ExecPipe5, "LastPipe")
+    .BuildAndCreate()
+    .Init(contract)
+    .CorrelationId(null)
+    .Logger(null)
+    .Run();
+```
 
-Console.WriteLine($"Contract value : {contract.MyProperty}");
-foreach (var item in pl.Status)
+### Sample-api/webUsage
+[**Top**](#table-of-contents)
+
+```csharp
+builder.Services
+    .AddPipeAndFilter(PipeAndFilter.New<WeatherForecast>()
+        .AddPipe(ExecPipe)
+        .Build());
+```
+
+```csharp
+private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    Console.WriteLine($"{item.Alias}:{item.Status.Value} => {item.Status.Elapsedtime}");
-    foreach (var det in item.StatusDetails)
+    pipe.ChangeContract((contract) =>
     {
-        Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");
-    }
+        contract.TemperatureC += 10;
+    });
+    return Task.CompletedTask;
 }
 ```
 
 ```csharp
-private static async Task Task50(EventPipe<MyClass> pipe, CancellationToken token)
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase
 {
-    pipe.ChangeContract((contract) =>
+    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly IPipeAndFilterServiceBuild<WeatherForecast> _mypipe;
+
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterServiceBuild<WeatherForecast> pipeAndFilter)
     {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(50, token);
-        pipe.SaveValue(50);
+        _logger = logger;
+        _mypipes = pipeAndFilter;
     }
-    catch (TaskCanceledException)
+
+    [HttpGet(Name = "GetWeatherForecast")]
+    public async Task<WeatherForecast> Get(CancellationToken cancellation)
     {
-        //none
+            var cid = Guid.NewGuid().ToString();
+
+            var pipe = await _mypipes.First(x => x.ServiceId == "opc1")
+                .Create()
+                .Logger(_logger)
+                .CorrelationId(cid)
+                .Init(new WeatherForecast { Date = DateOnly.FromDateTime(DateTime.Now), Summary = "PipeAndFilter-Opc1", TemperatureC = 0 })
+                .Run(cancellation);
+            return pipe.Value!
     }
-}
-private static async Task Task100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(100, token);
-        pipe.SaveValue(100);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async Task Task150(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.ChangeContract((contract) =>
-    {
-        contract.MyProperty++;
-    });
-    try
-    {
-        await Task.Delay(150, token);
-        pipe.SaveValue(150);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static Task ExecPipe(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved");
-    return Task.CompletedTask;
-}
-private static Task AgregateTask(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    return Task.CompletedTask;
-}
-private static async Task ExecPipe100(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    pipe.SaveValue("Saved0");
-    try
-    {
-        await Task.Delay(100, token);
-    }
-    catch (TaskCanceledException)
-    {
-        //none
-    }
-}
-private static async ValueTask<bool> CondFalse(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    return await Task.FromResult(false);
-}
-private static ValueTask<bool> CondTrue(EventPipe<MyClass> pipe, CancellationToken token)
-{
-    ValueTask.FromResult(true);
 }
 ```
+
+## Performance
+[**Top**](#table-of-contents)
+
+All pipes, conditions and tasks do not perform any task, they are only called and executed by the component
+
+See folder [**Samples/PipeandFIlterBenchmarking**](https://github.com/FRACerqueira/PipeAndFilter/tree/main/Samples/PipeandFIlterBenchmarking).
+
+```
+BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
+Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.100-rc.2.23502.2
+  [Host]     : .NET 8.0.0 (8.0.23.47906), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.0 (8.0.23.47906), X64 RyuJIT AVX2
+```
+
+| Method                       | Mean       | Error      | StdDev     | Median     | Gen0    | Allocated |
+|----------------------------- |-----------:|-----------:|-----------:|-----------:|--------:|----------:|
+| PipeAsync                    |   7.419 us |  0.1483 us |  0.3347 us |   7.345 us |  1.1597 |   4.74 KB |
+| PipeWith10Async              | 239.257 us | 10.6802 us | 30.9852 us | 234.596 us | 19.5313 |  80.68 KB |
+| PipeWithConditionAsync       |   8.273 us |  0.1639 us |  0.2599 us |   8.146 us |  1.4038 |   5.76 KB |
+| PipeWith10ConditionAsync     |  20.606 us |  0.4113 us |  0.9774 us |  20.202 us |  3.6011 |  14.78 KB |
+| PipeWith10ConditionGotoAsync |  33.396 us |  0.6631 us |  1.2455 us |  33.024 us |  5.1270 |  21.08 KB |
+| PipeTaskAsync                |  16.918 us |  0.5232 us |  1.5096 us |  16.795 us |  1.7090 |   7.07 KB |
+| PipeWith10TaskAsync          |  72.402 us |  3.5790 us |  9.8577 us |  68.424 us |  4.8828 |  20.47 KB |
+| PipeTaskConditionAsync       |  19.375 us |  0.3853 us |  0.9736 us |  19.425 us |  1.8616 |   7.66 KB |
+| PipeWith10TaskConditionAsync |  63.898 us |  1.2774 us |  2.9858 us |  63.562 us |  4.8828 |  20.47 KB |
+
+```
+BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
+Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.100-rc.2.23502.2
+  [Host]     : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
+```
+
+| Method                       | Mean       | Error     | StdDev     | Median     | Gen0    | Allocated |
+|----------------------------- |-----------:|----------:|-----------:|-----------:|--------:|----------:|
+| PipeAsync                    |  11.231 μs | 0.4573 μs |  1.3195 μs |  10.898 μs |  1.1597 |   4.79 KB |
+| PipeWith10Async              | 226.285 μs | 4.5187 μs | 10.8264 μs | 222.330 μs | 19.5313 |  80.73 KB |
+| PipeWithConditionAsync       |   9.902 μs | 0.1137 μs |  0.0950 μs |   9.858 μs |  1.4038 |    5.8 KB |
+| PipeWith10ConditionAsync     |  26.949 μs | 0.9860 μs |  2.6824 μs |  26.154 μs |  3.6011 |  14.83 KB |
+| PipeWith10ConditionGotoAsync |  39.820 μs | 0.7613 μs |  1.2075 μs |  39.498 μs |  5.1270 |  21.13 KB |
+| PipeTaskAsync                |  20.286 μs | 0.6041 μs |  1.7334 μs |  19.744 μs |  1.7395 |   7.12 KB |
+| PipeWith10TaskAsync          | 101.252 μs | 5.3239 μs | 15.4455 μs |  97.842 μs |  4.8828 |  20.53 KB |
+| PipeTaskConditionAsync       |  24.214 μs | 1.3098 μs |  3.7998 μs |  22.740 μs |  1.8616 |    7.7 KB |
+| PipeWith10TaskConditionAsync |  98.953 μs | 3.9903 μs | 11.0570 μs |  95.221 μs |  4.8828 |  20.56 KB |
+
+```
+BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
+Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.100-rc.2.23502.2
+  [Host]     : .NET Core 3.1.32 (CoreCLR 4.700.22.55902, CoreFX 4.700.22.56512), X64 RyuJIT AVX2
+  DefaultJob : .NET Core 3.1.32 (CoreCLR 4.700.22.55902, CoreFX 4.700.22.56512), X64 RyuJIT AVX2
+```
+
+| Method                       | Mean      | Error    | StdDev   | Gen0    | Allocated |
+|----------------------------- |----------:|---------:|---------:|--------:|----------:|
+| PipeAsync                    |  14.38 us | 0.225 us | 0.199 us |  1.1597 |   4.77 KB |
+| PipeWith10Async              | 328.18 us | 6.287 us | 5.880 us | 19.5313 |   81.7 KB |
+| PipeWithConditionAsync       |  17.11 us | 0.283 us | 0.237 us |  1.4038 |   5.85 KB |
+| PipeWith10ConditionAsync     |  36.82 us | 0.702 us | 0.657 us |  3.6621 |  15.44 KB |
+| PipeWith10ConditionGotoAsync |  58.69 us | 1.103 us | 2.557 us |  5.3101 |   21.8 KB |
+| PipeTaskAsync                |  37.06 us | 0.720 us | 1.077 us |  1.7090 |   7.18 KB |
+| PipeWith10TaskAsync          | 222.57 us | 2.935 us | 2.745 us |  4.8828 |  20.52 KB |
+| PipeTaskConditionAsync       |  42.97 us | 0.906 us | 2.525 us |  1.8921 |   7.84 KB |
+| PipeWith10TaskConditionAsync | 224.77 us | 2.119 us | 1.982 us |  4.8828 |  20.54 KB |
 
 ## Code of Conduct
 [**Top**](#table-of-contents)

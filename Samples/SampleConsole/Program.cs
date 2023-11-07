@@ -11,14 +11,8 @@ namespace PipeFilterCoreSamples
 
         public static async Task<int> Main()
         {
-            ResultPipeAndFilter<MyClass> pl;
-
             var contract = new MyClass { MyProperty = 10 };
-            pl = await PipeAndFilter.Create<MyClass>()
-                .Init(contract)
-                .CorrelationId(null)
-                .Logger(null)
-                .MaxDegreeProcess(4)
+            var pl = await PipeAndFilter.New<MyClass>()
                 .AddPipe(ExecPipe)
                     .WithCondition(CondFalse, "LastPipe")
                     .WithCondition(CondTrue, null)
@@ -27,19 +21,24 @@ namespace PipeFilterCoreSamples
                 .AddPipe(ExecPipe100)
                 .AddPipeTasks(AgregateTask)
                     .WithCondition(CondTrue, null)
+                    .MaxDegreeProcess(4)
                     .AddTask(Task50)
                     .AddTaskCondition(Task100, CondFalse)
                     .AddTask(Task150)
                 .AddPipe(ExecPipe, "LastPipe")
+                .BuildAndCreate()
+                .Init(contract)
+                .CorrelationId(null)
+                .Logger(null)
                 .Run();
 
-            Console.WriteLine($"Contract value : {contract.MyProperty}");
+            Console.WriteLine($"Contract value : {contract.MyProperty} Total Elapsedtime: {pl.Elapsedtime}" );
             foreach (var item in pl.Status)
             {
-                Console.WriteLine($"{item.Alias}:{item.Status.Value} => {item.Status.Elapsedtime}");
-                foreach (var det in item.StatusDetails)
+                Console.WriteLine($"{item.Alias}:{item.Status.Value} Count: {item.Count} => {item.Status.Elapsedtime}");
+                foreach (var det in item.StatusDetails) 
                 {
-                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => :{det.Value}:{det.Elapsedtime}");
+                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => {det.Value}:{det.Elapsedtime} UTC:{det.DateRef.ToString("MM/dd/yyyy hh:mm:ss ffff")}");
                 }
             }
 
@@ -129,9 +128,9 @@ namespace PipeFilterCoreSamples
             return await Task.FromResult(false);
         }
 
-        private static ValueTask<bool> CondTrue(EventPipe<MyClass> pipe, CancellationToken token)
+        private static async ValueTask<bool> CondTrue(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            return ValueTask.FromResult(true);
+            return await Task.FromResult(true);
         }
     }
 }

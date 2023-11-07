@@ -45,6 +45,18 @@ public bool Condition { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+### <a id="properties-dateref"/>**DateRef**
+
+The UTC Date reference.
+
+```csharp
+public DateTime DateRef { get; }
+```
+
+#### Property Value
+
+[DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime)<br>
+
 ### <a id="properties-elapsedtime"/>**Elapsedtime**
 
 The elapsed time.
@@ -86,18 +98,19 @@ public HandlerType TypeExec { get; }
 The running status.
 
 ```csharp
-public TaskStatus Value { get; }
+public HandlerStatus Value { get; }
 ```
 
 #### Property Value
 
-[TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus)<br>
+[HandlerStatus](./pipefiltercore.handlerstatus.md)<br>
 
 ## Constructors
 
 ### <a id="constructors-.ctor"/>**PipeStatus()**
 
 Create Pipe Status.
+ <br>Do not use this constructor!
 
 ```csharp
 PipeStatus()
@@ -108,16 +121,12 @@ PipeStatus()
 [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error.
 
-**Remarks:**
-
-Do not use this constructor!
-
-### <a id="constructors-.ctor"/>**PipeStatus(HandlerType, TaskStatus, TimeSpan, String, String, Boolean)**
+### <a id="constructors-.ctor"/>**PipeStatus(HandlerType, HandlerStatus, TimeSpan, String, String, Boolean)**
 
 Create instance (Only internal use or Unit-Test).
 
 ```csharp
-PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string alias, string gotoAlias, bool condition)
+PipeStatus(HandlerType typeExec, HandlerStatus value, TimeSpan elapsedtime, string alias, string gotoAlias, bool condition)
 ```
 
 #### Parameters
@@ -125,8 +134,8 @@ PipeStatus(HandlerType typeExec, TaskStatus value, TimeSpan elapsedtime, string 
 `typeExec` [HandlerType](./pipefiltercore.handlertype.md)<br>
 Type handle. See [HandlerType](./pipefiltercore.handlertype.md).
 
-`value` [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus)<br>
-The Status. See [TaskStatus](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.taskstatus).
+`value` [HandlerStatus](./pipefiltercore.handlerstatus.md)<br>
+The Status. See [HandlerStatus](./pipefiltercore.handlerstatus.md).
 
 `elapsedtime` [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)<br>
 The elapsed time. See [TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan).

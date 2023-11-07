@@ -3,6 +3,8 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
+using System.Collections.Immutable;
+
 namespace PipeFilterCore
 {
     /// <summary>
@@ -12,10 +14,8 @@ namespace PipeFilterCore
     {
         /// <summary>
         /// Create PipeRanStatus.
+        /// <br>Do not use this constructor!</br>
         /// </summary>
-        /// <remarks>
-        /// Do not use this constructor!
-        /// </remarks>
         /// <exception cref="PipeAndFilterException">Message error</exception>
         public PipeRanStatus()
         {
@@ -27,10 +27,10 @@ namespace PipeFilterCore
         /// <summary>
         /// Create PipeRanStatus (Only internal use or Unit-Test).
         /// </summary>
-        /// <param name="id">The pipe Id</param>
-        /// <param name="alias">The pipe alias</param>
-        /// <param name="details">The detailed status of all runs</param>
-        public PipeRanStatus(string id, string? alias, IEnumerable<PipeStatus> details)
+        /// <param name="id">The pipe Id.</param>
+        /// <param name="alias">The pipe alias.</param>
+        /// <param name="details">The detailed status of all runs.</param>
+        public PipeRanStatus(string id, string? alias, ImmutableArray<PipeStatus> details)
         {
             Id = id;
             Alias = alias;
@@ -54,7 +54,7 @@ namespace PipeFilterCore
                     return StatusDetails.Where(x => x.TypeExec == HandlerType.Pipe).Last();
                 }
                 return new PipeStatus(HandlerType.Pipe,
-                    TaskStatus.WaitingForActivation,
+                    HandlerStatus.Created,
                     TimeSpan.Zero,
                     null,
                     null, false);
@@ -69,7 +69,7 @@ namespace PipeFilterCore
         /// <summary>
         /// The detailed status of each step (pipe, conditions and tasks).
         /// </summary>
-        public IEnumerable<PipeStatus> StatusDetails { get; }
+        public ImmutableArray<PipeStatus> StatusDetails { get; }
 
         internal string Id { get; }
     }

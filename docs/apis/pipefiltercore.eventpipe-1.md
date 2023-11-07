@@ -28,7 +28,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ### <a id="properties-correlationid"/>**CorrelationId**
 
-The Correlation Id
+The Correlation Id.
 
 ```csharp
 public string CorrelationId { get; }
@@ -64,7 +64,7 @@ public string FromAlias { get; }
 
 ### <a id="properties-logger"/>**Logger**
 
-The log handler
+The log handler.
 
 ```csharp
 public ILogger Logger { get; }
@@ -76,7 +76,8 @@ ILogger<br>
 
 ### <a id="properties-savedpipes"/>**SavedPipes**
 
-The values saved ​​associated with pipes
+The values saved ​​associated with pipes.
+ <br>The values ​​are serialized in json.<br>Null result may exist.
 
 ```csharp
 public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
@@ -86,14 +87,10 @@ public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
 
 ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
 
-**Remarks:**
-
-The values ​​are serialized in json.
- <br>Null result may exist.
-
 ### <a id="properties-savedtasks"/>**SavedTasks**
 
 The values saved ​​associated with tasks.
+ <br>Data only exists when executed by an aggregator pipe.<br>The values ​​are serialized in json.<br>Null result may exist.
 
 ```csharp
 public ImmutableArray<ValueTuple<String, String, String>> SavedTasks { get; }
@@ -102,11 +99,6 @@ public ImmutableArray<ValueTuple<String, String, String>> SavedTasks { get; }
 #### Property Value
 
 ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-
-**Remarks:**
-
-Data only exists when executed by an aggregator pipe.
- <br>The values ​​are serialized in json.<br>Null result may exist.
 
 ## Constructors
 
@@ -152,6 +144,7 @@ The current alias.
 ### <a id="methods-changecontract"/>**ChangeContract(Action&lt;T&gt;)**
 
 Change value contract.
+ <br>The change will only be executed if the contract exists(not null).
 
 ```csharp
 public void ChangeContract(Action<T> action)
@@ -161,11 +154,7 @@ public void ChangeContract(Action<T> action)
 
 `action` Action&lt;T&gt;<br>
 The action to change value.
-
-**Remarks:**
-
-The action will only be executed if the contract exists.
- <br>See .
+ <br>The action will only be executed if the contract exists(not null).
 
 ### <a id="methods-endpipeandfilter"/>**EndPipeAndFilter()**
 
@@ -177,7 +166,7 @@ public void EndPipeAndFilter()
 
 ### <a id="methods-removesavedvalue"/>**RemoveSavedValue()**
 
-Remove a value associated with this pipe or task .
+Remove a value associated with this pipe or task.
 
 ```csharp
 public void RemoveSavedValue()
@@ -186,6 +175,7 @@ public void RemoveSavedValue()
 ### <a id="methods-savevalue"/>**SaveValue&lt;T1&gt;(T1)**
 
 Save/overwrite a value associated with this pipe or task.
+ <br>The values ​​will serialize into json.
 
 ```csharp
 public void SaveValue<T1>(T1 value)
@@ -200,10 +190,6 @@ Type value to save.
 
 `value` T1<br>
 The value to save.
-
-**Remarks:**
-
-The values ​​will serialize into json.
 
 
 - - -

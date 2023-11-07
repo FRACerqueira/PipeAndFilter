@@ -11,7 +11,7 @@
 
 Namespace: PipeFilterCore
 
-Represents the result of PipeAndFilter
+Represents the result of PipeAndFilter.
 
 ```csharp
 public struct ResultPipeAndFilter<T>
@@ -37,6 +37,18 @@ public bool Aborted { get; }
 
 [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 
+### <a id="properties-elapsedtime"/>**Elapsedtime**
+
+Total Elapsedtime
+
+```csharp
+public TimeSpan Elapsedtime { get; }
+```
+
+#### Property Value
+
+[TimeSpan](https://docs.microsoft.com/en-us/dotnet/api/system.timespan)<br>
+
 ### <a id="properties-exception"/>**Exception**
 
 The exception (pipe,condition or task), if any.
@@ -51,7 +63,7 @@ public PipeAndFilterException Exception { get; }
 
 ### <a id="properties-status"/>**Status**
 
-The status details of all pipes
+The status details of all pipes.
 
 ```csharp
 public ImmutableArray<PipeRanStatus> Status { get; }
@@ -63,7 +75,7 @@ ImmutableArray&lt;PipeRanStatus&gt;<br>
 
 ### <a id="properties-value"/>**Value**
 
-The Contract value
+The Contract value.
 
 ```csharp
 public T Value { get; }
@@ -77,7 +89,8 @@ T<br>
 
 ### <a id="constructors-.ctor"/>**ResultPipeAndFilter()**
 
-Create Result of PipeAndFilter
+Create Result of PipeAndFilter.
+ <br>Do not use this constructor!
 
 ```csharp
 ResultPipeAndFilter()
@@ -86,11 +99,7 @@ ResultPipeAndFilter()
 #### Exceptions
 
 [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
-Message error
-
-**Remarks:**
-
-Do not use this constructor!
+Message error.
 
 ### <a id="constructors-.ctor"/>**ResultPipeAndFilter(T, Boolean, PipeAndFilterException, ImmutableArray&lt;PipeRanStatus&gt;)**
 
