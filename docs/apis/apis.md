@@ -13,6 +13,8 @@
 
 - [EventPipe&lt;T&gt;](./pipefiltercore.eventpipe-1.md)
 
+- [HandlerStatus](./pipefiltercore.handlerstatus.md)
+
 - [HandlerType](./pipefiltercore.handlertype.md)
 
 - [IPipeAndFilterBuild&lt;T&gt;](./pipefiltercore.ipipeandfilterbuild-1.md)

@@ -1,42 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Immutable;
 using System.Threading.Tasks;
-using PipeFilterCore.CommandsInterface;
 
-namespace PipeFilterCore.Control
+namespace PipeFilterCore
 {
     internal class PipeAndFilterService<T> : IPipeAndFilterOptions<T>, IPipeAndFilterServiceBuild<T> where T : class
     {
         private readonly string? _serviceid;
-        readonly PipeAndFilterBuild<T> _parameters;
+        private readonly IPipeAndFilterOptions<T> _parameters;
 
-        public PipeAndFilterService(string? serviceid, PipeAndFilterBuild<T> parameters)
+        public PipeAndFilterService(string? serviceid, IPipeAndFilterOptions<T> parameters)
         {
             _serviceid = serviceid;
             _parameters = parameters;
         }
 
+        #region IPipeAndFilterOptions
+
         public string? ServiceId => _serviceid;
 
-        public Dictionary<string, string> AliasToId => _parameters._aliasToId;
+        public IImmutableDictionary<string, string> AliasToId => _parameters.AliasToId;
 
-        public Dictionary<string, string?> IdToAlias => _parameters._idToAlias;
+        public IImmutableDictionary<string, string?> IdToAlias => _parameters.IdToAlias;
 
-        public Dictionary<string, int> MaxDegreeProcess => _parameters._maxDegreeProcess;
+        public IImmutableDictionary<string, int> MaxDegreeProcess => _parameters.MaxDegreeProcess;
 
-        public Dictionary<string, (Func<EventPipe<T>, CancellationToken, 
-            Task> pipehandle, 
-            bool aggregateTasks, 
-            List<PipeCondition<T>> precondhandle, 
-            List<PipeStatus> status, 
-            List<(string Id, Func<EventPipe<T>, CancellationToken, Task> TaskHandle, PipeCondition<T>? TaskCondition, string? NameTask, string? NameCondition)> tasks)> 
-            Pipes => _parameters._pipes;
+        public IImmutableList<PipeCommand<T>> Pipes => _parameters.Pipes;
+
+        public IImmutableDictionary<string, bool> AggregateTasks => _parameters.AggregateTasks;
+
+        public IImmutableDictionary<string, IImmutableList<PipeCondition<T>>> PreConditions => _parameters.PreConditions;
+   
+        public IImmutableDictionary<string, IImmutableList<PipeTask<T>>> Tasks => _parameters.Tasks;
+
+        #endregion
+
+        #region IPipeAndFilterServiceBuild
 
         IPipeAndFilterRunService<T> IPipeAndFilterServiceBuild<T>.Create()
         {
             return new PipeAndFilterControl<T>(this);
         }
+
+        #endregion
     }
 }

@@ -18,7 +18,7 @@ namespace PipeFilterCore
         /// The default status for initialize.
         /// </summary>
         public static readonly PipeStatus StatusInit = new(HandlerType.Pipe,
-            TaskStatus.Created,
+            HandlerStatus.Created,
             TimeSpan.Zero, null, null, false);
 
         /// <summary>

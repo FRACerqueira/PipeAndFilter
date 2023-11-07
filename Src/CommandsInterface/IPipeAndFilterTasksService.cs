@@ -18,8 +18,8 @@ namespace PipeFilterCore
         /// <param name="alias">
         /// The unique alias for pipe.
         /// <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).</br>
+        /// <br>Alias ​​is used to reference in another pipe.</br>
         /// </param>
-        /// <remarks>Alias ​​is used to reference in another pipe.</remarks>
         /// <returns><see cref="IPipeAndFilterService{T}"/></returns>
         IPipeAndFilterService<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
 
@@ -32,8 +32,8 @@ namespace PipeFilterCore
         /// <param name="alias">
         /// The unique alias for pipe.
         /// <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).</br>
+        /// <br>Alias ​​is used to reference in another pipe.</br>
         /// </param>
-        /// <remarks>Alias ​​is used to reference in another pipe.</remarks>
         /// <returns><see cref="IPipeAndFilterTasksService{T}"/></returns>
         IPipeAndFilterTasksService<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
 
@@ -48,10 +48,10 @@ namespace PipeFilterCore
         /// <summary>
         /// Maximum number of concurrent tasks enable. 
         /// </summary>
-        /// <param name="value">Number of concurrent tasks.</param>
-        /// <remarks>
-        /// The default value is number of processors.
-        /// </remarks>
+        /// <param name="value">
+        /// Number of concurrent tasks.
+        /// <br>The default value is number of processors.</br>
+        /// </param>
         /// <returns><see cref="IPipeAndFilterTasksService{T}"/></returns>
         IPipeAndFilterTasksService<T> MaxDegreeProcess(int value);
 

@@ -3,7 +3,10 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-namespace PipeFilterCore.Control
+using System.Collections.Immutable;
+
+namespace PipeFilterCore
+
 {
     /// <summary>
     /// Represents the commands of the PipeAndFilter definition.
@@ -13,21 +16,55 @@ namespace PipeFilterCore.Control
         IPipeAndFilterCreateService<T>,
         IPipeAndFilterService<T>,
         IPipeAndFilterConditionsService<T>,
-        IPipeAndFilterTasksService<T>
+        IPipeAndFilterTasksService<T>,
+        IPipeAndFilterOptions<T>
         where T : class
     {
-        internal readonly Dictionary<string, string> _aliasToId = new();
-        internal readonly Dictionary<string, string?> _idToAlias = new();
-        internal readonly Dictionary<string, int> _maxDegreeProcess = new();
-        internal readonly Dictionary<string,
-             (Func<EventPipe<T>, CancellationToken, Task> pipehandle,
-             bool aggregateTasks,
-             List<PipeCondition<T>> precondhandle,
-             List<PipeStatus> status,
-             List<(string Id, Func<EventPipe<T>, CancellationToken, Task> TaskHandle, PipeCondition<T>? TaskCondition, string? NameTask, string? NameCondition)> tasks)> _pipes = new();
-
+        private readonly Dictionary<string, string> _aliasToId = new();
+        private readonly Dictionary<string, string?> _idToAlias = new();
+        private readonly Dictionary<string, int> _maxDegreeProcess = new();
+        private readonly List<PipeCommand<T>> _pipes = new();
+        private readonly Dictionary<string, bool> _aggregateTasks = new();
+        private readonly Dictionary<string, List<PipeCondition<T>>> _precondhandler = new();
+        private readonly Dictionary<string, List<PipeTask<T>>> _tasks = new();
         private readonly int _defaultMaxProcess = Environment.ProcessorCount;
         private string? _currentPipe;
+        private string? _serviceId;
+
+
+        #region IPipeAndFilterOptions
+
+        public string? ServiceId => _serviceId;
+
+        public IImmutableDictionary<string, string> AliasToId => _aliasToId.ToImmutableDictionary();
+
+        public IImmutableDictionary<string, string?> IdToAlias => _idToAlias.ToImmutableDictionary();
+
+        public IImmutableDictionary<string, int> MaxDegreeProcess => _maxDegreeProcess.ToImmutableDictionary();
+
+        public IImmutableList<PipeCommand<T>> Pipes => _pipes.ToImmutableList();
+
+        public IImmutableDictionary<string, bool> AggregateTasks => _aggregateTasks.ToImmutableDictionary();
+
+        public IImmutableDictionary<string, IImmutableList<PipeCondition<T>>> PreConditions
+        {
+            get
+            {
+                return ImmutableDictionary
+                    .CreateRange(_precondhandler.Select(obj => new KeyValuePair<string, IImmutableList<PipeCondition<T>>>(obj.Key, obj.Value.ToImmutableList())));
+            }
+        }
+
+        public IImmutableDictionary<string, IImmutableList<PipeTask<T>>> Tasks
+        {
+            get
+            {
+                return ImmutableDictionary
+                    .CreateRange(_tasks.Select(obj => new KeyValuePair<string, IImmutableList<PipeTask<T>>>(obj.Key, obj.Value.ToImmutableList())));
+            }
+        }
+
+        #endregion
 
         #region IPipeAndFilterCreateService
 
@@ -115,13 +152,19 @@ namespace PipeFilterCore.Control
             {
                 throw new PipeAndFilterException(
                     PipeAndFilterException.StatusInit,
-                    "Pipe not exist to set MaxDegreeProcess");
+                    "Pipe found to set MaxDegreeProcess");
             }
-            if (!_pipes[_currentPipe].aggregateTasks)
+            if (!_aggregateTasks.TryGetValue(_currentPipe!, out _))
             {
                 throw new PipeAndFilterException(
                     PipeAndFilterException.StatusInit,
                     "Pipe not aggregate tasks");
+            }
+            if (!_maxDegreeProcess.TryGetValue(_currentPipe!, out _))
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "Pipe not found to set MaxDegreeProcess");
             }
             _maxDegreeProcess[_currentPipe!] = value;
             return this;
@@ -151,18 +194,19 @@ namespace PipeFilterCore.Control
 
         IPipeAndFilterServiceBuild<T> IPipeAndFilterBuild<T>.Build(string? serviceId)
         {
+            _serviceId = serviceId;
             if (_pipes.Count == 0)
             {
                 throw new PipeAndFilterException(
                     PipeAndFilterException.StatusInit,
                     "Not pipes to run");
             }
-            foreach (var item in _pipes.Where(x => x.Value.precondhandle.Any()))
+            foreach (var item in _precondhandler)
             {
-                foreach (var precond in item.Value.precondhandle.Where(x => !string.IsNullOrEmpty(x.GotoId)))
+                foreach (var precond in item.Value.Where(x => !string.IsNullOrEmpty(x.GotoId)))
                 {
                     var id = _aliasToId[precond.GotoId!];
-                    if (!_pipes.ContainsKey(id))
+                    if (!_pipes.Any(x => x.Id == id))
                     {
                         throw new PipeAndFilterException(
                             PipeAndFilterException.StatusInit,
@@ -192,11 +236,12 @@ namespace PipeFilterCore.Control
             }
             if (alias == null)
             {
-                var seq = 1;
+                var seq = 0;
                 var name = command.Method.Name;
                 alias = name;
                 while (_aliasToId.ContainsKey(alias))
                 {
+                    seq++;
                     alias = $"{name}({seq})";
                 }
             }
@@ -206,14 +251,37 @@ namespace PipeFilterCore.Control
                     PipeAndFilterException.StatusInit,
                     "Alias already exists");
             }
-            _idToAlias.Add(id, alias);
-
+            if (!_idToAlias.TryAdd(id,alias))
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "pipe already exists");
+            }
             if (agregatetask)
             {
                 _maxDegreeProcess.Add(id, _defaultMaxProcess);
             }
+            if (_pipes.Any(x => x.Id == id))
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "idpipe already exists");
+            }
+            _pipes.Add(new PipeCommand<T>(id, command));
 
-            if (!_pipes.TryAdd(id, (command, agregatetask, new(), new(), new())))
+            if (!_aggregateTasks.TryAdd(id, agregatetask))
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "idpipe already exists");
+            }
+            if (!_precondhandler.TryAdd(id, new()))
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "idpipe already exists");
+            }
+            if (!_tasks.TryAdd(id, new()))
             {
                 throw new PipeAndFilterException(
                     PipeAndFilterException.StatusInit,
@@ -234,7 +302,16 @@ namespace PipeFilterCore.Control
             {
                 namecondition = condition.Method.Name;
             }
-            _pipes[_currentPipe!].precondhandle.Add(new PipeCondition<T>(condition, aliasgoto, namecondition));
+            if (_precondhandler.TryGetValue(_currentPipe!, out var precod))
+            {
+                precod.Add(new PipeCondition<T>(condition, aliasgoto, namecondition));
+            }
+            else
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "Current Pipe not found");
+            }
         }
 
         private void SharedAddTask(Func<EventPipe<T>, CancellationToken, Task> command, Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? condition, string? nametask, string? namecond)
@@ -246,7 +323,7 @@ namespace PipeFilterCore.Control
                     PipeAndFilterException.StatusInit,
                     "Pipe not exist to add task");
             }
-            if (!_pipes[_currentPipe].aggregateTasks)
+            if (!_aggregateTasks.TryGetValue(_currentPipe!, out _))
             {
                 throw new PipeAndFilterException(
                     PipeAndFilterException.StatusInit,
@@ -258,20 +335,29 @@ namespace PipeFilterCore.Control
                     PipeAndFilterException.StatusInit,
                     "command cannot be null");
             }
-            if (condition != null && string.IsNullOrEmpty(namecond))
+            if (_tasks.TryGetValue(_currentPipe!, out var tasks))
             {
-                namecond = condition.Method.Name;
+                if (condition != null && string.IsNullOrEmpty(namecond))
+                {
+                    namecond = condition.Method.Name;
+                }
+                if (string.IsNullOrEmpty(nametask))
+                {
+                    nametask = command.Method.Name;
+                }
+                PipeCondition<T>? pipecond = null;
+                if (condition != null)
+                {
+                    pipecond = new PipeCondition<T>(condition, null, nametask);
+                }
+                tasks.Add(new PipeTask<T>(id, command, pipecond, nametask, namecond));
             }
-            if (string.IsNullOrEmpty(nametask))
+            else
             {
-                nametask = command.Method.Name;
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "Pipe not found to add task");
             }
-            PipeCondition<T>? pipecond = null;
-            if (condition != null)
-            {
-                pipecond = new PipeCondition<T>(condition, null, nametask);
-            }
-            _pipes[_currentPipe].tasks.Add((id, command, pipecond, nametask, namecond));
         }
 
     }

@@ -8,6 +8,21 @@
 
 - First Release
 
+## Features
+[**Top**](#table-of-contents)
+
+- Contract with thread safety for change values
+- Set the maximum amount of parallel execution
+- Add multiple preconditions to run a pipe
+- Add multiple link to the pipe to jump to another pipe
+- Add tasks with a precondition
+- Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
+- Save a result from each pipe to use when executing another pipe
+- Save a result from each task to use during the execution of the aggregation pipe
+- Terminate the PipeAndFilter on any task, condition or pipe
+- Simple and clear fluent syntax
+
+
 ## Usage
 [**Top**](#table-of-contents)
 

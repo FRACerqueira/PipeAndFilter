@@ -3,8 +3,6 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-using PipeFilterCore.Control;
-
 namespace PipeFilterCore
 {
     /// <summary>

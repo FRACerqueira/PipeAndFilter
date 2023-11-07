@@ -19,10 +19,8 @@ namespace PipeFilterCore
 
         /// <summary>
         /// Create Event-Pipe.
+        /// <br>Do not use this constructor!</br>
         /// </summary>
-        /// <remarks>
-        /// Do not use this constructor!
-        /// </remarks>
         /// <exception cref="PipeAndFilterException">Message error.</exception>
         private EventPipe()
         {
@@ -58,21 +56,17 @@ namespace PipeFilterCore
 
         /// <summary>
         /// The values saved ​​associated with pipes.
-        /// </summary>
-        /// <remarks>
-        /// The values ​​are serialized in json.
+        /// <br>The values ​​are serialized in json.</br> 
         /// <br>Null result may exist.</br>
-        /// </remarks>.
+        /// </summary>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedPipes { get; }
 
         /// <summary>
         /// The values saved ​​associated with tasks.
-        /// </summary>
-        /// <remarks>
-        /// Data only exists when executed by an aggregator pipe.
+        /// <br>Data only exists when executed by an aggregator pipe.</br>
         /// <br>The values ​​are serialized in json.</br>
         /// <br>Null result may exist.</br>
-        /// </remarks>
+        /// </summary>
         public ImmutableArray<(string? Alias, string Id, string? Result)> SavedTasks { get; }
 
         /// <summary>
@@ -107,11 +101,12 @@ namespace PipeFilterCore
 
         /// <summary>
         /// Change value contract.
+        /// <br>The change will only be executed if the contract exists(not null).</br>
         /// </summary>
-        /// <param name="action">The action to change value.</param>
-        /// <remarks>
-        /// The action will only be executed if the contract exists.
-        /// </remarks>
+        /// <param name="action">
+        /// The action to change value.
+        /// <br>The action will only be executed if the contract exists(not null).</br>
+        /// </param>
         public void ChangeContract(Action<T> action)
         {
             _changecontract(action!);
@@ -119,12 +114,12 @@ namespace PipeFilterCore
 
         /// <summary>
         /// Save/overwrite a value associated with this pipe or task.
+        /// <br>The values ​​will serialize into json.</br>
         /// </summary>
         /// <typeparam name="T1">Type value to save.</typeparam>
-        /// <param name="value">The value to save.</param>
-        /// <remarks>
-        /// The values ​​will serialize into json.
-        /// </remarks>
+        /// <param name="value">
+        /// The value to save.
+        /// </param>
         public void SaveValue<T1>(T1  value)
         {
             IsSaved = true;

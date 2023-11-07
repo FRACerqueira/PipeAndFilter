@@ -21,7 +21,7 @@ Key features
 - Add multiple preconditions to run a pipe
 - Add multiple link to the pipe to jump to another pipe
 - Add tasks with a precondition
-- Have the detailed status (execution time, execution type, result of each executed condition) in each pipe
+- Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
 - Save a result from each pipe to use when executing another pipe
 - Save a result from each task to use during the execution of the aggregation pipe
 - Terminate the PipeAndFilter on any task, condition or pipe

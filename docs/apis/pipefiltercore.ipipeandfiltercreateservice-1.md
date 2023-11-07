@@ -41,15 +41,11 @@ The handler pipe to execute.
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The unique alias for pipe.
- <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).
+ <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).<br>Alias ​​is used to reference in another pipe.
 
 #### Returns
 
 [IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
-
-**Remarks:**
-
-Alias ​​is used to reference in another pipe.
 
 ### <a id="methods-addpipetasks"/>**AddPipeTasks(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
@@ -67,15 +63,11 @@ The handler pipe aggregate to execute.
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The unique alias for pipe.
- <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).
+ <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).<br>Alias ​​is used to reference in another pipe.
 
 #### Returns
 
 [IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
-
-**Remarks:**
-
-Alias ​​is used to reference in another pipe.
 
 
 - - -

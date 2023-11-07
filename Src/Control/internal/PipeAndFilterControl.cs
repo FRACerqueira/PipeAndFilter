@@ -3,15 +3,12 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using PipeFilterCore.CommandsInterface;
 
-namespace PipeFilterCore.Control
+namespace PipeFilterCore
 {
     internal class PipeAndFilterControl<T> : IDisposable,IPipeAndFilterRunService<T> where T : class
     {
@@ -21,6 +18,7 @@ namespace PipeFilterCore.Control
         private readonly List<string> _sequencePipes = new();
         private readonly List<(string? Alias, string Id, string? Value)> _savedvalues = new();
         private readonly List<(string? Alias, string Id, string? Value)> _savedtaskvalues = new();
+        private readonly Dictionary<string, List<PipeStatus>> _status = new();
 
         private bool _disposed;
         private CancellationTokenSource? _pipects;
@@ -107,7 +105,11 @@ namespace PipeFilterCore.Control
 
         private void InitControl()
         {
-            _sequencePipes.AddRange(_parameters.Pipes.Keys.ToArray());
+            _sequencePipes.AddRange(_parameters.Pipes.Select(x => x.Id));
+            foreach (var item in _sequencePipes)
+            {
+                _status.Add(item, new());
+            }
         }
 
         private async ValueTask<ResultPipeAndFilter<T>> ExecutePipes()
@@ -121,13 +123,13 @@ namespace PipeFilterCore.Control
                 {
                     var tm = Stopwatch.StartNew();
                     var elapsed = TimeSpan.Zero;
-                    var sta = TaskStatus.WaitingForActivation;
+                    var sta = HandlerStatus.Created;
                     try
                     {
                         _savedtaskvalues.Clear();
-                        if (_parameters.Pipes[_currentPipe!].aggregateTasks)
+                        if (_parameters.AggregateTasks[_currentPipe!])
                         {
-                            await ExecuteTasksPipes(_parameters.Pipes[_currentPipe!].tasks!);
+                            await ExecuteTasksPipes(_parameters.Tasks[_currentPipe!]);
                         }
                         if (!IsEnd)
                         {
@@ -146,8 +148,8 @@ namespace PipeFilterCore.Control
                                 _prevPipe,
                                 _currentPipe!,
                                 aliasprev, aliascur);
-                            await _parameters.Pipes[_currentPipe!].pipehandle(evt, _pipects!.Token);
-                            sta = TaskStatus.RanToCompletion;
+                            await _parameters.Pipes.First(x => x.Id == _currentPipe!).Handler(evt, _pipects!.Token);
+                            sta = HandlerStatus.Completed;
                             elapsed = tm.Elapsed;
                             EnsureResultEventPipe(_currentPipe!, evt);
                         }
@@ -155,13 +157,13 @@ namespace PipeFilterCore.Control
                     catch (OperationCanceledException)
                     {
                         elapsed = tm.Elapsed;
-                        sta = TaskStatus.Canceled;
+                        sta = HandlerStatus.Canceled;
                         _finished = true;
                     }
                     catch (Exception ex)
                     {
                         elapsed = tm.Elapsed;
-                        sta = TaskStatus.Faulted;
+                        sta = HandlerStatus.Faulted;
                         _lastexception = new PipeAndFilterException(
                             new PipeStatus(
                                 HandlerType.Pipe,
@@ -175,7 +177,7 @@ namespace PipeFilterCore.Control
                         _finished = true;
                     }
                     tm.Stop();
-                    _parameters.Pipes[_currentPipe!].status.Add(new PipeStatus(
+                    _status[_currentPipe].Add(new PipeStatus(
                         HandlerType.Pipe,
                         sta,
                         elapsed,
@@ -207,9 +209,9 @@ namespace PipeFilterCore.Control
                 _lastexception,
                 _parameters.Pipes.Select(x =>
                     new PipeRanStatus(
-                        x.Key,
-                        _parameters.IdToAlias[x.Key],
-                        x.Value.status)).ToImmutableArray()
+                        x.Id,
+                        _parameters.IdToAlias[x.Id],
+                        _status[x.Id].ToImmutableArray())).ToImmutableArray()
                 );
         }
 
@@ -218,10 +220,10 @@ namespace PipeFilterCore.Control
             while (!IsEnd)
             {
                 var isok = true;
-                foreach (var itemcond in _parameters.Pipes[_currentPipe!].precondhandle)
+                foreach (var itemcond in _parameters.PreConditions[_currentPipe!])
                 {
                     var condpipeType = string.IsNullOrEmpty(itemcond.GotoId) ? HandlerType.Condition : HandlerType.ConditionGoto;
-                    var sta = TaskStatus.RanToCompletion;
+                    var sta = HandlerStatus.Created;
                     string? aliasprev = null;
                     if (!string.IsNullOrEmpty(_prevPipe))
                     {
@@ -245,18 +247,19 @@ namespace PipeFilterCore.Control
                     {
                         isok = await itemcond.Handle!(evt, _pipects!.Token);
                         elapsed = tm.Elapsed;
+                        sta = HandlerStatus.Completed;
                         EnsureResultEventPipe(_currentPipe!, evt);
                     }
                     catch (OperationCanceledException)
                     {
                         elapsed = tm.Elapsed;
-                        sta = TaskStatus.Canceled;
+                        sta = HandlerStatus.Canceled;
                         _finished = true;
                     }
                     catch (Exception ex)
                     {
                         elapsed = tm.Elapsed;
-                        sta = TaskStatus.Faulted;
+                        sta = HandlerStatus.Faulted;
                         _lastexception = new PipeAndFilterException(
                              new PipeStatus(
                                  condpipeType,
@@ -271,7 +274,7 @@ namespace PipeFilterCore.Control
                         _pipects!.Cancel(false);
                     }
                     tm.Stop();
-                    _parameters.Pipes[_currentPipe!].status.Add(new PipeStatus(
+                    _status[_currentPipe!].Add(new PipeStatus(
                         condpipeType,
                         sta,
                         elapsed,
@@ -350,7 +353,7 @@ namespace PipeFilterCore.Control
             }
         }
 
-        private async Task ExecuteTasksPipes(List<(string Id, Func<EventPipe<T>, CancellationToken, Task> TaskHandle, PipeCondition<T>? TaskCondition, string? NameTask, string? NameCondition)> tasks)
+        private async Task ExecuteTasksPipes(IImmutableList<PipeTask<T>> tasks)
         {
             var i = 0;
             var maxDegreeProcess = _parameters.MaxDegreeProcess[_currentPipe!];
@@ -362,9 +365,9 @@ namespace PipeFilterCore.Control
                 do
                 {
                     var isvalidtask = true;
-                    if (tasks[i].TaskCondition.HasValue)
+                    if (tasks[i].Condition.HasValue)
                     {
-                        TaskStatus sta;
+                        HandlerStatus sta;
                         string? aliasprev = null;
                         if (!string.IsNullOrEmpty(_prevPipe))
                         {
@@ -386,21 +389,21 @@ namespace PipeFilterCore.Control
                         var tm = Stopwatch.StartNew();
                         try
                         {
-                            isvalidtask = await tasks[i].TaskCondition!.Value.Handle!(evt, _pipects!.Token);
+                            isvalidtask = await tasks[i].Condition!.Value.Handle!(evt, _pipects!.Token);
                             elapsed = tm.Elapsed;
-                            sta = TaskStatus.RanToCompletion;
+                            sta = HandlerStatus.Completed;
                             EnsureResultEventPipeTask(tasks[i].Id, tasks[i].NameTask, evt);
                         }
                         catch (OperationCanceledException)
                         {
                             elapsed = tm.Elapsed;
-                            sta = TaskStatus.Canceled;
+                            sta = HandlerStatus.Canceled;
                             _finished = true;
                         }
                         catch (Exception ex)
                         {
                             elapsed = tm.Elapsed;
-                            sta = TaskStatus.Faulted;
+                            sta = HandlerStatus.Faulted;
                             _lastexception = new PipeAndFilterException(
                                 new PipeStatus(
                                     HandlerType.ConditionTask,
@@ -415,7 +418,7 @@ namespace PipeFilterCore.Control
                             _pipects!.Cancel(false);
                         }
                         tm.Stop();
-                        _parameters.Pipes[_currentPipe!].status.Add(new PipeStatus(
+                        _status[_currentPipe!].Add(new PipeStatus(
                             HandlerType.ConditionTask,
                             sta,
                             elapsed,
@@ -439,7 +442,7 @@ namespace PipeFilterCore.Control
                             lock (_lockObj)
                             {
                                 var index = (int)param!;
-                                handle = tasks[index].TaskHandle;
+                                handle = tasks[index].Handler;
                                 taskid = tasks[index].Id;
                                 taskname = tasks[index].NameTask;
                                 if (!string.IsNullOrEmpty(_prevPipe))
@@ -458,18 +461,19 @@ namespace PipeFilterCore.Control
                                     aliasprev, aliascur);
                             }
                             var elapsed = TimeSpan.Zero;
-                            var sta = TaskStatus.RanToCompletion;
+                            var sta = HandlerStatus.Created;
                             var tm = Stopwatch.StartNew();
                             try
                             {
                                 handle(evt, _pipects!.Token).Wait(_pipects.Token);
                                 elapsed = tm.Elapsed;
+                                sta = HandlerStatus.Completed;
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                             }
                             catch (OperationCanceledException)
                             {
                                 elapsed = tm.Elapsed;
-                                sta = TaskStatus.Canceled;
+                                sta = HandlerStatus.Canceled;
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
@@ -479,7 +483,7 @@ namespace PipeFilterCore.Control
                             catch (Exception ex)
                             {
                                 elapsed = tm.Elapsed;
-                                sta = TaskStatus.Faulted;
+                                sta = HandlerStatus.Faulted;
                                 EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
@@ -499,7 +503,7 @@ namespace PipeFilterCore.Control
                             tm.Stop();
                             lock (_lockObj)
                             {
-                                _parameters.Pipes[_currentPipe!].status.Add(new PipeStatus(
+                                _status[_currentPipe!].Add(new PipeStatus(
                                     HandlerType.Task,
                                     sta,
                                     elapsed,

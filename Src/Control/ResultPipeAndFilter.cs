@@ -14,10 +14,8 @@ namespace PipeFilterCore
     {
         /// <summary>
         /// Create Result of PipeAndFilter.
+        /// <br>Do not use this constructor!</br>
         /// </summary>
-        /// <remarks>
-        /// Do not use this constructor!
-        /// </remarks>
         /// <exception cref="PipeAndFilterException">Message error.</exception>
         public ResultPipeAndFilter()
         {
@@ -61,5 +59,9 @@ namespace PipeFilterCore
         /// </summary>
         public ImmutableArray<PipeRanStatus> Status { get; }
 
+        /// <summary>
+        /// Total Elapsedtime
+        /// </summary>
+        public TimeSpan Elapsedtime => TimeSpan.FromMilliseconds(Status.Sum(x => x.Status.Elapsedtime.TotalMilliseconds));
     }
 }
