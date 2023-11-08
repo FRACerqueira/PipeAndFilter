@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using PipeFilterCore;
@@ -41,7 +39,7 @@ namespace PipeandFIlterBenchmarking
         {
             await PipeAndFilter.New<MyClass>()
                 .AddPipe(ExecPipe)
-                    .WithCondition(CondTrue,null)
+                    .WithCondition(CondTrue)
                 .BuildAndCreate()
                 .Run();
         }
@@ -53,7 +51,7 @@ namespace PipeandFIlterBenchmarking
                 .AddPipe(ExecPipe);
             for (int i = 0; i < 10; i++)
             {
-                aux.WithCondition(CondTrue, null);
+                aux.WithCondition(CondTrue);
            }
             await aux.BuildAndCreate()
                 .Run();
@@ -66,10 +64,9 @@ namespace PipeandFIlterBenchmarking
                 .AddPipe(ExecPipe);
             for (int i = 0; i < 10; i++)
             {
-                aux.WithCondition(CondFalse, "EndPipe");
-            }
-            aux.WithCondition(CondTrue, null)
-               .AddPipe(ExecPipe,"EndPipe");
+                aux.WithGotoCondition(CondFalse, "EndPipe");
+            };
+            aux.AddPipe(ExecPipe,"EndPipe");
             await aux.BuildAndCreate()
                 .Run();
         }

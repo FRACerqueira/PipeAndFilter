@@ -1,5 +1,3 @@
-
-using System;
 using PipeFilterCore;
 
 namespace WebApplication1
