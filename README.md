@@ -137,7 +137,7 @@ public class WeatherForecastController : ControllerBase
     {
             var cid = Guid.NewGuid().ToString();
 
-            var pipe = await _mypipes.First(x => x.ServiceId == "opc1")
+            var pipe = await _mypipes
                 .Create()
                 .Logger(_logger)
                 .CorrelationId(cid)
