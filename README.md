@@ -9,6 +9,8 @@
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
 
+<img src="./docs/images/PipeAndFilterFeature.png"> 
+
 **[Visit the official page for more documentation of PipeAndFilter](https://fracerqueira.github.io/PipeAndFilter)**
 
 ## Table of Contents
