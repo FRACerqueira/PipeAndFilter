@@ -50,7 +50,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task50(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });
@@ -67,7 +67,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task100(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });
@@ -84,7 +84,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task150(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });

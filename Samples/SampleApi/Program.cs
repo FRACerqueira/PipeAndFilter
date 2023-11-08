@@ -49,7 +49,7 @@ namespace WebApplication1
 
         private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.TemperatureC += 10;
             });

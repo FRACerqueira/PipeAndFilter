@@ -28,11 +28,11 @@ and the ability to parallel execute tasks over a pipe.
 - [API Reference](https://fracerqueira.github.io/PipeAndFilter/apis/apis.html)
 
 ## What's new in the latest version 
-### V1.0.0 
+### V1.0.1 
 
 [**Top**](#table-of-contents)
 
-- First Release
+- First Release G.A
 
 ## Features
 [**Top**](#table-of-contents)

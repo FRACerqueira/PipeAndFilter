@@ -36,10 +36,10 @@ PipeAndFilter was developed in C# with target frameworks:
 - .NET 6
 - .NET 7
 
-*** What's new in V1.0.0 ***
+*** What's new in V1.0.1 ***
 ----------------------------
 
-- First Release
+- First Release G.A
 
 **PipeAndFilter Sample-console Usage**
 --------------------------------------
@@ -77,7 +77,7 @@ builder.Services
 
 private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    pipe.ChangeContract((contract) =>
+    pipe.ThreadSafeAccess((contract) =>
     {
         contract.TemperatureC += 10;
     });

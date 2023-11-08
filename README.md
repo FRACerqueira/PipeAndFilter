@@ -28,11 +28,11 @@
 - [API Reference](https://fracerqueira.github.io/PipeAndFilter/apis/apis.html)
 
 ## What's new in the latest version 
-### V1.0.0 
+### V1.0.1
 
 [**Top**](#table-of-contents)
 
-- First Release
+- First Release G.A
 
 ## Features
 [**Top**](#table-of-contents)
@@ -112,7 +112,7 @@ builder.Services
 ```csharp
 private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    pipe.ChangeContract((contract) =>
+    pipe.ThreadSafeAccess((contract) =>
     {
         contract.TemperatureC += 10;
     });
