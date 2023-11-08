@@ -29,7 +29,7 @@ Type of contract.
 Build PipeAndFilter to add into ServiceCollection.
 
 ```csharp
-IPipeAndFilterServiceBuild<T> Build(string serviceId)
+IPipeAndFilterService<T> Build(string serviceId)
 ```
 
 #### Parameters
@@ -39,19 +39,19 @@ The service Id.
 
 #### Returns
 
-[IPipeAndFilterServiceBuild&lt;T&gt;](./pipefiltercore.ipipeandfilterservicebuild-1.md)
+[IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
 
 ### <a id="methods-buildandcreate"/>**BuildAndCreate()**
 
 Build and create PipeAndFilter to run.
 
 ```csharp
-IPipeAndFilterRunService<T> BuildAndCreate()
+IPipeAndFilterInit<T> BuildAndCreate()
 ```
 
 #### Returns
 
-[IPipeAndFilterRunService&lt;T&gt;](./pipefiltercore.ipipeandfilterrunservice-1.md)
+[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
 
 - - -

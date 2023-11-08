@@ -19,7 +19,7 @@ namespace PipeFilterCore
         /// <param name="services">The <see cref="IServiceCollection"/>.</param>
         /// <param name="pipeAndFilterServiceBuild">The PipeAndFilter</param>
         /// <returns><see cref="IServiceCollection"/></returns>
-        public static IServiceCollection AddPipeAndFilter<T>(this IServiceCollection services, IPipeAndFilterServiceBuild<T> pipeAndFilterServiceBuild) where T : class
+        public static IServiceCollection AddPipeAndFilter<T>(this IServiceCollection services, IPipeAndFilterService<T> pipeAndFilterServiceBuild) where T : class
         {
             return services.AddSingleton(pipeAndFilterServiceBuild);
         }

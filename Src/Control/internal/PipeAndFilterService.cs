@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace PipeFilterCore
 {
-    internal class PipeAndFilterService<T> : IPipeAndFilterOptions<T>, IPipeAndFilterServiceBuild<T> where T : class
+    internal class PipeAndFilterService<T> : IPipeAndFilterOptions<T>, IPipeAndFilterService<T> where T : class
     {
         private readonly string? _serviceid;
         private readonly IPipeAndFilterOptions<T> _parameters;
@@ -36,7 +36,7 @@ namespace PipeFilterCore
 
         #region IPipeAndFilterServiceBuild
 
-        IPipeAndFilterRunService<T> IPipeAndFilterServiceBuild<T>.Create()
+        IPipeAndFilterInit<T> IPipeAndFilterService<T>.Create()
         {
             return new PipeAndFilterControl<T>(this);
         }

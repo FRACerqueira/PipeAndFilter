@@ -11,7 +11,7 @@ namespace PipeFilterCore
     /// Represents commands for initialization and run.
     /// </summary>
     /// <typeparam name="T">Type of contract.</typeparam>
-    public interface IPipeAndFilterRunService<T>: IPipeAndFilterRun<T> where T : class
+    public interface IPipeAndFilterInit<T>: IPipeAndFilterRun<T> where T : class
     {
         /// <summary>
         /// The service id for this type.
@@ -22,22 +22,22 @@ namespace PipeFilterCore
         /// Initial contract value.
         /// </summary>
         /// <param name="contract">The contract.</param>
-        /// <returns><see cref="IPipeAndFilterRunService{T}"/></returns>
-        IPipeAndFilterRunService<T> Init(T contract);
+        /// <returns><see cref="IPipeAndFilterInit{T}"/></returns>
+        IPipeAndFilterInit<T> Init(T contract);
 
         /// <summary>
         /// The Correlation Id.
         /// </summary>
         /// <param name="value">Correlation Id value.</param>
-        /// <returns><see cref="IPipeAndFilterRunService{T}"/></returns>
-        IPipeAndFilterRunService<T> CorrelationId(string? value);
+        /// <returns><see cref="IPipeAndFilterInit{T}"/></returns>
+        IPipeAndFilterInit<T> CorrelationId(string? value);
 
         /// <summary>
         /// The logger handler.
         /// </summary>
         /// <param name="value">logger handler value.</param>
-        /// <returns><see cref="IPipeAndFilterRunService{T}"/></returns>
-        IPipeAndFilterRunService<T> Logger(ILogger? value);
+        /// <returns><see cref="IPipeAndFilterInit{T}"/></returns>
+        IPipeAndFilterInit<T> Logger(ILogger? value);
 
     }
 }

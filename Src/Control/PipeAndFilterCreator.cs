@@ -14,8 +14,8 @@ namespace PipeFilterCore
         /// Create PipeAndFilter service.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <returns><see cref="IPipeAndFilterCreateService{T}"/></returns>
-        public static IPipeAndFilterCreateService<T> New<T>() where T : class
+        /// <returns><see cref="IPipeAndFilterStart{T}"/></returns>
+        public static IPipeAndFilterStart<T> New<T>() where T : class
         {
             return new PipeAndFilterBuild<T>();
         }

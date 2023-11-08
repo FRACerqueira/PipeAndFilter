@@ -6,17 +6,17 @@
 using System.Collections.Immutable;
 
 namespace PipeFilterCore
-
 {
+
     /// <summary>
     /// Represents the commands of the PipeAndFilter definition.
     /// </summary>
     /// <typeparam name="T">Type of contract.</typeparam>
     internal class PipeAndFilterBuild<T> :
-        IPipeAndFilterCreateService<T>,
-        IPipeAndFilterService<T>,
-        IPipeAndFilterConditionsService<T>,
-        IPipeAndFilterTasksService<T>,
+        IPipeAndFilterStart<T>,
+        IPipeAndFilterAdd<T>,
+        IPipeAndFilterCondition<T>,
+        IPipeAndFilterTasks<T>,
         IPipeAndFilterOptions<T>
         where T : class
     {
@@ -66,15 +66,15 @@ namespace PipeFilterCore
 
         #endregion
 
-        #region IPipeAndFilterCreateService
+        #region IPipeAndFilterStart
 
-        IPipeAndFilterService<T> IPipeAndFilterCreateService<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterAdd<T> IPipeAndFilterStart<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, false);
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterCreateService<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterTasks<T> IPipeAndFilterStart<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, true);
             return this;
@@ -82,65 +82,89 @@ namespace PipeFilterCore
 
         #endregion
 
-        #region IPipeAndFilterService
+        #region IPipeAndFilterAdd
 
-        IPipeAndFilterService<T> IPipeAndFilterService<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterAdd<T> IPipeAndFilterAdd<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, false);
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterService<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterTasks<T> IPipeAndFilterAdd<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, true);
             return this;
         }
 
-        IPipeAndFilterConditionsService<T> IPipeAndFilterService<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
+        IPipeAndFilterCondition<T> IPipeAndFilterAdd<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition)
         {
-            SharedWithCondition(condition,aliasgoto, namecondition);
+            SharedWithCondition(condition,null, namecondition);
             return this;
         }
 
-        #endregion
-
-        #region IPipeAndFilterConditionsService
-
-        IPipeAndFilterService<T> IPipeAndFilterConditionsService<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterCondition<T> IPipeAndFilterAdd<T>.WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string aliasgoto, string? namecondition)
         {
-            SharedAddPipeTasks(command, alias, false);
-            return this;
-        }
-
-        IPipeAndFilterTasksService<T> IPipeAndFilterConditionsService<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
-        {
-            SharedAddPipeTasks(command, alias, true);
-            return this;
-        }
-
-        IPipeAndFilterConditionsService<T> IPipeAndFilterConditionsService<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
-        {
+            if (aliasgoto == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "aliasgoto cannot be null");
+            }
             SharedWithCondition(condition, aliasgoto, namecondition);
             return this;
         }
 
         #endregion
 
-        #region IPipeAndFilterTasksService
+        #region IPipeAndFilterCondition
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterTasksService<T>.AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask)
+        IPipeAndFilterAdd<T> IPipeAndFilterCondition<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        {
+            SharedAddPipeTasks(command, alias, false);
+            return this;
+        }
+
+        IPipeAndFilterTasks<T> IPipeAndFilterCondition<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        {
+            SharedAddPipeTasks(command, alias, true);
+            return this;
+        }
+
+        IPipeAndFilterCondition<T> IPipeAndFilterCondition<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition)
+        {
+            SharedWithCondition(condition, null, namecondition);
+            return this;
+        }
+
+        IPipeAndFilterCondition<T> IPipeAndFilterCondition<T>.WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string aliasgoto, string? namecondition)
+        {
+            if (aliasgoto == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "aliasgoto cannot be null");
+            }
+            SharedWithCondition(condition, aliasgoto, namecondition);
+            return this;
+        }
+
+        #endregion
+
+        #region IPipeAndFilterTasks
+
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask)
         {
             SharedAddTask(command, null, nametask, null);
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterTasksService<T>.AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? nametask, string? namecondition)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? nametask, string? namecondition)
         {
             SharedAddTask(command, condition, nametask, namecondition);
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterTasksService<T>.MaxDegreeProcess(int value)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.MaxDegreeProcess(int value)
         {
             if (value < 0)
             {
@@ -170,19 +194,32 @@ namespace PipeFilterCore
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterTasksService<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? aliasgoto, string? namecondition)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition)
         {
-            SharedWithCondition(condition, aliasgoto, namecondition);
+            SharedWithCondition(condition, null, namecondition);
             return this;
         }
 
-        IPipeAndFilterService<T> IPipeAndFilterTasksService<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string aliasgoto, string? namecondition)
+        {
+            if (aliasgoto == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "aliasgoto cannot be null");
+            }
+            SharedWithCondition(condition, null, namecondition);
+            return this;
+        }
+
+        IPipeAndFilterAdd<T> IPipeAndFilterTasks<T>.AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, false);
             return this;
         }
 
-        IPipeAndFilterTasksService<T> IPipeAndFilterTasksService<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
+        IPipeAndFilterTasks<T> IPipeAndFilterTasks<T>.AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias)
         {
             SharedAddPipeTasks(command, alias, true);
             return this;
@@ -192,7 +229,7 @@ namespace PipeFilterCore
 
         #region IPipeAndFilterBuild
 
-        IPipeAndFilterServiceBuild<T> IPipeAndFilterBuild<T>.Build(string? serviceId)
+        IPipeAndFilterService<T> IPipeAndFilterBuild<T>.Build(string? serviceId)
         {
             _serviceId = serviceId;
             if (_pipes.Count == 0)
@@ -217,7 +254,7 @@ namespace PipeFilterCore
             return new PipeAndFilterService<T>(serviceId, this);
         }
 
-        IPipeAndFilterRunService<T> IPipeAndFilterBuild<T>.BuildAndCreate()
+        IPipeAndFilterInit<T> IPipeAndFilterBuild<T>.BuildAndCreate()
         {
             return new PipeAndFilterControl<T>(new PipeAndFilterService<T>(null, this));
         }

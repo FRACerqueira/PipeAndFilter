@@ -15,13 +15,13 @@ namespace PipeFilterCore
         /// Build PipeAndFilter to add into ServiceCollection.
         /// </summary>
         /// <param name="serviceId">The service Id.</param>
-        /// <returns><see cref="IPipeAndFilterServiceBuild{T}"/></returns>
-        IPipeAndFilterServiceBuild<T> Build(string? serviceId = null);
+        /// <returns><see cref="IPipeAndFilterService{T}"/></returns>
+        IPipeAndFilterService<T> Build(string? serviceId = null);
 
         /// <summary>
         /// Build and create PipeAndFilter to run.
         /// </summary>
-        /// <returns><see cref="IPipeAndFilterRunService{T}"/></returns>
-        IPipeAndFilterRunService<T> BuildAndCreate();
+        /// <returns><see cref="IPipeAndFilterInit{T}"/></returns>
+        IPipeAndFilterInit<T> BuildAndCreate();
     }
 }
