@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterRunService<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterInit<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterRunService&lt;T&gt;
+# IPipeAndFilterInit&lt;T&gt;
 
 Namespace: PipeFilterCore
 
 Represents commands for initialization and run.
 
 ```csharp
-public interface IPipeAndFilterRunService<T> : IPipeAndFilterRun<T>
+public interface IPipeAndFilterInit<T> : IPipeAndFilterRun<T>
 ```
 
 #### Type Parameters
@@ -45,7 +45,7 @@ public abstract string ServiceId { get; }
 The Correlation Id.
 
 ```csharp
-IPipeAndFilterRunService<T> CorrelationId(string value)
+IPipeAndFilterInit<T> CorrelationId(string value)
 ```
 
 #### Parameters
@@ -55,14 +55,14 @@ Correlation Id value.
 
 #### Returns
 
-[IPipeAndFilterRunService&lt;T&gt;](./pipefiltercore.ipipeandfilterrunservice-1.md)
+[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
 ### <a id="methods-init"/>**Init(T)**
 
 Initial contract value.
 
 ```csharp
-IPipeAndFilterRunService<T> Init(T contract)
+IPipeAndFilterInit<T> Init(T contract)
 ```
 
 #### Parameters
@@ -72,14 +72,14 @@ The contract.
 
 #### Returns
 
-[IPipeAndFilterRunService&lt;T&gt;](./pipefiltercore.ipipeandfilterrunservice-1.md)
+[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
 ### <a id="methods-logger"/>**Logger(ILogger)**
 
 The logger handler.
 
 ```csharp
-IPipeAndFilterRunService<T> Logger(ILogger value)
+IPipeAndFilterInit<T> Logger(ILogger value)
 ```
 
 #### Parameters
@@ -89,7 +89,7 @@ logger handler value.
 
 #### Returns
 
-[IPipeAndFilterRunService&lt;T&gt;](./pipefiltercore.ipipeandfilterrunservice-1.md)
+[IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
 
 - - -

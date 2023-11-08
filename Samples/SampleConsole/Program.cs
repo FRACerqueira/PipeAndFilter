@@ -14,13 +14,13 @@ namespace PipeFilterCoreSamples
             var contract = new MyClass { MyProperty = 10 };
             var pl = await PipeAndFilter.New<MyClass>()
                 .AddPipe(ExecPipe)
-                    .WithCondition(CondFalse, "LastPipe")
-                    .WithCondition(CondTrue, null)
-                    .WithCondition(CondTrue, null)
+                    .WithGotoCondition(CondFalse, "LastPipe")
+                    .WithCondition(CondTrue)
+                    .WithCondition(CondTrue)
                 .AddPipe(ExecPipe)
                 .AddPipe(ExecPipe100)
                 .AddPipeTasks(AgregateTask)
-                    .WithCondition(CondTrue, null)
+                    .WithCondition(CondTrue)
                     .MaxDegreeProcess(4)
                     .AddTask(Task50)
                     .AddTaskCondition(Task100, CondFalse)
@@ -50,7 +50,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task50(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });
@@ -67,7 +67,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task100(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });
@@ -84,7 +84,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task Task150(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.ChangeContract((contract) =>
+            pipe.ThreadSafeAccess((contract) =>
             {
                 contract.MyProperty++;
             });

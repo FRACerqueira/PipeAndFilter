@@ -9,9 +9,9 @@ namespace WebApplication1.Controllers
     {
 
         private readonly ILogger<WeatherForecastController> _logger;
-        private readonly IEnumerable<IPipeAndFilterServiceBuild<WeatherForecast>> _mypipes;
+        private readonly IEnumerable<IPipeAndFilterService<WeatherForecast>> _mypipes;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IEnumerable<IPipeAndFilterServiceBuild<WeatherForecast>> pipeAndFilter)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IEnumerable<IPipeAndFilterService<WeatherForecast>> pipeAndFilter)
         {
             _logger = logger;
             _mypipes = pipeAndFilter;

@@ -141,21 +141,6 @@ The current alias.
 
 ## Methods
 
-### <a id="methods-changecontract"/>**ChangeContract(Action&lt;T&gt;)**
-
-Change value contract.
- <br>The change will only be executed if the contract exists(not null).
-
-```csharp
-public void ChangeContract(Action<T> action)
-```
-
-#### Parameters
-
-`action` Action&lt;T&gt;<br>
-The action to change value.
- <br>The action will only be executed if the contract exists(not null).
-
 ### <a id="methods-endpipeandfilter"/>**EndPipeAndFilter()**
 
 End PipeAndFilter.
@@ -190,6 +175,21 @@ Type value to save.
 
 `value` T1<br>
 The value to save.
+
+### <a id="methods-threadsafeaccess"/>**ThreadSafeAccess(Action&lt;T&gt;)**
+
+Thread Safe Access of contract.
+ <br>The action will only be executed if the contract exists(not null).
+
+```csharp
+public void ThreadSafeAccess(Action<T> action)
+```
+
+#### Parameters
+
+`action` Action&lt;T&gt;<br>
+The action to access.
+ <br>The action will only be executed if the contract exists(not null).
 
 
 - - -

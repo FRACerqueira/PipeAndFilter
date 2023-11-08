@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterConditionsService<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterCondition<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterConditionsService&lt;T&gt;
+# IPipeAndFilterCondition&lt;T&gt;
 
 Namespace: PipeFilterCore
 
 Represents commands for conditions.
 
 ```csharp
-public interface IPipeAndFilterConditionsService<T> : IPipeAndFilterBuild<T>
+public interface IPipeAndFilterCondition<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
@@ -31,7 +31,7 @@ Implements IPipeAndFilterBuild&lt;T&gt;
 Add new pipe.
 
 ```csharp
-IPipeAndFilterService<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterAdd<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -45,14 +45,14 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
+[IPipeAndFilterAdd&lt;T&gt;](./pipefiltercore.ipipeandfilteradd-1.md)
 
 ### <a id="methods-addpipetasks"/>**AddPipeTasks(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
 Add new pipe aggregate tasks.
 
 ```csharp
-IPipeAndFilterTasksService<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -67,14 +67,35 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
-### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
+### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String)**
 
 Add new condition.
 
 ```csharp
-IPipeAndFilterConditionsService<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
+IPipeAndFilterCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string namecondition)
+```
+
+#### Parameters
+
+`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
+The handle condition to execute.
+
+`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for condition(optional).
+
+#### Returns
+
+[IPipeAndFilterCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltercondition-1.md)
+
+### <a id="methods-withgotocondition"/>**WithGotoCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
+
+Add new go to condition.
+ <br>If the condition is true, jump to the given pipe without executing the current pipe.<br>If the false condition continues.
+
+```csharp
+IPipeAndFilterCondition<T> WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
 ```
 
 #### Parameters
@@ -84,14 +105,13 @@ The handle condition to execute.
 
 `aliasgoto` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The alias to another pipe.
- <br>If condition not have link to another pipe, the value must be null.
 
 `namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterConditionsService&lt;T&gt;](./pipefiltercore.ipipeandfilterconditionsservice-1.md)
+[IPipeAndFilterCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltercondition-1.md)
 
 
 - - -

@@ -21,12 +21,12 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Methods
 
-### <a id="methods-addpipeandfilter"/>**AddPipeAndFilter&lt;T&gt;(IServiceCollection, IPipeAndFilterServiceBuild&lt;T&gt;)**
+### <a id="methods-addpipeandfilter"/>**AddPipeAndFilter&lt;T&gt;(IServiceCollection, IPipeAndFilterService&lt;T&gt;)**
 
 Add PipeAndFilter to ServiceCollection.
 
 ```csharp
-public static IServiceCollection AddPipeAndFilter<T>(IServiceCollection services, IPipeAndFilterServiceBuild<T> pipeAndFilterServiceBuild)
+public static IServiceCollection AddPipeAndFilter<T>(IServiceCollection services, IPipeAndFilterService<T> pipeAndFilterServiceBuild)
 ```
 
 #### Type Parameters
@@ -39,7 +39,7 @@ Type of contract.
 `services` IServiceCollection<br>
 The .
 
-`pipeAndFilterServiceBuild` IPipeAndFilterServiceBuild&lt;T&gt;<br>
+`pipeAndFilterServiceBuild` IPipeAndFilterService&lt;T&gt;<br>
 The PipeAndFilter
 
 #### Returns

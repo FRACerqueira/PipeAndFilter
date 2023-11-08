@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PipeFilterCore
 {
-    internal class PipeAndFilterControl<T> : IDisposable,IPipeAndFilterRunService<T> where T : class
+    internal class PipeAndFilterControl<T> : IDisposable,IPipeAndFilterInit<T> where T : class
     {
         private readonly IPipeAndFilterOptions<T> _parameters;
         private readonly List<Task> _tasks = new();
@@ -42,19 +42,19 @@ namespace PipeFilterCore
 
         public string? ServiceId => _parameters.ServiceId;
 
-        public IPipeAndFilterRunService<T> CorrelationId(string? value)
+        public IPipeAndFilterInit<T> CorrelationId(string? value)
         {
             _cid = value;
             return this;
         }
 
-        public IPipeAndFilterRunService<T> Init(T contract)
+        public IPipeAndFilterInit<T> Init(T contract)
         {
             _contract = contract;
             return this;
         }
 
-        public IPipeAndFilterRunService<T> Logger(ILogger? value)
+        public IPipeAndFilterInit<T> Logger(ILogger? value)
         {
             _logger = value ?? NullLogger.Instance;
             return this;
@@ -280,30 +280,31 @@ namespace PipeFilterCore
                         elapsed,
                         itemcond.Name,
                         itemcond.GotoId, isok));
-                    if (!IsEnd)
+                    if (!IsEnd && ((!isok && condpipeType == HandlerType.Condition) || (isok && condpipeType == HandlerType.ConditionGoto)))
                     {
-                        if ((!isok && condpipeType == HandlerType.Condition) || (isok && condpipeType == HandlerType.ConditionGoto))
+                        if (!string.IsNullOrEmpty(itemcond.GotoId))
                         {
-                            if (!string.IsNullOrEmpty(itemcond.GotoId))
-                            {
-                                _prevPipe = _currentPipe;
-                                _currentPipe = _parameters.AliasToId[itemcond.GotoId];
-                                _currentPipeIndex = _sequencePipes.IndexOf(_currentPipe);
-                                return;
-                            }
-                            _currentPipeIndex++;
-                            if (_currentPipeIndex < _sequencePipes.Count)
-                            {
-                                _prevPipe = _currentPipe;
-                                _currentPipe = _sequencePipes[_currentPipeIndex];
-                            }
-                            else
-                            {
-                                _finished = true;
-                            }
+                            _prevPipe = _currentPipe;
+                            _currentPipe = _parameters.AliasToId[itemcond.GotoId];
+                            _currentPipeIndex = _sequencePipes.IndexOf(_currentPipe);
                             return;
                         }
+                        _currentPipeIndex++;
+                        if (_currentPipeIndex < _sequencePipes.Count)
+                        {
+                            _prevPipe = _currentPipe;
+                            _currentPipe = _sequencePipes[_currentPipeIndex];
+                        }
+                        else
+                        {
+                            _finished = true;
+                        }
+                        return;
                     }
+                    if (!IsEnd && !isok && condpipeType == HandlerType.ConditionGoto)
+                    { 
+                        isok = true;
+                    }                
                 }
                 if (isok)
                 {

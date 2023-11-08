@@ -28,11 +28,11 @@
 - [API Reference](https://fracerqueira.github.io/PipeAndFilter/apis/apis.html)
 
 ## What's new in the latest version 
-### V1.0.0 
+### V1.0.1
 
 [**Top**](#table-of-contents)
 
-- First Release
+- First Release G.A
 
 ## Features
 [**Top**](#table-of-contents)
@@ -80,13 +80,13 @@ The **PipeAndFilter** use **fluent interface**; an object-oriented API whose des
 ```csharp
 var result = await PipeAndFilter.New<MyClass>()
     .AddPipe(ExecPipe1)
-        .WithCondition(CondFalse, "LastPipe")
-        .WithCondition(CondTrue, null)
-        .WithCondition(CondTrue, null)
+        .WithGotoCondition(CondFalse, "LastPipe")
+        .WithCondition(CondTrue)
+        .WithCondition(CondTrue)
     .AddPipe(ExecPipe2)
     .AddPipe(ExecPipe3)
     .AddPipeTasks(AgregateTask)
-        .WithCondition(CondTrue, null)
+        .WithCondition(CondTrue)
         .MaxDegreeProcess(4)
         .AddTask(Task1)
         .AddTaskCondition(Task2, CondFalse)
@@ -112,7 +112,7 @@ builder.Services
 ```csharp
 private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    pipe.ChangeContract((contract) =>
+    pipe.ThreadSafeAccess((contract) =>
     {
         contract.TemperatureC += 10;
     });

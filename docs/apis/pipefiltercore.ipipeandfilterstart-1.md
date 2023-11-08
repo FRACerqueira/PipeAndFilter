@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterCreateService<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterStart<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterCreateService&lt;T&gt;
+# IPipeAndFilterStart&lt;T&gt;
 
 Namespace: PipeFilterCore
 
 Represents the commands for Pipes.
 
 ```csharp
-public interface IPipeAndFilterCreateService<T> : IPipeAndFilterBuild<T>
+public interface IPipeAndFilterStart<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
@@ -31,7 +31,7 @@ Implements IPipeAndFilterBuild&lt;T&gt;
 Add new pipe.
 
 ```csharp
-IPipeAndFilterService<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterAdd<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -45,14 +45,14 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
+[IPipeAndFilterAdd&lt;T&gt;](./pipefiltercore.ipipeandfilteradd-1.md)
 
 ### <a id="methods-addpipetasks"/>**AddPipeTasks(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
 Add new pipe aggregate tasks.
 
 ```csharp
-IPipeAndFilterTasksService<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
@@ -67,7 +67,7 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterTasksService&lt;T&gt;](./pipefiltercore.ipipeandfiltertasksservice-1.md)
+[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 
 - - -

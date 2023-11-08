@@ -26,7 +26,7 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 Create PipeAndFilter service.
 
 ```csharp
-public static IPipeAndFilterCreateService<T> New<T>()
+public static IPipeAndFilterStart<T> New<T>()
 ```
 
 #### Type Parameters
@@ -35,7 +35,7 @@ public static IPipeAndFilterCreateService<T> New<T>()
 
 #### Returns
 
-[IPipeAndFilterCreateService&lt;T&gt;](./pipefiltercore.ipipeandfiltercreateservice-1.md)
+[IPipeAndFilterStart&lt;T&gt;](./pipefiltercore.ipipeandfilterstart-1.md)
 
 
 - - -

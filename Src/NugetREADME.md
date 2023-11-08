@@ -4,9 +4,9 @@
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
 
-## What's new in V1.0.0
+## What's new in V1.0.1
 
-- First Release
+- First Release G.A
 
 ## Features
 [**Top**](#table-of-contents)
@@ -33,13 +33,13 @@ The **PipeAndFilter** use **fluent interface**; an object-oriented API whose des
 ```csharp
 var result = await PipeAndFilter.New<MyClass>()
     .AddPipe(ExecPipe1)
-        .WithCondition(CondFalse, "LastPipe")
-        .WithCondition(CondTrue, null)
-        .WithCondition(CondTrue, null)
+        .WithGotoCondition(CondFalse, "LastPipe")
+        .WithCondition(CondTrue)
+        .WithCondition(CondTrue)
     .AddPipe(ExecPipe2)
     .AddPipe(ExecPipe3)
     .AddPipeTasks(AgregateTask)
-        .WithCondition(CondTrue, null)
+        .WithCondition(CondTrue)
         .MaxDegreeProcess(4)
         .AddTask(Task1)
         .AddTaskCondition(Task2, CondFalse)
@@ -67,7 +67,7 @@ builder.Services
 ```csharp
 private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
-    pipe.ChangeContract((contract) =>
+    pipe.ThreadSafeAccess((contract) =>
     {
         contract.TemperatureC += 10;
     });
@@ -94,7 +94,7 @@ public class WeatherForecastController : ControllerBase
     {
             var cid = Guid.NewGuid().ToString();
 
-            var pipe = await _mypipes.First(x => x.ServiceId == "opc1")
+            var pipe = await _mypipes
                 .Create()
                 .Logger(_logger)
                 .CorrelationId(cid)

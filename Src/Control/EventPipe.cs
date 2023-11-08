@@ -100,14 +100,14 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// Change value contract.
-        /// <br>The change will only be executed if the contract exists(not null).</br>
+        /// Thread Safe Access of contract.
+        /// <br>The action will only be executed if the contract exists(not null).</br>
         /// </summary>
         /// <param name="action">
-        /// The action to change value.
+        /// The action to access.
         /// <br>The action will only be executed if the contract exists(not null).</br>
         /// </param>
-        public void ChangeContract(Action<T> action)
+        public void ThreadSafeAccess(Action<T> action)
         {
             _changecontract(action!);
         }
