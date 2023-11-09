@@ -3,6 +3,7 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -376,7 +377,6 @@ namespace PipeFilterCore
             var i = 0;
             var maxDegreeProcess = _parameters.MaxDegreeProcess[_currentPipe!];
             _savedtaskvalues.Clear();
-            var emptytask = _savedtaskvalues.ToImmutableArray();
             do
             {
                 var degreecount = 0;
@@ -454,13 +454,11 @@ namespace PipeFilterCore
                             string? aliascur = null;
                             EventPipe<T> evt;
                             Func<EventPipe<T>, CancellationToken, Task> handle;
-                            string taskid;
                             string? taskname;
                             lock (_lockObj)
                             {
                                 var index = (int)param!;
                                 handle = tasks[index].Handler;
-                                taskid = tasks[index].Id;
                                 taskname = tasks[index].NameTask;
                                 if (!string.IsNullOrEmpty(_prevPipe))
                                 {
