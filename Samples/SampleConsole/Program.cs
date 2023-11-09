@@ -57,7 +57,7 @@ namespace PipeFilterCoreSamples
             try
             {
                 await Task.Delay(50, token);
-                pipe.SaveValue(50);
+                pipe.SaveValueAtEnd("T50",50);
             }
             catch (TaskCanceledException)
             {
@@ -74,7 +74,7 @@ namespace PipeFilterCoreSamples
             try
             {
                 await Task.Delay(100, token);
-                pipe.SaveValue(100);
+                pipe.SaveValueAtEnd("T100",100);
             }
             catch (TaskCanceledException)
             {
@@ -91,7 +91,7 @@ namespace PipeFilterCoreSamples
             try
             {
                 await Task.Delay(150, token);
-                pipe.SaveValue(150);
+                pipe.SaveValueAtEnd("T150",150);
             }
             catch (TaskCanceledException)
             {
@@ -101,7 +101,7 @@ namespace PipeFilterCoreSamples
 
         private static Task ExecPipe(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.SaveValue("Saved");
+            pipe.SaveValueAtEnd("ExecPipe", "Saved1");
             return Task.CompletedTask;
         }
 
@@ -112,7 +112,7 @@ namespace PipeFilterCoreSamples
 
         private static async Task ExecPipe100(EventPipe<MyClass> pipe, CancellationToken token)
         {
-            pipe.SaveValue("Saved0");
+            pipe.SaveValueAtEnd("ExecPipe100", "Saved2");
             try
             {
                 await Task.Delay(100, token);

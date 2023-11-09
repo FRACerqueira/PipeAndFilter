@@ -74,40 +74,14 @@ public ILogger Logger { get; }
 
 ILogger<br>
 
-### <a id="properties-savedpipes"/>**SavedPipes**
-
-The values saved ​​associated with pipes.
- <br>The values ​​are serialized in json.<br>Null result may exist.
-
-```csharp
-public ImmutableArray<ValueTuple<String, String, String>> SavedPipes { get; }
-```
-
-#### Property Value
-
-ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-
-### <a id="properties-savedtasks"/>**SavedTasks**
-
-The values saved ​​associated with tasks.
- <br>Data only exists when executed by an aggregator pipe.<br>The values ​​are serialized in json.<br>Null result may exist.
-
-```csharp
-public ImmutableArray<ValueTuple<String, String, String>> SavedTasks { get; }
-```
-
-#### Property Value
-
-ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-
 ## Constructors
 
-### <a id="constructors-.ctor"/>**EventPipe(String, ILogger, Action&lt;Action&lt;T&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;, String, String, String, String)**
+### <a id="constructors-.ctor"/>**EventPipe(String, ILogger, Action&lt;Action&lt;T&gt;&gt;, ImmutableDictionary&lt;String, String&gt;, String, String, String, String)**
 
 Create instance of Event-Pipe (Only internal use or Unit-Test).
 
 ```csharp
-public EventPipe(string cid, ILogger logger, Action<Action<T>> changecontract, ImmutableArray<ValueTuple<String, String, String>> savedpipes, ImmutableArray<ValueTuple<String, String, String>> savedtasks, string fromId, string currentId, string fromAlias, string currentAlias)
+public EventPipe(string cid, ILogger logger, Action<Action<T>> changecontract, ImmutableDictionary<String, String> savedvalues, string fromId, string currentId, string fromAlias, string currentAlias)
 ```
 
 #### Parameters
@@ -121,11 +95,8 @@ Handle of log.
 `changecontract` Action&lt;Action&lt;T&gt;&gt;<br>
 Handle of changecontract.
 
-`savedpipes` ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-The values saved by pipe.
-
-`savedtasks` ImmutableArray&lt;ValueTuple&lt;String, String, String&gt;&gt;<br>
-The values saved by tasks.
+`savedvalues` ImmutableDictionary&lt;String, String&gt;<br>
+The values saved.
 
 `fromId` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 The previous Id.
@@ -149,21 +120,27 @@ End PipeAndFilter.
 public void EndPipeAndFilter()
 ```
 
-### <a id="methods-removesavedvalue"/>**RemoveSavedValue()**
+### <a id="methods-removalueatend"/>**RemoValueAtEnd(String)**
 
-Remove a value associated with this pipe or task.
+Remove a value associated with a unique key at the end of this event (If this event is not a task event).
+ <br>Values ​​removed in the task event will only take effect in the pipe aggregation event<br>A task event cannot see values ​​saved and/or removed by another task.<br>In a task event, Never try to overwrite a value already saved by another event, the results may not be as expected as the execution sequence is not guaranteed.
 
 ```csharp
-public void RemoveSavedValue()
+public void RemoValueAtEnd(string id)
 ```
 
-### <a id="methods-savevalue"/>**SaveValue&lt;T1&gt;(T1)**
+#### Parameters
 
-Save/overwrite a value associated with this pipe or task.
- <br>The values ​​will serialize into json.
+`id` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The unique key Id.
+
+### <a id="methods-savevalueatend"/>**SaveValueAtEnd&lt;T1&gt;(String, T1)**
+
+Save/replace a value associated with a unique key at the end of this event(If this event is not a task event).
+ <br>Values ​​saved in the task event will only take effect in the pipe aggregation event<br>A task event cannot see values ​​saved and/or removed by another task.<br>In a task event, Never try to overwrite a value already saved by another event, the results may not be as expected as the execution sequence is not guaranteed.<br>The values ​​will serialize into json.
 
 ```csharp
-public void SaveValue<T1>(T1 value)
+public void SaveValueAtEnd<T1>(string id, T1 value)
 ```
 
 #### Type Parameters
@@ -172,6 +149,9 @@ public void SaveValue<T1>(T1 value)
 Type value to save.
 
 #### Parameters
+
+`id` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The unique key Id.
 
 `value` T1<br>
 The value to save.
@@ -190,6 +170,27 @@ public void ThreadSafeAccess(Action<T> action)
 `action` Action&lt;T&gt;<br>
 The action to access.
  <br>The action will only be executed if the contract exists(not null).
+
+### <a id="methods-trysavedvalue"/>**TrySavedValue(String, ref String)**
+
+Try get value saved ​​associated with a unique key.
+ <br>The values ​​are serialized in json.<br>Null result may exist.
+
+```csharp
+public bool TrySavedValue(string id, ref String value)
+```
+
+#### Parameters
+
+`id` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The unique key Id.
+
+`value` [String&](https://docs.microsoft.com/en-us/dotnet/api/system.string&)<br>
+The value saved if any.
+
+#### Returns
+
+True if value exists, otherwise false with null value
 
 
 - - -

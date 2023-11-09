@@ -4,27 +4,35 @@
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
 
-## What's new in V1.0.1
+## What's new in V1.0.2
 
-- First Release G.A
+- Added ability to save/overwrite multiple result to use during the execution another pipe / aggregation pipe
+    - Removed propery 'SavedTasks' in EventPipe
+    - Removed propery 'SavedPipes' in EventPipe
+    - Removed Method 'SaveValue'
+    - Removed Method 'RemoveSavedValue'
+    - Added Method TrySavedValue
+        - Now TrySavedValue return true/false if exist id saved and value in out paramameter
+    - Added Method SaveValueAtEnd
+        - Now SaveValueAtEnd receives the unique id to be saved/overwrite and the value
+    - Added Method RemoveValueAtEnd
+        - Now RemoveValueAtEnd receives the unique id to be removed if any
 
 ## Features
-[**Top**](#table-of-contents)
 
-- Contract with thread safety for change values
+- Thread safety to obtain/change contract values ​​and/or generic purpose when running a Task (pararel execute)
 - Set the maximum amount of parallel execution
 - Add multiple preconditions to run a pipe
 - Add multiple link to the pipe to jump to another pipe
 - Add tasks with a precondition
 - Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
-- Save a result from each pipe to use when executing another pipe
-- Save a result from each task to use during the execution of the aggregation pipe
+- Save multiple results from each pipe to be used during the another pipe/aggregate pipe run
+- Save multiple results in each task to be effective during the aggregation pipe run
 - Terminate the PipeAndFilter on any task, condition or pipe
 - Simple and clear fluent syntax
 
 
 ## Usage
-[**Top**](#table-of-contents)
 
 The **PipeAndFilter** use **fluent interface**; an object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility. The term was coined in 2005 by Eric Evans and Martin Fowler.
 
@@ -53,7 +61,6 @@ var result = await PipeAndFilter.New<MyClass>()
 ```
 
 ### Sample-api/webUsage
-[**Top**](#table-of-contents)
 
 ```csharp
 builder.Services

@@ -16,8 +16,8 @@ namespace PipeFilterCore
         private readonly List<Task> _tasks = new();
         private readonly object _lockObj = new();
         private readonly List<string> _sequencePipes = new();
-        private readonly List<(string? Alias, string Id, string? Value)> _savedvalues = new();
-        private readonly List<(string? Alias, string Id, string? Value)> _savedtaskvalues = new();
+        private readonly Dictionary<string, string?> _savedvalues = new();
+        private readonly List<(string id, string? value, bool toremove)> _savedtaskvalues = new();
         private readonly Dictionary<string, List<PipeStatus>> _status = new();
 
         private bool _disposed;
@@ -126,10 +126,32 @@ namespace PipeFilterCore
                     var sta = HandlerStatus.Created;
                     try
                     {
-                        _savedtaskvalues.Clear();
                         if (_parameters.AggregateTasks[_currentPipe!])
                         {
+                            _savedtaskvalues.Clear();
                             await ExecuteTasksPipes(_parameters.Tasks[_currentPipe!]);
+                            if (!IsEnd)
+                            { 
+                                foreach(var (id, value, toremove) in _savedtaskvalues) 
+                                {
+                                    if (toremove)
+                                    {
+                                        _savedvalues.Remove(id);
+                                    }
+                                    else
+                                    {
+                                        if (_savedvalues.ContainsKey(id))
+                                        {
+                                            _savedvalues[id] = value;
+                                        }
+                                        else
+                                        {
+                                            _savedvalues.Add(id,value);
+                                        }
+                                    }
+                                }
+                            }
+                            _savedtaskvalues.Clear();
                         }
                         if (!IsEnd)
                         {
@@ -143,15 +165,14 @@ namespace PipeFilterCore
                                 _cid,
                                 _logger,
                                 ChangeContract!,
-                                _savedvalues.ToImmutableArray(),
-                                _savedtaskvalues.ToImmutableArray(),
+                                _savedvalues.ToImmutableDictionary(),
                                 _prevPipe,
                                 _currentPipe!,
                                 aliasprev, aliascur);
                             await _parameters.Pipes.First(x => x.Id == _currentPipe!).Handler(evt, _pipects!.Token);
                             sta = HandlerStatus.Completed;
                             elapsed = tm.Elapsed;
-                            EnsureResultEventPipe(_currentPipe!, evt);
+                            EnsureResultEventPipe(evt);
                         }
                     }
                     catch (OperationCanceledException)
@@ -235,8 +256,7 @@ namespace PipeFilterCore
                         _cid,
                         _logger,
                         ChangeContract!,
-                        _savedvalues.ToImmutableArray(),
-                        _savedtaskvalues.ToImmutableArray(),
+                        _savedvalues.ToImmutableDictionary(),
                         _prevPipe,
                         _currentPipe!,
                         aliasprev, aliascur);
@@ -248,7 +268,7 @@ namespace PipeFilterCore
                         isok = await itemcond.Handle!(evt, _pipects!.Token);
                         elapsed = tm.Elapsed;
                         sta = HandlerStatus.Completed;
-                        EnsureResultEventPipe(_currentPipe!, evt);
+                        EnsureResultEventPipe(evt);
                     }
                     catch (OperationCanceledException)
                     {
@@ -313,31 +333,28 @@ namespace PipeFilterCore
             }
         }
 
-        private void EnsureResultEventPipe(string idpipe, EventPipe<T> eventPipe)
+        private void EnsureResultEventPipe(EventPipe<T> eventPipe)
         {
             if (eventPipe.FinishedPipeAndFilter)
             {
                 _finished = true;
             }
-            var alias = _parameters.IdToAlias[idpipe];
-            if (eventPipe.ToRemove)
+            foreach (var (id, value, toremove) in eventPipe.ToSaveRemove)
             {
-                var index = _savedvalues.FindIndex(x => x.Id == idpipe);
-                if (index >= 0)
+                if (toremove)
                 {
-                    _savedvalues.RemoveAt(index);
-                }
-            }
-            else if (eventPipe.IsSaved)
-            {
-                var index = _savedvalues.FindIndex(x => x.Id == idpipe);
-                if (index >= 0)
-                {
-                    _savedvalues[index] = (alias, idpipe, eventPipe.ValueToSave);
+                    _savedvalues.Remove(id);
                 }
                 else
                 {
-                    _savedvalues.Add((alias, idpipe, eventPipe.ValueToSave));
+                    if (_savedvalues.ContainsKey(id))
+                    {
+                        _savedvalues[id] = value;
+                    }
+                    else
+                    {
+                        _savedvalues.Add(id, value);
+                    }
                 }
             }
         }
@@ -380,8 +397,7 @@ namespace PipeFilterCore
                             _cid,
                             _logger,
                             ChangeContract!,
-                            _savedvalues.ToImmutableArray(),
-                            emptytask,
+                            _savedvalues.ToImmutableDictionary(),
                             _prevPipe,
                             _currentPipe!,
                             aliasprev, aliascur);
@@ -393,7 +409,7 @@ namespace PipeFilterCore
                             isvalidtask = await tasks[i].Condition!.Value.Handle!(evt, _pipects!.Token);
                             elapsed = tm.Elapsed;
                             sta = HandlerStatus.Completed;
-                            EnsureResultEventPipeTask(tasks[i].Id, tasks[i].NameTask, evt);
+                            EnsureResultEventPipe(evt);
                         }
                         catch (OperationCanceledException)
                         {
@@ -455,8 +471,7 @@ namespace PipeFilterCore
                                     _cid,
                                     _logger,
                                     ChangeContract!,
-                                    _savedvalues.ToImmutableArray(),
-                                    _savedtaskvalues.ToImmutableArray(),
+                                    _savedvalues.ToImmutableDictionary(),
                                     _prevPipe,
                                     _currentPipe!,
                                     aliasprev, aliascur);
@@ -469,13 +484,12 @@ namespace PipeFilterCore
                                 handle(evt, _pipects!.Token).Wait(_pipects.Token);
                                 elapsed = tm.Elapsed;
                                 sta = HandlerStatus.Completed;
-                                EnsureResultEventPipeTask(taskid, taskname, evt);
+                                EnsureResultEventPipeTask(evt);
                             }
                             catch (OperationCanceledException)
                             {
                                 elapsed = tm.Elapsed;
                                 sta = HandlerStatus.Canceled;
-                                EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
                                     _finished = true;
@@ -485,7 +499,6 @@ namespace PipeFilterCore
                             {
                                 elapsed = tm.Elapsed;
                                 sta = HandlerStatus.Faulted;
-                                EnsureResultEventPipeTask(taskid, taskname, evt);
                                 lock (_lockObj)
                                 {
                                     _lastexception = new PipeAndFilterException(
@@ -541,7 +554,7 @@ namespace PipeFilterCore
             } while (!IsEnd && i < tasks.Count);
         }
 
-        private void EnsureResultEventPipeTask(string idtask, string? name, EventPipe<T> eventPipe)
+        private void EnsureResultEventPipeTask(EventPipe<T> eventPipe)
         {
             lock (_lockObj)
             {
@@ -549,29 +562,8 @@ namespace PipeFilterCore
                 {
                     _finished = true;
                 }
-                if (eventPipe.ToRemove)
-                {
-                    var index = _savedtaskvalues.FindIndex(x => x.Id == idtask);
-                    if (index >= 0)
-                    {
-                        _savedtaskvalues.RemoveAt(index);
-                    }
-                }
-                else if (eventPipe.IsSaved)
-                {
-                    var index = _savedvalues.FindIndex(x => x.Id == idtask);
-                    if (index >= 0)
-                    {
-                        _savedtaskvalues[index] = (name, idtask, eventPipe.ValueToSave);
-                    }
-                    else
-                    {
-                        _savedtaskvalues.Add((name, idtask, eventPipe.ValueToSave));
-                    }
-                }
+                _savedtaskvalues.AddRange(eventPipe.ToSaveRemove);
             }
         }
-
-
     }
 }
