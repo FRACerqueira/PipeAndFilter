@@ -1,4 +1,5 @@
-﻿using PipeFilterCore;
+﻿using System.Diagnostics.Contracts;
+using PipeFilterCore;
 
 namespace PipeFilterCoreSamples
 {
@@ -23,7 +24,9 @@ namespace PipeFilterCoreSamples
                     .WithCondition(CondTrue)
                     .MaxDegreeProcess(4)
                     .AddTask(Task50)
-                    .AddTaskCondition(Task100, CondFalse)
+                    .AddTaskCondition(Task100)
+                        .WithCondition(CondTrue)
+                        .WithCondition(CondFalse)
                     .AddTask(Task150)
                 .AddPipe(ExecPipe, "LastPipe")
                 .BuildAndCreate()
@@ -32,13 +35,13 @@ namespace PipeFilterCoreSamples
                 .Logger(null)
                 .Run();
 
-            Console.WriteLine($"Contract value : {contract.MyProperty} Total Elapsedtime: {pl.Elapsedtime}" );
+            Console.WriteLine($"Contract value : {contract.MyProperty} Total Elapsedtime: {pl.Elapsedtime}");
             foreach (var item in pl.Status)
             {
                 Console.WriteLine($"{item.Alias}:{item.Status.Value} Count: {item.Count} => {item.Status.Elapsedtime}");
-                foreach (var det in item.StatusDetails) 
+                foreach (var det in item.StatusDetails)
                 {
-                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => {det.Value}:{det.Elapsedtime} UTC:{det.DateRef.ToString("MM/dd/yyyy hh:mm:ss ffff")}");
+                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => {det.Value}:{det.Elapsedtime} UTC:{det.DateRef:MM/dd/yyyy hh:mm:ss ffff}");
                 }
             }
 

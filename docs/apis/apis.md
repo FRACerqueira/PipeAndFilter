@@ -31,6 +31,8 @@
 
 - [IPipeAndFilterStart&lt;T&gt;](./pipefiltercore.ipipeandfilterstart-1.md)
 
+- [IPipeAndFilterTaskCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltertaskcondition-1.md)
+
 - [IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 - [PipeAndFilter](./pipefiltercore.pipeandfilter.md)

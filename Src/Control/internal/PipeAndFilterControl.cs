@@ -127,10 +127,10 @@ namespace PipeFilterCore
                     var sta = HandlerStatus.Created;
                     try
                     {
-                        if (_parameters.AggregateTasks[_currentPipe!])
+                        if (_parameters.Pipes[_currentPipeIndex].IsAgregate)
                         {
                             _savedtaskvalues.Clear();
-                            await ExecuteTasksPipes(_parameters.Tasks[_currentPipe!]);
+                            await ExecuteTasksPipes(_parameters.Pipes[_currentPipeIndex].Tasks, _parameters.Pipes[_currentPipeIndex].MaxDegreeProcess);
                             if (!IsEnd)
                             { 
                                 foreach(var (id, value, toremove) in _savedtaskvalues) 
@@ -170,7 +170,7 @@ namespace PipeFilterCore
                                 _prevPipe,
                                 _currentPipe!,
                                 aliasprev, aliascur);
-                            await _parameters.Pipes.First(x => x.Id == _currentPipe!).Handler(evt, _pipects!.Token);
+                            await _parameters.Pipes[_currentPipeIndex].Handler(evt, _pipects!.Token);
                             sta = HandlerStatus.Completed;
                             elapsed = tm.Elapsed;
                             EnsureResultEventPipe(evt);
@@ -242,7 +242,7 @@ namespace PipeFilterCore
             while (!IsEnd)
             {
                 var isok = true;
-                foreach (var itemcond in _parameters.PreConditions[_currentPipe!])
+                foreach (var itemcond in _parameters.Pipes[_currentPipeIndex].Condtitions)
                 {
                     var condpipeType = string.IsNullOrEmpty(itemcond.GotoId) ? HandlerType.Condition : HandlerType.ConditionGoto;
                     var sta = HandlerStatus.Created;
@@ -372,10 +372,9 @@ namespace PipeFilterCore
             }
         }
 
-        private async Task ExecuteTasksPipes(IImmutableList<PipeTask<T>> tasks)
+        private async Task ExecuteTasksPipes(List<PipeTask<T>> tasks,int maxDegreeProcess)
         {
             var i = 0;
-            var maxDegreeProcess = _parameters.MaxDegreeProcess[_currentPipe!];
             _savedtaskvalues.Clear();
             do
             {
@@ -383,7 +382,7 @@ namespace PipeFilterCore
                 do
                 {
                     var isvalidtask = true;
-                    if (tasks[i].Condition.HasValue)
+                    foreach (var item in tasks[i].Condtitions)
                     {
                         HandlerStatus sta;
                         string? aliasprev = null;
@@ -406,7 +405,7 @@ namespace PipeFilterCore
                         var tm = Stopwatch.StartNew();
                         try
                         {
-                            isvalidtask = await tasks[i].Condition!.Value.Handle!(evt, _pipects!.Token);
+                            isvalidtask = await item.Handle!(evt, _pipects!.Token);
                             elapsed = tm.Elapsed;
                             sta = HandlerStatus.Completed;
                             EnsureResultEventPipe(evt);
@@ -426,7 +425,7 @@ namespace PipeFilterCore
                                     HandlerType.ConditionTask,
                                     sta,
                                     elapsed,
-                                    tasks[i].NameTask,
+                                    tasks[i].Name,
                                     null, isvalidtask),
                                 "Error handler Condition Task",
                                 ex);
@@ -439,13 +438,18 @@ namespace PipeFilterCore
                             HandlerType.ConditionTask,
                             sta,
                             elapsed,
-                            tasks[i].NameTask,
+                            item.Name,
                             null, isvalidtask));
                         if (IsEnd)
                         {
                             isvalidtask = false;
                         }
+                        if (!isvalidtask)
+                        {
+                            break;
+                        }
                     }
+
                     if (isvalidtask)
                     {
                         _tasks.Add(new Task((param) =>
@@ -459,7 +463,7 @@ namespace PipeFilterCore
                             {
                                 var index = (int)param!;
                                 handle = tasks[index].Handler;
-                                taskname = tasks[index].NameTask;
+                                taskname = tasks[index].Name;
                                 if (!string.IsNullOrEmpty(_prevPipe))
                                 {
                                     aliasprev = _parameters.IdToAlias[_prevPipe];

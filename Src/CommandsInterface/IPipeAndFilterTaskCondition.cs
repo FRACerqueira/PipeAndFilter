@@ -6,10 +6,10 @@
 namespace PipeFilterCore
 {
     /// <summary>
-    /// Represents commands for task.
+    /// Represents commands for conditions.
     /// </summary>
     /// <typeparam name="T">Type of contract.</typeparam>
-    public interface IPipeAndFilterTasks<T>: IPipeAndFilterBuild<T> where T : class
+    public interface IPipeAndFilterTaskCondition<T>: IPipeAndFilterBuild<T> where T : class
     {
         /// <summary>
         /// Add new pipe.
@@ -37,6 +37,7 @@ namespace PipeFilterCore
         /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
         IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
 
+
         /// <summary>
         /// Add new task (execution in parallel) through pipe.
         /// </summary>
@@ -46,45 +47,12 @@ namespace PipeFilterCore
         IPipeAndFilterTasks<T> AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask = null);
 
         /// <summary>
-        /// Maximum number of concurrent tasks enable. 
+        /// Add new condition for task.
         /// </summary>
-        /// <param name="value">
-        /// Number of concurrent tasks.
-        /// <br>The default value is number of processors.</br>
-        /// </param>
-        /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
-        IPipeAndFilterTasks<T> MaxDegreeProcess(int value);
-
-
-        /// <summary>
-        /// Add new task (execution in parallel) through pipe with conditions.
-        /// </summary>
-        /// <param name="command">The handler task to execute.</param>
-        /// <param name="nametask">The name for task (optional).</param>
+        /// <param name="condition">The handle condition to execute.</param>
+        /// <param name="namecondition">The name for condition(optional).</param>
         /// <returns><see cref="IPipeAndFilterTaskCondition{T}"/></returns>
-        IPipeAndFilterTaskCondition<T> AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask = null);
+        IPipeAndFilterTaskCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition = null);
+     }
 
-        /// <summary>
-        /// Add new condition.
-        /// </summary>
-        /// <param name="condition">The handle condition to execute.</param>
-        /// <param name="namecondition">The name for condition(optional).</param>
-        /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
-        IPipeAndFilterTasks<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition = null);
-
-        /// <summary>
-        /// Add new go to condition.
-        /// <br>If the condition is true, jump to the given pipe without executing the current pipe.</br>
-        /// <br>If the false condition continues.</br>
-        /// </summary>
-        /// <param name="condition">The handle condition to execute.</param>
-        /// <param name="aliasgoto">
-        /// The alias to another pipe.
-        /// </param>
-        /// <param name="namecondition">The name for condition(optional).</param>
-        /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
-        IPipeAndFilterTasks<T> WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string aliasgoto, string? namecondition = null);
-
-
-    }
 }

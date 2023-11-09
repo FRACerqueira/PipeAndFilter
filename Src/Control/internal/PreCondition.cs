@@ -5,16 +5,16 @@
 
 namespace PipeFilterCore
 {
-    internal readonly struct PipeCondition<T> where T : class
+    internal readonly struct PreCondition<T> where T : class
     {
-        public PipeCondition()
+        public PreCondition()
         {
             throw new PipeAndFilterException(
                 PipeAndFilterException.StatusInit, 
                 "Invalid ctor PipeCondition");
         }
 
-        public PipeCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
+        public PreCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
         {
             Handle = handle;
             GotoId = gotoId;

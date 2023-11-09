@@ -17,10 +17,11 @@ and the ability to parallel execute tasks over a pipe.
 Key features
 ------------
 - Thread safety to obtain/change contract values ​​and/or generic purpose when running a Task (pararel execute)
+- Add multiple pipe
+- Add multiple agregate pipe (for run pararel tasks)
 - Set the maximum amount of parallel execution
-- Add multiple preconditions to run a pipe
+- Add multiple preconditions to run a pipe or pipe
 - Add multiple link to the pipe to jump to another pipe
-- Add tasks with a precondition
 - Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
 - Save multiple results from each pipe to be used during the another pipe/aggregate pipe run
 - Save multiple results in each task to be effective during the aggregation pipe run
@@ -50,23 +51,29 @@ PipeAndFilter was developed in C# with target frameworks:
         - Now SaveValueAtEnd receives the unique id to be saved/overwrite and the value
     - Added Method RemoveValueAtEnd
         - Now RemoveValueAtEnd receives the unique id to be removed if any
+- Added ability to multiple preconditions for Tasks
+    - Channged command AddTaskCondition
+        - Now the same parameters as AddTask
+    - Added command WithCondition for AddTaskCondition
 
 **PipeAndFilter Sample-console Usage**
 --------------------------------------
-var result = await PipeAndFilter.New<MyClass>()
-    .AddPipe(ExecPipe1)
-        .WithGotoCondition(CondFalse, "LastPipe")
-        .WithCondition(CondTrue)
-        .WithCondition(CondTrue)
-    .AddPipe(ExecPipe2)
-    .AddPipe(ExecPipe3)
-    .AddPipeTasks(AgregateTask)
-        .WithCondition(CondTrue)
+await PipeAndFilter.New<MyClass>()
+    .AddPipe(Pipe1)
+        .WithGotoCondition(Cond0, "LastPipe")
+        .WithCondition(Cond1)
+        .WithCondition(Cond2)
+    .AddPipe(Pipe2)
+    .AddPipe(Pipe3)
+    .AddPipeTasks(Pipe4)
+        .WithCondition(Cond1)
         .MaxDegreeProcess(4)
-        .AddTask(Task1)
-        .AddTaskCondition(Task2, CondFalse)
-        .AddTask(Task3)
-    .AddPipe(ExecPipe5, "LastPipe")
+        .AddTask(Task50)
+        .AddTaskCondition(Task100)
+            .WithCondition(Cond3)
+            .WithCondition(Cond4)
+        .AddTask(Task150)
+    .AddPipe(Pipe5, "LastPipe")
     .BuildAndCreate()
     .Init(contract)
     .CorrelationId(null)
@@ -81,11 +88,11 @@ Program.cs
 
 builder.Services
     .AddPipeAndFilter(PipeAndFilter.New<WeatherForecast>()
-        .AddPipe(ExecPipe)
+        .AddPipe(TemperatureAdd10)
         .Build());
 ...
 
-private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
+private static Task TemperatureAdd10(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
     pipe.ThreadSafeAccess((contract) =>
     {
@@ -103,9 +110,9 @@ WeatherForecastController.cs
 public class WeatherForecastController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly IPipeAndFilterServiceBuild<WeatherForecast> _mypipe;
+    private readonly IPipeAndFilterService<WeatherForecast> _mypipe;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterServiceBuild<WeatherForecast> pipeAndFilter)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterService<WeatherForecast> pipeAndFilter)
     {
         _logger = logger;
         _mypipes = pipeAndFilter;
