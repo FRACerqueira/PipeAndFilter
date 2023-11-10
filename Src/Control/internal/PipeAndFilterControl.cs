@@ -298,12 +298,6 @@ namespace PipeFilterCore
                 //execute after handler
                 if (!IsEnd)
                 {
-                    string? aliasprev = null;
-                    if (!string.IsNullOrEmpty(_prevPipe))
-                    {
-                        aliasprev = _parameters.IdToAlias[_prevPipe];
-                    };
-                    string? aliascur = _parameters.IdToAlias[_currentPipe!];
                     var evt = new EventPipe<T>(
                         _cid,
                         _logger,
@@ -311,7 +305,7 @@ namespace PipeFilterCore
                         _savedvalues.ToImmutableDictionary(),
                         _currentPipe!,
                         _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id,
-                        aliascur,
+                        _parameters.IdToAlias[_currentPipe!],
                        _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id]);
                     await _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Handler(evt, _pipects!.Token);
                     sta = HandlerStatus.Completed;
