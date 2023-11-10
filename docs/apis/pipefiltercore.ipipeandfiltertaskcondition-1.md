@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterTasks<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterTaskCondition<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterTasks&lt;T&gt;
+# IPipeAndFilterTaskCondition&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents commands for task.
+Represents commands for conditions.
 
 ```csharp
-public interface IPipeAndFilterTasks<T> : IPipeAndFilterBuild<T>
+public interface IPipeAndFilterTaskCondition<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
@@ -89,87 +89,25 @@ The name for task (optional).
 
 [IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
-### <a id="methods-addtaskcondition"/>**AddTaskCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
+### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String)**
 
-Add new task (execution in parallel) through pipe with conditions.
+Add new condition for task.
 
 ```csharp
-IPipeAndFilterTaskCondition<T> AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, string nametask)
+IPipeAndFilterTaskCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string namecondition)
 ```
 
 #### Parameters
 
-`command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
-The handler task to execute.
+`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
+The handle condition to execute.
 
-`nametask` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The name for task (optional).
+`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for condition(optional).
 
 #### Returns
 
 [IPipeAndFilterTaskCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltertaskcondition-1.md)
-
-### <a id="methods-maxdegreeprocess"/>**MaxDegreeProcess(Int32)**
-
-Maximum number of concurrent tasks enable.
-
-```csharp
-IPipeAndFilterTasks<T> MaxDegreeProcess(int value)
-```
-
-#### Parameters
-
-`value` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
-Number of concurrent tasks.
- <br>The default value is number of processors.
-
-#### Returns
-
-[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
-
-### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String)**
-
-Add new condition.
-
-```csharp
-IPipeAndFilterTasks<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string namecondition)
-```
-
-#### Parameters
-
-`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
-The handle condition to execute.
-
-`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The name for condition(optional).
-
-#### Returns
-
-[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
-
-### <a id="methods-withgotocondition"/>**WithGotoCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
-
-Add new go to condition.
- <br>If the condition is true, jump to the given pipe without executing the current pipe.<br>If the false condition continues.
-
-```csharp
-IPipeAndFilterTasks<T> WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
-```
-
-#### Parameters
-
-`condition` Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;<br>
-The handle condition to execute.
-
-`aliasgoto` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The alias to another pipe.
-
-`namecondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The name for condition(optional).
-
-#### Returns
-
-[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 
 - - -

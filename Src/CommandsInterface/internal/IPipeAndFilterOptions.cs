@@ -11,12 +11,8 @@ namespace PipeFilterCore
     internal interface IPipeAndFilterOptions<T> where T : class
     {
         string? ServiceId { get; }
-        IImmutableDictionary<string, string> AliasToId { get; }
-        IImmutableDictionary<string, string?> IdToAlias { get; }
-        IImmutableDictionary<string, int> MaxDegreeProcess { get; }
-        IImmutableList<PipeCommand<T>> Pipes { get; }
-        IImmutableDictionary<string, bool> AggregateTasks { get; }
-        IImmutableDictionary<string, IImmutableList<PipeCondition<T>>> PreConditions { get; }
-        IImmutableDictionary<string, IImmutableList<PipeTask<T>>> Tasks { get; }
+        ImmutableDictionary <string, string> AliasToId { get; }
+        ImmutableDictionary<string, string?> IdToAlias { get; }
+        ImmutableList<PipeCommand<T>> Pipes { get; }
     }
 }

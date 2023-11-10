@@ -16,6 +16,8 @@ namespace PipeFilterCore
     public class EventPipe<T> where T : class
     {
         private readonly Action<Action<T?>> _changecontract;
+        private readonly List<(string id,string? value, bool toremove)> _toSaveRemove = new();
+        private readonly ImmutableDictionary<string, string?> _savedvalues;
 
         /// <summary>
         /// Create Event-Pipe.
@@ -35,19 +37,17 @@ namespace PipeFilterCore
         /// <param name="cid">The correlation Id.</param>
         /// <param name="logger">Handle of log.</param>
         /// <param name="changecontract">Handle of changecontract.</param>
-        /// <param name="savedpipes">The values saved by pipe.</param>
-        /// <param name="savedtasks">The values saved by tasks.</param>
+        /// <param name="savedvalues">The values saved.</param>
         /// <param name="fromId">The previous Id.</param>
         /// <param name="currentId">The current Id.</param>
         /// <param name="fromAlias">The previous alias.</param>
         /// <param name="currentAlias">The current alias.</param>
-        public EventPipe(string? cid, ILogger logger, Action<Action<T?>> changecontract, ImmutableArray<(string? Alias, string Id,string? Result)> savedpipes, ImmutableArray<(string? Alias, string Id, string? Result)> savedtasks, string? fromId, string currentId, string? fromAlias, string? currentAlias)
+        public EventPipe(string? cid, ILogger logger, Action<Action<T?>> changecontract, ImmutableDictionary<string, string?> savedvalues, string? fromId, string currentId, string? fromAlias, string? currentAlias)
         {
             _changecontract = changecontract;
             CorrelationId = cid;
-            Logger = logger; 
-            SavedPipes = savedpipes;
-            SavedTasks = savedtasks;
+            Logger = logger;
+            _savedvalues = savedvalues;
             FromAlias = fromAlias;
             FromId = fromId;
             CurrentAlias = currentAlias;
@@ -55,19 +55,27 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// The values saved ​​associated with pipes.
+        /// Try get value saved ​​associated with a unique key.
         /// <br>The values ​​are serialized in json.</br> 
         /// <br>Null result may exist.</br>
         /// </summary>
-        public ImmutableArray<(string? Alias, string Id, string? Result)> SavedPipes { get; }
-
-        /// <summary>
-        /// The values saved ​​associated with tasks.
-        /// <br>Data only exists when executed by an aggregator pipe.</br>
-        /// <br>The values ​​are serialized in json.</br>
-        /// <br>Null result may exist.</br>
-        /// </summary>
-        public ImmutableArray<(string? Alias, string Id, string? Result)> SavedTasks { get; }
+        /// <param name="id">
+        /// The unique key Id.
+        /// </param>
+        /// <param name="value">
+        /// The value saved if any.
+        /// </param>
+        /// <returns>True if value exists, otherwise false with null value</returns>
+        public bool TrySavedValue(string id, out string? value)
+        {
+            if (id == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "id cannot be null");
+            }
+            return _savedvalues.TryGetValue(id, out value); 
+        }
 
         /// <summary>
         /// The current Alias.
@@ -113,34 +121,53 @@ namespace PipeFilterCore
         }
 
         /// <summary>
-        /// Save/overwrite a value associated with this pipe or task.
+        /// Save/replace a value associated with a unique key at the end of this event(If this event is not a task event).
+        /// <br>Values ​​saved in the task event will only take effect in the pipe aggregation event</br>
+        /// <br>A task event cannot see values ​​saved and/or removed by another task.</br>
+        /// <br>In a task event, Never try to overwrite a value already saved by another event, the results may not be as expected as the execution sequence is not guaranteed.</br>
         /// <br>The values ​​will serialize into json.</br>
         /// </summary>
         /// <typeparam name="T1">Type value to save.</typeparam>
+        /// <param name="id">
+        /// The unique key Id.
+        /// </param>
         /// <param name="value">
         /// The value to save.
         /// </param>
-        public void SaveValue<T1>(T1  value)
+        public void SaveValueAtEnd<T1>(string id, T1  value)
         {
-            IsSaved = true;
-            ToRemove = false;
-            ValueToSave = JsonSerializer.Serialize(value);
+            if (id == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "id cannot be null");
+            }
+            _toSaveRemove.Add((id, JsonSerializer.Serialize(value), false));
         }
 
         /// <summary>
-        /// Remove a value associated with this pipe or task.
+        /// Remove a value associated with a unique key at the end of this event (If this event is not a task event).
+        /// <br>Values ​​removed in the task event will only take effect in the pipe aggregation event</br>
+        /// <br>A task event cannot see values ​​saved and/or removed by another task.</br>
+        /// <br>In a task event, Never try to overwrite a value already saved by another event, the results may not be as expected as the execution sequence is not guaranteed.</br>
         /// </summary>
-        public void RemoveSavedValue()
+        /// <param name="id">
+        /// The unique key Id.
+        /// </param>
+        public void RemoValueAtEnd(string id)
         {
-            IsSaved = false;
-            ToRemove = true;
+            if (id == null)
+            {
+                throw new PipeAndFilterException(
+                    PipeAndFilterException.StatusInit,
+                    "id cannot be null");
+            }
+            _toSaveRemove.Add((id, null, true));
         }
 
         internal string CurrentId { get; }
         internal string? FromId { get; }
         internal bool FinishedPipeAndFilter { get; set; }
-        internal bool ToRemove { get; set; }
-        internal bool IsSaved { get; set; }
-        internal string? ValueToSave { get; set; }
+        internal IEnumerable<(string id, string? value, bool toremove)> ToSaveRemove => _toSaveRemove;
     }
 }

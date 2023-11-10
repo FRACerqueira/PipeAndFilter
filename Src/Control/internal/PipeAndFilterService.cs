@@ -17,19 +17,12 @@ namespace PipeFilterCore
 
         public string? ServiceId => _serviceid;
 
-        public IImmutableDictionary<string, string> AliasToId => _parameters.AliasToId;
+        public ImmutableDictionary<string, string> AliasToId => _parameters.AliasToId;
 
-        public IImmutableDictionary<string, string?> IdToAlias => _parameters.IdToAlias;
+        public ImmutableDictionary<string, string?> IdToAlias => _parameters.IdToAlias;
 
-        public IImmutableDictionary<string, int> MaxDegreeProcess => _parameters.MaxDegreeProcess;
+        public ImmutableList<PipeCommand<T>> Pipes => _parameters.Pipes;
 
-        public IImmutableList<PipeCommand<T>> Pipes => _parameters.Pipes;
-
-        public IImmutableDictionary<string, bool> AggregateTasks => _parameters.AggregateTasks;
-
-        public IImmutableDictionary<string, IImmutableList<PipeCondition<T>>> PreConditions => _parameters.PreConditions;
-   
-        public IImmutableDictionary<string, IImmutableList<PipeTask<T>>> Tasks => _parameters.Tasks;
 
         #endregion
 

@@ -15,7 +15,7 @@ and the ability to parallel execute tasks over a pipe.
 
 ## Table of Contents
 
-- [What's new - previous versions]()
+- [What's new - previous versions](whatsnewprev.md)
 - [Features](#features)
 - [Installing](#installing)
 - [Examples](#examples)
@@ -28,23 +28,38 @@ and the ability to parallel execute tasks over a pipe.
 - [API Reference](https://fracerqueira.github.io/PipeAndFilter/apis/apis.html)
 
 ## What's new in the latest version 
-### V1.0.1 
+### V1.0.2 
 
 [**Top**](#table-of-contents)
 
-- First Release G.A
+- Added ability to save/overwrite multiple result to use during the execution another pipe / aggregation pipe
+    - Removed propery 'SavedTasks' in EventPipe
+    - Removed propery 'SavedPipes' in EventPipe
+    - Removed Method 'SaveValue'
+    - Removed Method 'RemoveSavedValue'
+    - Added Method TrySavedValue
+        - Now TrySavedValue return true/false if exist id saved and value in out paramameter
+    - Added Method SaveValueAtEnd
+        - Now SaveValueAtEnd receives the unique id to be saved/overwrite and the value
+    - Added Method RemoveValueAtEnd
+        - Now RemoveValueAtEnd receives the unique id to be removed if any
+- Added ability to multiple preconditions for Tasks
+    - Channged command AddTaskCondition
+        - Now the same parameters as AddTask
+    - Added command WithCondition for AddTaskCondition
 
 ## Features
 [**Top**](#table-of-contents)
 
-- Contract with thread safety for change values
+- Thread safety to obtain/change contract values ​​and/or generic purpose when running a Task (pararel execute)
+- Add multiple pipe
+- Add multiple agregate pipe (for run pararel tasks)
 - Set the maximum amount of parallel execution
-- Add multiple preconditions to run a pipe
+- Add multiple preconditions to run a pipe or task
 - Add multiple link to the pipe to jump to another pipe
-- Add tasks with a precondition
 - Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
-- Save a result from each pipe to use when executing another pipe
-- Save a result from each task to use during the execution of the aggregation pipe
+- Save multiple results from each pipe to be used during the another pipe/aggregate pipe run
+- Save multiple results in each task to be effective during the aggregation pipe run
 - Terminate the PipeAndFilter on any task, condition or pipe
 - Simple and clear fluent syntax
 
@@ -78,20 +93,22 @@ The **PipeAndFilter** use **fluent interface**; an object-oriented API whose des
 ### Sample-Console Usage
 
 ```csharp
-var result = await PipeAndFilter.New<MyClass>()
-    .AddPipe(ExecPipe1)
-        .WithGotoCondition(CondFalse, "LastPipe")
-        .WithCondition(CondTrue)
-        .WithCondition(CondTrue)
-    .AddPipe(ExecPipe2)
-    .AddPipe(ExecPipe3)
-    .AddPipeTasks(AgregateTask)
-        .WithCondition(CondTrue)
+await PipeAndFilter.New<MyClass>()
+    .AddPipe(Pipe1)
+        .WithGotoCondition(Cond0, "LastPipe")
+        .WithCondition(Cond1)
+        .WithCondition(Cond2)
+    .AddPipe(Pipe2)
+    .AddPipe(Pipe3)
+    .AddPipeTasks(Pipe4)
+        .WithCondition(Cond1)
         .MaxDegreeProcess(4)
-        .AddTask(Task1)
-        .AddTaskCondition(Task2, CondFalse)
-        .AddTask(Task3)
-    .AddPipe(ExecPipe5, "LastPipe")
+        .AddTask(Task50)
+        .AddTaskCondition(Task100)
+            .WithCondition(Cond3)
+            .WithCondition(Cond4)
+        .AddTask(Task150)
+    .AddPipe(Pipe5, "LastPipe")
     .BuildAndCreate()
     .Init(contract)
     .CorrelationId(null)
@@ -105,12 +122,12 @@ var result = await PipeAndFilter.New<MyClass>()
 ```csharp
 builder.Services
     .AddPipeAndFilter(PipeAndFilter.New<WeatherForecast>()
-        .AddPipe(ExecPipe)
+        .AddPipe(TemperatureAdd10)
         .Build());
 ```
 
 ```csharp
-private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken token)
+private static Task TemperatureAdd10(EventPipe<WeatherForecast> pipe, CancellationToken token)
 {
     pipe.ThreadSafeAccess((contract) =>
     {
@@ -126,9 +143,9 @@ private static Task ExecPipe(EventPipe<WeatherForecast> pipe, CancellationToken 
 public class WeatherForecastController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly IPipeAndFilterServiceBuild<WeatherForecast> _mypipe;
+    private readonly IPipeAndFilterService<WeatherForecast> _mypipe;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterServiceBuild<WeatherForecast> pipeAndFilter)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IPipeAndFilterService<WeatherForecast> pipeAndFilter)
     {
         _logger = logger;
         _mypipes = pipeAndFilter;
@@ -158,64 +175,25 @@ All pipes, conditions and tasks do not perform any task, they are only called an
 See folder [**Samples/PipeandFIlterBenchmarking**](https://github.com/FRACerqueira/PipeAndFilter/tree/main/Samples/PipeandFIlterBenchmarking).
 
 ```
-BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
-Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
-.NET SDK 8.0.100-rc.2.23502.2
-  [Host]     : .NET 8.0.0 (8.0.23.47906), X64 RyuJIT AVX2
-  DefaultJob : .NET 8.0.0 (8.0.23.47906), X64 RyuJIT AVX2
-```
-
-| Method                       | Mean       | Error      | StdDev     | Median     | Gen0    | Allocated |
-|----------------------------- |-----------:|-----------:|-----------:|-----------:|--------:|----------:|
-| PipeAsync                    |   7.419 us |  0.1483 us |  0.3347 us |   7.345 us |  1.1597 |   4.74 KB |
-| PipeWith10Async              | 239.257 us | 10.6802 us | 30.9852 us | 234.596 us | 19.5313 |  80.68 KB |
-| PipeWithConditionAsync       |   8.273 us |  0.1639 us |  0.2599 us |   8.146 us |  1.4038 |   5.76 KB |
-| PipeWith10ConditionAsync     |  20.606 us |  0.4113 us |  0.9774 us |  20.202 us |  3.6011 |  14.78 KB |
-| PipeWith10ConditionGotoAsync |  33.396 us |  0.6631 us |  1.2455 us |  33.024 us |  5.1270 |  21.08 KB |
-| PipeTaskAsync                |  16.918 us |  0.5232 us |  1.5096 us |  16.795 us |  1.7090 |   7.07 KB |
-| PipeWith10TaskAsync          |  72.402 us |  3.5790 us |  9.8577 us |  68.424 us |  4.8828 |  20.47 KB |
-| PipeTaskConditionAsync       |  19.375 us |  0.3853 us |  0.9736 us |  19.425 us |  1.8616 |   7.66 KB |
-| PipeWith10TaskConditionAsync |  63.898 us |  1.2774 us |  2.9858 us |  63.562 us |  4.8828 |  20.47 KB |
-
-```
+------------------------------------------------------------------------------------------------------
 BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
 Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
 .NET SDK 8.0.100-rc.2.23502.2
   [Host]     : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
   DefaultJob : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
+------------------------------------------------------------------------------------------------------
+| Method                       | Mean      | Error     | StdDev    | Median    | Gen0    | Allocated |
+|----------------------------- |----------:|----------:|----------:|----------:|--------:|----------:|
+| PipeAsync                    |  3.990 us | 0.0460 us | 0.0384 us |  3.992 us |  0.8698 |   3.57 KB |
+| PipeWith10Async              | 97.574 us | 1.7283 us | 1.7748 us | 97.153 us | 15.0146 |  61.37 KB |
+| PipeWithConditionAsync       |  5.003 us | 0.0591 us | 0.0524 us |  5.003 us |  1.0834 |   4.45 KB |
+| PipeWith10ConditionAsync     | 13.157 us | 0.1262 us | 0.0985 us | 13.155 us |  3.1891 |  13.05 KB |
+| PipeWith10ConditionGotoAsync | 18.253 us | 0.3007 us | 0.2347 us | 18.211 us |  3.9978 |  16.34 KB |
+| PipeTaskAsync                |  9.741 us | 0.1923 us | 0.3517 us |  9.649 us |  1.3275 |   5.45 KB |
+| PipeWith10TaskAsync          | 45.064 us | 0.7313 us | 0.8981 us | 44.984 us |  4.5166 |  18.58 KB |
+| PipeTaskConditionAsync       | 11.280 us | 0.1956 us | 0.1830 us | 11.312 us |  1.5564 |   6.39 KB |
+| PipeWith10TaskConditionAsync | 48.034 us | 0.9578 us | 2.5895 us | 47.222 us |  4.5166 |  18.58 KB |
 ```
-
-| Method                       | Mean       | Error     | StdDev     | Median     | Gen0    | Allocated |
-|----------------------------- |-----------:|----------:|-----------:|-----------:|--------:|----------:|
-| PipeAsync                    |  11.231 μs | 0.4573 μs |  1.3195 μs |  10.898 μs |  1.1597 |   4.79 KB |
-| PipeWith10Async              | 226.285 μs | 4.5187 μs | 10.8264 μs | 222.330 μs | 19.5313 |  80.73 KB |
-| PipeWithConditionAsync       |   9.902 μs | 0.1137 μs |  0.0950 μs |   9.858 μs |  1.4038 |    5.8 KB |
-| PipeWith10ConditionAsync     |  26.949 μs | 0.9860 μs |  2.6824 μs |  26.154 μs |  3.6011 |  14.83 KB |
-| PipeWith10ConditionGotoAsync |  39.820 μs | 0.7613 μs |  1.2075 μs |  39.498 μs |  5.1270 |  21.13 KB |
-| PipeTaskAsync                |  20.286 μs | 0.6041 μs |  1.7334 μs |  19.744 μs |  1.7395 |   7.12 KB |
-| PipeWith10TaskAsync          | 101.252 μs | 5.3239 μs | 15.4455 μs |  97.842 μs |  4.8828 |  20.53 KB |
-| PipeTaskConditionAsync       |  24.214 μs | 1.3098 μs |  3.7998 μs |  22.740 μs |  1.8616 |    7.7 KB |
-| PipeWith10TaskConditionAsync |  98.953 μs | 3.9903 μs | 11.0570 μs |  95.221 μs |  4.8828 |  20.56 KB |
-
-```
-BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
-Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
-.NET SDK 8.0.100-rc.2.23502.2
-  [Host]     : .NET Core 3.1.32 (CoreCLR 4.700.22.55902, CoreFX 4.700.22.56512), X64 RyuJIT AVX2
-  DefaultJob : .NET Core 3.1.32 (CoreCLR 4.700.22.55902, CoreFX 4.700.22.56512), X64 RyuJIT AVX2
-```
-
-| Method                       | Mean      | Error    | StdDev   | Gen0    | Allocated |
-|----------------------------- |----------:|---------:|---------:|--------:|----------:|
-| PipeAsync                    |  14.38 us | 0.225 us | 0.199 us |  1.1597 |   4.77 KB |
-| PipeWith10Async              | 328.18 us | 6.287 us | 5.880 us | 19.5313 |   81.7 KB |
-| PipeWithConditionAsync       |  17.11 us | 0.283 us | 0.237 us |  1.4038 |   5.85 KB |
-| PipeWith10ConditionAsync     |  36.82 us | 0.702 us | 0.657 us |  3.6621 |  15.44 KB |
-| PipeWith10ConditionGotoAsync |  58.69 us | 1.103 us | 2.557 us |  5.3101 |   21.8 KB |
-| PipeTaskAsync                |  37.06 us | 0.720 us | 1.077 us |  1.7090 |   7.18 KB |
-| PipeWith10TaskAsync          | 222.57 us | 2.935 us | 2.745 us |  4.8828 |  20.52 KB |
-| PipeTaskConditionAsync       |  42.97 us | 0.906 us | 2.525 us |  1.8921 |   7.84 KB |
-| PipeWith10TaskConditionAsync | 224.77 us | 2.119 us | 1.982 us |  4.8828 |  20.54 KB |
 
 ## Code of Conduct
 [**Top**](#table-of-contents)

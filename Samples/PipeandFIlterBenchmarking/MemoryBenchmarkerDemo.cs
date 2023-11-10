@@ -102,7 +102,8 @@ namespace PipeandFIlterBenchmarking
         {
             await PipeAndFilter.New<MyClass>()
                 .AddPipeTasks(ExecPipe)
-                    .AddTaskCondition(ExecTask,CondTrue)
+                .AddTaskCondition(ExecTask)
+                    .WithCondition(CondTrue)
                 .BuildAndCreate()
                 .Run();
         }

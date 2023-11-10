@@ -14,18 +14,16 @@ namespace PipeFilterCore
                 "Invalid ctor PipeTask");
         }
 
-        public PipeTask(string id, Func<EventPipe<T>, CancellationToken, Task> handler, PipeCondition<T>? condition, string? nameTask, string? nameCondition)
+        public PipeTask(string id, Func<EventPipe<T>, CancellationToken, Task> handler, string? nameTask)
         {
             Id = id;
             Handler = handler;
-            Condition = condition;
-            NameTask = nameTask;
-            NameCondition = nameCondition;
+            Name = nameTask;
+            Condtitions = new();
         }
         public string Id { get; }
         public Func<EventPipe<T>, CancellationToken, Task> Handler { get; }
-        public PipeCondition<T>? Condition { get; }
-        public string? NameTask { get; }
-        public string? NameCondition { get; }
+        public List<PreCondition<T>> Condtitions { get; }
+        public string? Name { get; }
     }
 }
