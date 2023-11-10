@@ -26,39 +26,18 @@ Implements IPipeAndFilterBuild&lt;T&gt;
 
 ## Methods
 
-### <a id="methods-addpipe"/>**AddPipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
+### <a id="methods-addaggregatepipe"/>**AddAggregatePipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
-Add new pipe.
+Add new aggregate pipe.
 
 ```csharp
-IPipeAndFilterAdd<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+IPipeAndFilterAggregate<T> AddAggregatePipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
 ```
 
 #### Parameters
 
 `command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
-The handler pipe to execute.
-
-`alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
-The unique alias for pipe.
- <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).<br>Alias ​​is used to reference in another pipe.
-
-#### Returns
-
-[IPipeAndFilterAdd&lt;T&gt;](./pipefiltercore.ipipeandfilteradd-1.md)
-
-### <a id="methods-addpipetasks"/>**AddPipeTasks(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
-
-Add new pipe aggregate tasks.
-
-```csharp
-IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
-```
-
-#### Parameters
-
-`command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
-The handler pipe aggregate to execute.
+The handler to execute.
  <br>The handler command will run after all tasks are executed.
 
 `alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
@@ -67,7 +46,28 @@ The unique alias for pipe.
 
 #### Returns
 
-[IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
+[IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
+
+### <a id="methods-addpipe"/>**AddPipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
+
+Add new pipe.
+
+```csharp
+IPipeAndFilterPipe<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
+```
+
+#### Parameters
+
+`command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
+The handler to execute.
+
+`alias` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The unique alias for pipe.
+ <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).<br>Alias ​​is used to reference in another pipe.
+
+#### Returns
+
+[IPipeAndFilterPipe&lt;T&gt;](./pipefiltercore.ipipeandfilterpipe-1.md)
 
 
 - - -

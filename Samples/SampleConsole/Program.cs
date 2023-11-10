@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using PipeFilterCore;
+﻿using PipeFilterCore;
 
 namespace PipeFilterCoreSamples
 {
@@ -18,17 +17,39 @@ namespace PipeFilterCoreSamples
                     .WithGotoCondition(CondFalse, "LastPipe")
                     .WithCondition(CondTrue)
                     .WithCondition(CondTrue)
-                .AddPipe(ExecPipe)
+                    .AfterRunningPipe(ExecPipeAfter)
+                        .WithCondition(CondTrue)
+                        .WithGotoCondition(CondFalse, "LastPipe")
                 .AddPipe(ExecPipe100)
-                .AddPipeTasks(AgregateTask)
+                    .AfterRunningAggregatePipe(ExecPipeAfterTask)
+                        .MaxDegreeProcess(8)
+                        .AddTaskCondition(Task50)
+                            .WithCondition(CondTrue)
+                        .AddTask(Task100)
+                .AddAggregatePipe(AggregateTask)
                     .WithCondition(CondTrue)
+                    .WithGotoCondition(CondFalse, "LastPipe")
                     .MaxDegreeProcess(4)
                     .AddTask(Task50)
                     .AddTaskCondition(Task100)
                         .WithCondition(CondTrue)
                         .WithCondition(CondFalse)
-                    .AddTask(Task150)
+                   .AddTask(Task150)
+                .AddAggregatePipe(AggregateTask)
+                    .WithCondition(CondTrue)
+                    .AddTaskCondition(Task100)
+                        .WithCondition(CondTrue)
+                    .AfterRunningAggregatePipe(ExecPipeAfterTask)
+                        .MaxDegreeProcess(8)
+                        .AddTaskCondition(Task50)
+                            .WithCondition(CondTrue)
+                        .AddTask(Task100)
+                .AddAggregatePipe(AggregateTask)
+                    .WithCondition(CondTrue)
+                    .AddTaskCondition(Task100)
+                        .WithCondition(CondTrue)
                 .AddPipe(ExecPipe, "LastPipe")
+                    .AfterRunningPipe(ExecPipeAfterTask)
                 .BuildAndCreate()
                 .Init(contract)
                 .CorrelationId(null)
@@ -41,7 +62,7 @@ namespace PipeFilterCoreSamples
                 Console.WriteLine($"{item.Alias}:{item.Status.Value} Count: {item.Count} => {item.Status.Elapsedtime}");
                 foreach (var det in item.StatusDetails)
                 {
-                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? det.Alias}:{det.Condition} => {det.Value}:{det.Elapsedtime} UTC:{det.DateRef:MM/dd/yyyy hh:mm:ss ffff}");
+                    Console.WriteLine($"\t{det.TypeExec}:{det.GotoAlias ?? string.Empty}:{det.Alias ?? string.Empty}:{det.Condition}:{det.ToAliasCondition ?? string.Empty} => {det.Value}:{det.Elapsedtime} UTC:{det.DateRef:MM/dd/yyyy hh:mm:ss ffff}");
                 }
             }
 
@@ -108,7 +129,17 @@ namespace PipeFilterCoreSamples
             return Task.CompletedTask;
         }
 
-        private static Task AgregateTask(EventPipe<MyClass> pipe, CancellationToken token)
+        private static Task ExecPipeAfter(EventPipe<MyClass> pipe, CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
+
+        private static Task ExecPipeAfterTask(EventPipe<MyClass> pipe, CancellationToken token)
+        {
+            return Task.CompletedTask;
+        }
+
+        private static Task AggregateTask(EventPipe<MyClass> pipe, CancellationToken token)
         {
             return Task.CompletedTask;
         }

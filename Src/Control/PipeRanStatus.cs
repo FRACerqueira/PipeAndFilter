@@ -57,7 +57,7 @@ namespace PipeFilterCore
                     HandlerStatus.Created,
                     TimeSpan.Zero,
                     null,
-                    null, false);
+                    null, false, null);
             }
         }
 

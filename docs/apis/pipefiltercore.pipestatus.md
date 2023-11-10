@@ -81,6 +81,18 @@ public string GotoAlias { get; }
 
 [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
 
+### <a id="properties-toaliascondition"/>**ToAliasCondition**
+
+The alias to result of the condition.
+
+```csharp
+public string ToAliasCondition { get; }
+```
+
+#### Property Value
+
+[String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+
 ### <a id="properties-typeexec"/>**TypeExec**
 
 The Type handle.
@@ -121,12 +133,12 @@ PipeStatus()
 [PipeAndFilterException](./pipefiltercore.pipeandfilterexception.md)<br>
 Message error.
 
-### <a id="constructors-.ctor"/>**PipeStatus(HandlerType, HandlerStatus, TimeSpan, String, String, Boolean)**
+### <a id="constructors-.ctor"/>**PipeStatus(HandlerType, HandlerStatus, TimeSpan, String, String, Boolean, String)**
 
 Create instance (Only internal use or Unit-Test).
 
 ```csharp
-PipeStatus(HandlerType typeExec, HandlerStatus value, TimeSpan elapsedtime, string alias, string gotoAlias, bool condition)
+PipeStatus(HandlerType typeExec, HandlerStatus value, TimeSpan elapsedtime, string alias, string gotoAlias, bool condition, string toAliasCondition)
 ```
 
 #### Parameters
@@ -148,6 +160,9 @@ The alias link.
 
 `condition` [Boolean](https://docs.microsoft.com/en-us/dotnet/api/system.boolean)<br>
 The result of the condition for execution.
+
+`toAliasCondition` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The alias to result of the condition.
 
 
 - - -

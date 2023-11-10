@@ -31,8 +31,10 @@ namespace PipeFilterCore
         /// <param name="alias">The alias execution.</param>
         /// <param name="gotoAlias">The alias link.</param>.
         /// <param name="condition">The result of the condition for execution.</param>
-        public PipeStatus(HandlerType typeExec, HandlerStatus value, TimeSpan elapsedtime, string? alias, string? gotoAlias, bool condition)
+        /// <param name="toAliasCondition">The alias to result of the condition.</param>
+        public PipeStatus(HandlerType typeExec, HandlerStatus value, TimeSpan elapsedtime, string? alias, string? gotoAlias, bool condition, string? toAliasCondition)
         {
+            ToAliasCondition = toAliasCondition;
             TypeExec = typeExec;
             Value = value;
             Elapsedtime = elapsedtime;
@@ -67,6 +69,7 @@ namespace PipeFilterCore
         /// </summary>
         public string? Alias { get; }
 
+
         /// <summary>
         /// The Alias ​​link.
         /// </summary>
@@ -76,6 +79,11 @@ namespace PipeFilterCore
         /// The result of the condition. 
         /// </summary>
         public bool Condition { get; }
+
+        /// <summary>
+        /// The alias to result of the condition.
+        /// </summary>
+        public string? ToAliasCondition { get; }
 
     }
 }

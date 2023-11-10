@@ -29,8 +29,14 @@ Implements [IComparable](https://docs.microsoft.com/en-us/dotnet/api/system.icom
 | ConditionGoto | 2 | Type condition with link to another pipe. |
 | Pipe | 3 | Type pipe. |
 | Task | 4 | Type task. |
-| AggregateTask | 5 | Type aggregate task. |
+| AggregatePipe | 5 | Type aggregate pipe. |
 | ConditionTask | 6 | Type condition task. |
+| AfterCondition | 7 | Type after condition. |
+| AfterConditionGoto | 8 | Type after condition with link to another pipe. |
+| AfterPipe | 9 | Type after pipe. |
+| AfterTask | 10 | Type after task. |
+| AfterAggregatePipe | 11 | Type after aggregate task. |
+| AfterConditionTask | 12 | Type after condition task. |
 
 
 - - -

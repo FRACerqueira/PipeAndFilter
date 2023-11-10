@@ -17,7 +17,15 @@
 
 - [HandlerType](./pipefiltercore.handlertype.md)
 
-- [IPipeAndFilterAdd&lt;T&gt;](./pipefiltercore.ipipeandfilteradd-1.md)
+- [IPipeAndFilterAfterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilterafteraggregate-1.md)
+
+- [IPipeAndFilterAfterAggregateCondition&lt;T&gt;](./pipefiltercore.ipipeandfilterafteraggregatecondition-1.md)
+
+- [IPipeAndFilterAfterPipe&lt;T&gt;](./pipefiltercore.ipipeandfilterafterpipe-1.md)
+
+- [IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
+
+- [IPipeAndFilterAggregateCondition&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregatecondition-1.md)
 
 - [IPipeAndFilterBuild&lt;T&gt;](./pipefiltercore.ipipeandfilterbuild-1.md)
 
@@ -25,15 +33,13 @@
 
 - [IPipeAndFilterInit&lt;T&gt;](./pipefiltercore.ipipeandfilterinit-1.md)
 
+- [IPipeAndFilterPipe&lt;T&gt;](./pipefiltercore.ipipeandfilterpipe-1.md)
+
 - [IPipeAndFilterRun&lt;T&gt;](./pipefiltercore.ipipeandfilterrun-1.md)
 
 - [IPipeAndFilterService&lt;T&gt;](./pipefiltercore.ipipeandfilterservice-1.md)
 
 - [IPipeAndFilterStart&lt;T&gt;](./pipefiltercore.ipipeandfilterstart-1.md)
-
-- [IPipeAndFilterTaskCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltertaskcondition-1.md)
-
-- [IPipeAndFilterTasks&lt;T&gt;](./pipefiltercore.ipipeandfiltertasks-1.md)
 
 - [PipeAndFilter](./pipefiltercore.pipeandfilter.md)
 

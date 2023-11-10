@@ -26,7 +26,7 @@
 		<PackageId>PipeAndFilter</PackageId>
 		<PackageReadmeFile>NugetREADME.md</PackageReadmeFile>
 		<PackageProjectUrl>https://fracerqueira.github.io/PipeAndFilter</PackageProjectUrl>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<PackageIcon>icon.png</PackageIcon>
 		<Copyright>© 2023 - Fernando Cerqueira </Copyright>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>

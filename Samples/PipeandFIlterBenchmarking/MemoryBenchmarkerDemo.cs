@@ -75,7 +75,7 @@ namespace PipeandFIlterBenchmarking
         public async Task PipeTaskAsync()
         {
             await PipeAndFilter.New<MyClass>()
-                .AddPipeTasks(ExecPipe)
+                .AddAggregatePipe(ExecPipe)
                     .AddTask(ExecTask)
                 .BuildAndCreate()
                 .Run();
@@ -86,7 +86,7 @@ namespace PipeandFIlterBenchmarking
         public async Task PipeWith10TaskAsync()
         {
             var aux = PipeAndFilter.New<MyClass>()
-                .AddPipeTasks(ExecPipe)
+                .AddAggregatePipe(ExecPipe)
                 .MaxDegreeProcess(4);
             for (int i = 0; i < 10; i++)
             {
@@ -101,7 +101,7 @@ namespace PipeandFIlterBenchmarking
         public async Task PipeTaskConditionAsync()
         {
             await PipeAndFilter.New<MyClass>()
-                .AddPipeTasks(ExecPipe)
+                .AddAggregatePipe(ExecPipe)
                 .AddTaskCondition(ExecTask)
                     .WithCondition(CondTrue)
                 .BuildAndCreate()
@@ -112,7 +112,7 @@ namespace PipeandFIlterBenchmarking
         public async Task PipeWith10TaskConditionAsync()
         {
             var aux = PipeAndFilter.New<MyClass>()
-                .AddPipeTasks(ExecPipe)
+                .AddAggregatePipe(ExecPipe)
                 .MaxDegreeProcess(4);
             for (int i = 0; i < 10; i++)
             {

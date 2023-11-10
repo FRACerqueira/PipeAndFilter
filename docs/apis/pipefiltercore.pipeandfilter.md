@@ -21,17 +21,23 @@ Inheritance [Object](https://docs.microsoft.com/en-us/dotnet/api/system.object) 
 
 ## Methods
 
-### <a id="methods-new"/>**New&lt;T&gt;()**
+### <a id="methods-new"/>**New&lt;T&gt;(Char)**
 
-Create PipeAndFilter service.
+Create PipeAndFilter component.
 
 ```csharp
-public static IPipeAndFilterStart<T> New<T>()
+public static IPipeAndFilterStart<T> New<T>(char sepsameinstance)
 ```
 
 #### Type Parameters
 
 `T`<br>
+
+#### Parameters
+
+`sepsameinstance` [Char](https://docs.microsoft.com/en-us/dotnet/api/system.char)<br>
+The separator char when it has the same instance. Default value is '#'
+ <br>When the alias refers to the same instance and the alias is not informed, an alias is created with the name of the activated method, the char and a sequence starting from 1.
 
 #### Returns
 

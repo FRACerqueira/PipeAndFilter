@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterCondition<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterPipe<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterCondition&lt;T&gt;
+# IPipeAndFilterPipe&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents commands for conditions.
+Represents the commands for pipes / aggregate pipe.
 
 ```csharp
-public interface IPipeAndFilterCondition<T> : IPipeAndFilterBuild<T>
+public interface IPipeAndFilterPipe<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
@@ -93,7 +93,7 @@ The unique alias for pipe.
 
 ### <a id="methods-afterrunningpipe"/>**AfterRunningPipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
-Add new pipe to run after pipe or aggregate pipe completes
+Add new pipe to run after pipe completes.
 
 ```csharp
 IPipeAndFilterAfterPipe<T> AfterRunningPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
