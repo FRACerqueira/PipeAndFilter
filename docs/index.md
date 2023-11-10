@@ -55,7 +55,7 @@ and the ability to parallel execute tasks over a pipe.
 - Add multiple pipe
 - Add multiple agregate pipe (for run pararel tasks)
 - Set the maximum amount of parallel execution
-- Add multiple preconditions to run a pipe or pipe
+- Add multiple preconditions to run a pipe or task
 - Add multiple link to the pipe to jump to another pipe
 - Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
 - Save multiple results from each pipe to be used during the another pipe/aggregate pipe run
