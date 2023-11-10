@@ -5,7 +5,17 @@
 [![NuGet](https://img.shields.io/nuget/v/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 [![Downloads](https://img.shields.io/nuget/dt/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 
+### V1.0.2
+[**Main**](index.md) | [**Top**](#pipeandfilter-whats-new)
+
+- Internal Release
+   
 ### V1.0.1
 [**Main**](index.md) | [**Top**](#pipeandfilter-whats-new)
 
-- First Release G.A
+- Internal Release
+
+### V1.0.0
+[**Main**](index.md) | [**Top**](#pipeandfilter-whats-new)
+
+- Test Release 

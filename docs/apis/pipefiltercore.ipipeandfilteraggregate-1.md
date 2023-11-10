@@ -1,4 +1,4 @@
-# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterCondition<T> 
+# <img align="left" width="100" height="100" src="../images/icon.png">PipeAndFilter API:IPipeAndFilterAggregate<T> 
 
 [![Build](https://github.com/FRACerqueira/PipeAndFilter/workflows/Build/badge.svg)](https://github.com/FRACerqueira/PipeAndFilter/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/FRACerqueira/PipeAndFilter/blob/master/LICENSE)
@@ -7,14 +7,14 @@
 
 [**Back to List Api**](./apis.md)
 
-# IPipeAndFilterCondition&lt;T&gt;
+# IPipeAndFilterAggregate&lt;T&gt;
 
 Namespace: PipeFilterCore
 
-Represents commands for conditions.
+Represents commands task for Aggregate pipe.
 
 ```csharp
-public interface IPipeAndFilterCondition<T> : IPipeAndFilterBuild<T>
+public interface IPipeAndFilterAggregate<T> : IPipeAndFilterBuild<T>
 ```
 
 #### Type Parameters
@@ -69,9 +69,49 @@ The unique alias for pipe.
 
 [IPipeAndFilterPipe&lt;T&gt;](./pipefiltercore.ipipeandfilterpipe-1.md)
 
+### <a id="methods-addtask"/>**AddTask(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
+
+Add new task (execution in parallel) to the aggregate pipe.
+
+```csharp
+IPipeAndFilterAggregate<T> AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string nametask)
+```
+
+#### Parameters
+
+`command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
+The handler to execute.
+
+`nametask` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for task (optional).
+
+#### Returns
+
+[IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
+
+### <a id="methods-addtaskcondition"/>**AddTaskCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
+
+Add new task (execution in parallel) with conditions to the aggregate pipe.
+
+```csharp
+IPipeAndFilterAggregateCondition<T> AddTaskCondition(Func<EventPipe<T>, CancellationToken, Task> command, string nametask)
+```
+
+#### Parameters
+
+`command` Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;<br>
+The handler to execute.
+
+`nametask` [String](https://docs.microsoft.com/en-us/dotnet/api/system.string)<br>
+The name for task (optional).
+
+#### Returns
+
+[IPipeAndFilterAggregateCondition&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregatecondition-1.md)
+
 ### <a id="methods-afterrunningaggregatepipe"/>**AfterRunningAggregatePipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
-Add new Aggregate pipe to run after pipe/Aggregate pipe completes.
+Add new aggregate pipe to run after aggregate pipe completes
 
 ```csharp
 IPipeAndFilterAfterAggregate<T> AfterRunningAggregatePipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
@@ -93,7 +133,7 @@ The unique alias for pipe.
 
 ### <a id="methods-afterrunningpipe"/>**AfterRunningPipe(Func&lt;EventPipe&lt;T&gt;, CancellationToken, Task&gt;, String)**
 
-Add new pipe to run after pipe or aggregate pipe completes
+Add new pipe to run after aggregate pipe completes.
 
 ```csharp
 IPipeAndFilterAfterPipe<T> AfterRunningPipe(Func<EventPipe<T>, CancellationToken, Task> command, string alias)
@@ -113,12 +153,30 @@ The unique alias for pipe.
 
 [IPipeAndFilterAfterPipe&lt;T&gt;](./pipefiltercore.ipipeandfilterafterpipe-1.md)
 
-### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String)**
+### <a id="methods-maxdegreeprocess"/>**MaxDegreeProcess(Int32)**
 
-Add new condition.
+Maximum number of concurrent tasks enable.
 
 ```csharp
-IPipeAndFilterCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string namecondition)
+IPipeAndFilterAggregate<T> MaxDegreeProcess(int value)
+```
+
+#### Parameters
+
+`value` [Int32](https://docs.microsoft.com/en-us/dotnet/api/system.int32)<br>
+Number of concurrent tasks.
+ <br>The default value is number of processors.
+
+#### Returns
+
+[IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
+
+### <a id="methods-withcondition"/>**WithCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String)**
+
+Add new condition to the aggregate pipe.
+
+```csharp
+IPipeAndFilterAggregate<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string namecondition)
 ```
 
 #### Parameters
@@ -131,15 +189,15 @@ The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltercondition-1.md)
+[IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
 
 ### <a id="methods-withgotocondition"/>**WithGotoCondition(Func&lt;EventPipe&lt;T&gt;, CancellationToken, ValueTask&lt;Boolean&gt;&gt;, String, String)**
 
-Add new go to condition.
+Add new go to condition to the aggregate pipe.
  <br>If the condition is true, jump to the given pipe without executing the current pipe.<br>If the false condition continues.
 
 ```csharp
-IPipeAndFilterCondition<T> WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
+IPipeAndFilterAggregate<T> WithGotoCondition(Func<EventPipe<T>, CancellationToken, ValueTask<Boolean>> condition, string aliasgoto, string namecondition)
 ```
 
 #### Parameters
@@ -155,7 +213,7 @@ The name for condition(optional).
 
 #### Returns
 
-[IPipeAndFilterCondition&lt;T&gt;](./pipefiltercore.ipipeandfiltercondition-1.md)
+[IPipeAndFilterAggregate&lt;T&gt;](./pipefiltercore.ipipeandfilteraggregate-1.md)
 
 
 - - -

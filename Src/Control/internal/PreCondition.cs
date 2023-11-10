@@ -14,12 +14,14 @@ namespace PipeFilterCore
                 "Invalid ctor PipeCondition");
         }
 
-        public PreCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
+        public PreCondition(string id, Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? handle, string? gotoId, string? name)
         {
+            Id = id;
             Handle = handle;
             GotoId = gotoId;
             Name = name;
         }
+        public string Id { get; }
         public Func<EventPipe<T>, CancellationToken, ValueTask<bool>>? Handle { get; }
         public string? GotoId { get;}
         public string? Name { get; }

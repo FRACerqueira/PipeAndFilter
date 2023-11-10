@@ -4,44 +4,30 @@
 
 **PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
 
-## What's new in V1.0.2
+## What's new in V1.0.3
 
-- Added ability to save/overwrite multiple result to use during the execution another pipe / aggregation pipe
-    - Removed propery 'SavedTasks' in EventPipe
-    - Removed propery 'SavedPipes' in EventPipe
-    - Removed Method 'SaveValue'
-    - Removed Method 'RemoveSavedValue'
-    - Added Method TrySavedValue
-        - Now TrySavedValue return true/false if exist id saved and value in out paramameter
-    - Added Method SaveValueAtEnd
-        - Now SaveValueAtEnd receives the unique id to be saved/overwrite and the value
-    - Added Method RemoveValueAtEnd
-        - Now RemoveValueAtEnd receives the unique id to be removed if any
-- Added ability to multiple preconditions for Tasks
-    - Channged command AddTaskCondition
-        - Now the same parameters as AddTask
-    - Added command WithCondition for AddTaskCondition
-
+- First Release G.A
+ 
 ## Features
 
 - Thread safety to obtain/change contract values ​​and/or generic purpose when running a Task (pararel execute)
 - Add multiple pipe
-- Add multiple agregate pipe (for run pararel tasks)
+- Add multiple Aggregate pipe (for run pararel tasks)
 - Set the maximum amount of parallel execution
 - Add multiple preconditions to run a pipe or task
 - Add multiple link to the pipe to jump to another pipe
+- Perform an action with conditions after pipe/aggregatepipe 
 - Have detailed status (execution date, execution time, type of execution, result of each execution) and number of executions in each pipe
 - Save multiple results from each pipe to be used during the another pipe/aggregate pipe run
 - Save multiple results in each task to be effective during the aggregation pipe run
 - Terminate the PipeAndFilter on any task, condition or pipe
 - Simple and clear fluent syntax
 
-
 ## Usage
 
 The **PipeAndFilter** use **fluent interface**; an object-oriented API whose design relies extensively on method chaining. Its goal is to increase code legibility. The term was coined in 2005 by Eric Evans and Martin Fowler.
 
-### Sample-Console Usage
+### Sample-Console Usage (Full features)
 
 ```csharp
 await PipeAndFilter.New<MyClass>()
@@ -49,9 +35,20 @@ await PipeAndFilter.New<MyClass>()
         .WithGotoCondition(Cond0, "LastPipe")
         .WithCondition(Cond1)
         .WithCondition(Cond2)
+        .AfterRunningPipe(ExecPipeAfter)
+            .WithCondition(CondA1)
+            .WithGotoCondition(CondA2, "LastPipe")
     .AddPipe(Pipe2)
+        .AfterRunningPipe()
+            .WithGotoCondition(CondA3, "LastPipe")
     .AddPipe(Pipe3)
-    .AddPipeTasks(Pipe4)
+        .AfterRunningAggregatePipe(ExecPipeAfterTask)
+            .MaxDegreeProcess(8)
+            .AddTaskCondition(Task50)
+                .WithCondition(CondTrue)
+            .AddTask(Task100)    
+    .AddPipe(Pipe4)
+    .AddAggregatePipe(Pipe5)
         .WithCondition(Cond1)
         .MaxDegreeProcess(4)
         .AddTask(Task50)
@@ -59,7 +56,7 @@ await PipeAndFilter.New<MyClass>()
             .WithCondition(Cond3)
             .WithCondition(Cond4)
         .AddTask(Task150)
-    .AddPipe(Pipe5, "LastPipe")
+    .AddPipe(Pipe6, "LastPipe")
     .BuildAndCreate()
     .Init(contract)
     .CorrelationId(null)

@@ -19,7 +19,7 @@ namespace PipeFilterCore
         /// </summary>
         public static readonly PipeStatus StatusInit = new(HandlerType.Pipe,
             HandlerStatus.Created,
-            TimeSpan.Zero, null, null, false);
+            TimeSpan.Zero, null, null, false,null);
 
         /// <summary>
         /// The status of step (pipe, condition or task).

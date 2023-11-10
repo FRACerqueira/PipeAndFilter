@@ -31,12 +31,37 @@ namespace PipeFilterCore
         /// </summary>
         Task,
         /// <summary>
-        /// Type aggregate task.
+        /// Type aggregate pipe.
         /// </summary>
-        AggregateTask,
+        AggregatePipe,
         /// <summary>
         /// Type condition task.
         /// </summary>
-        ConditionTask
+        ConditionTask,
+        /// <summary>
+        /// Type after condition.
+        /// </summary>
+        AfterCondition,
+        /// <summary>
+        /// Type after condition with link to another pipe.
+        /// </summary>
+        AfterConditionGoto,
+        /// <summary>
+        /// Type after pipe.
+        /// </summary>
+        AfterPipe,
+        /// <summary>
+        /// Type after task.
+        /// </summary>
+        AfterTask,
+        /// <summary>
+        /// Type after aggregate task.
+        /// </summary>
+        AfterAggregatePipe,
+        /// <summary>
+        /// Type after condition task.
+        /// </summary>
+        AfterConditionTask,
+
     }
 }

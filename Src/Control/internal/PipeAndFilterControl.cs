@@ -3,7 +3,6 @@
 // The maintenance and evolution is maintained by the PipeAndFilter project under MIT license
 // ********************************************************************************************
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace PipeFilterCore
 {
-    internal class PipeAndFilterControl<T> : IDisposable,IPipeAndFilterInit<T> where T : class
+    internal class PipeAndFilterControl<T> : IDisposable, IPipeAndFilterInit<T> where T : class
     {
         private readonly IPipeAndFilterOptions<T> _parameters;
         private readonly List<Task> _tasks = new();
@@ -120,6 +119,7 @@ namespace PipeFilterCore
             while (!IsEnd)
             {
                 await NextPipe();
+                var tocond = _parameters.IdToAlias[_currentPipe!];
                 if (!IsEnd)
                 {
                     var tm = Stopwatch.StartNew();
@@ -127,10 +127,11 @@ namespace PipeFilterCore
                     var sta = HandlerStatus.Created;
                     try
                     {
-                        if (_parameters.Pipes[_currentPipeIndex].IsAgregate)
+                        //execute Tasks
+                        if (_parameters.Pipes[_currentPipeIndex].IsAggregate)
                         {
                             _savedtaskvalues.Clear();
-                            await ExecuteTasksPipes(_parameters.Pipes[_currentPipeIndex].Tasks, _parameters.Pipes[_currentPipeIndex].MaxDegreeProcess);
+                            await ExecuteTasksPipes(false,_parameters.Pipes[_currentPipeIndex].Tasks, _parameters.Pipes[_currentPipeIndex].MaxDegreeProcess,_prevPipe,_currentPipe);
                             if (!IsEnd)
                             { 
                                 foreach(var (id, value, toremove) in _savedtaskvalues) 
@@ -154,6 +155,7 @@ namespace PipeFilterCore
                             }
                             _savedtaskvalues.Clear();
                         }
+                        //execute aggregare
                         if (!IsEnd)
                         {
                             string? aliasprev = null;
@@ -192,7 +194,7 @@ namespace PipeFilterCore
                                 sta,
                                 elapsed,
                                 _parameters.IdToAlias[_currentPipe!],
-                                null, true),
+                                null, false, tocond!),
                             "Error handler Pipe",
                             ex);
                         _abort = true;
@@ -204,8 +206,26 @@ namespace PipeFilterCore
                         sta,
                         elapsed,
                         _parameters.IdToAlias[_currentPipe!],
-                        null, true));
+                        null, true, tocond!));
 
+                    //execute after handler
+                    if (_parameters.Pipes[_currentPipeIndex].HandlerAfter != null)
+                    {
+                        var oldindex = _currentPipeIndex;
+                        // execute conditions for after handler
+                        var ok = await ExecutePipesConditionsAfter();
+                        if (!ok && oldindex != _currentPipeIndex)
+                        {
+                            //race go to conditition
+                            continue;
+                        }
+                        // execute after handler
+                        if (ok)
+                        {
+                            await ExecutePipesAfter();
+
+                        }
+                    }
                 }
                 if (_lastexception != null)
                 {
@@ -237,11 +257,185 @@ namespace PipeFilterCore
                 );
         }
 
+        private async  Task ExecutePipesAfter()
+        {
+            var tm = Stopwatch.StartNew();
+            var elapsed = TimeSpan.Zero;
+            var sta = HandlerStatus.Created;
+            var typeexe = _parameters.Pipes[_currentPipeIndex].HandlerAfter!.IsAggregate ? HandlerType.AfterAggregatePipe : HandlerType.AfterPipe;
+            var tocond = _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id];
+            try
+            {
+                // execute after handler tasks
+                if (_parameters.Pipes[_currentPipeIndex].HandlerAfter!.IsAggregate)
+                {
+                    _savedtaskvalues.Clear();
+
+                    await ExecuteTasksPipes(true, _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Tasks, _parameters.Pipes[_currentPipeIndex].HandlerAfter!.MaxDegreeProcess, _currentPipe, _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id);
+                    if (!IsEnd)
+                    {
+                        foreach (var (id, value, toremove) in _savedtaskvalues)
+                        {
+                            if (toremove)
+                            {
+                                _savedvalues.Remove(id);
+                            }
+                            else
+                            {
+                                if (_savedvalues.ContainsKey(id))
+                                {
+                                    _savedvalues[id] = value;
+                                }
+                                else
+                                {
+                                    _savedvalues.Add(id, value);
+                                }
+                            }
+                        }
+                    }
+                    _savedtaskvalues.Clear();
+                }
+                //execute after handler
+                if (!IsEnd)
+                {
+                    string? aliasprev = null;
+                    if (!string.IsNullOrEmpty(_prevPipe))
+                    {
+                        aliasprev = _parameters.IdToAlias[_prevPipe];
+                    };
+                    string? aliascur = _parameters.IdToAlias[_currentPipe!];
+                    var evt = new EventPipe<T>(
+                        _cid,
+                        _logger,
+                        ChangeContract!,
+                        _savedvalues.ToImmutableDictionary(),
+                        _currentPipe!,
+                        _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id,
+                        aliascur,
+                       _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id]);
+                    await _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Handler(evt, _pipects!.Token);
+                    sta = HandlerStatus.Completed;
+                    elapsed = tm.Elapsed;
+                    EnsureResultEventPipe(evt);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                elapsed = tm.Elapsed;
+                sta = HandlerStatus.Canceled;
+                _finished = true;
+            }
+            catch (Exception ex)
+            {
+                elapsed = tm.Elapsed;
+                sta = HandlerStatus.Faulted;
+                _lastexception = new PipeAndFilterException(
+                    new PipeStatus(
+                        typeexe,
+                        sta,
+                        elapsed,
+                        _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id],
+                        null, false, tocond!),
+                    typeexe == HandlerType.AfterPipe ? "Error handler after pipe" : "Error handler after aggregate pipe",
+                    ex);
+                _abort = true;
+                _finished = true;
+            }
+            tm.Stop();
+            _status[_currentPipe!].Add(new PipeStatus(
+                typeexe,
+                sta,
+                elapsed,
+                _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id],
+                null, true, tocond!));
+        }
+
+        private async ValueTask<bool> ExecutePipesConditionsAfter()
+        {
+            var isok = true;
+            var toCond = _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id];
+            foreach (var itemcond in _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Condtitions)
+            {
+                var condpipeType = string.IsNullOrEmpty(itemcond.GotoId) ? HandlerType.AfterCondition : HandlerType.AfterConditionGoto;
+                var sta = HandlerStatus.Created;
+  
+                var evt = new EventPipe<T>(
+                    _cid,
+                    _logger,
+                    ChangeContract!,
+                    _savedvalues.ToImmutableDictionary(),
+                    _currentPipe!,
+                    _parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id,
+                    _parameters.IdToAlias[_currentPipe!],
+                    _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].HandlerAfter!.Id]);
+
+                var elapsed = TimeSpan.Zero;
+                var tm = Stopwatch.StartNew();
+                try
+                {
+                    isok = await itemcond.Handle!(evt, _pipects!.Token);
+                    elapsed = tm.Elapsed;
+                    sta = HandlerStatus.Completed;
+                    EnsureResultEventPipe(evt);
+                }
+                catch (OperationCanceledException)
+                {
+                    elapsed = tm.Elapsed;
+                    sta = HandlerStatus.Canceled;
+                    _finished = true;
+                }
+                catch (Exception ex)
+                {
+                    elapsed = tm.Elapsed;
+                    sta = HandlerStatus.Faulted;
+                    _lastexception = new PipeAndFilterException(
+                            new PipeStatus(
+                                condpipeType,
+                                sta,
+                                elapsed,
+                                itemcond.Name,
+                                itemcond.GotoId, isok, toCond!),
+                            "Error handler condition",
+                            ex);
+                    _abort = true;
+                    _finished = true;
+                    _pipects!.Cancel(false);
+                }
+                tm.Stop();
+                _status[_currentPipe!].Add(new PipeStatus(
+                    condpipeType,
+                    sta,
+                    elapsed,
+                    itemcond.Name,
+                    itemcond.GotoId, isok, toCond!));
+                if (!IsEnd && isok && condpipeType == HandlerType.AfterConditionGoto)
+                {
+                    _prevPipe = _currentPipe;
+                    _currentPipe = _parameters.AliasToId[itemcond.GotoId!];
+                    _currentPipeIndex = _sequencePipes.IndexOf(_currentPipe);
+                    isok = false;
+                }
+                if (!isok)
+                {
+                    if (condpipeType == HandlerType.AfterConditionGoto)
+                    {
+                        isok = true;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            return isok;
+        }
+
         private async Task NextPipe()
         {
             while (!IsEnd)
             {
                 var isok = true;
+                var tocond = _parameters.IdToAlias[_parameters.Pipes[_currentPipeIndex].Id];
                 foreach (var itemcond in _parameters.Pipes[_currentPipeIndex].Condtitions)
                 {
                     var condpipeType = string.IsNullOrEmpty(itemcond.GotoId) ? HandlerType.Condition : HandlerType.ConditionGoto;
@@ -287,7 +481,7 @@ namespace PipeFilterCore
                                  sta,
                                  elapsed,
                                  itemcond.Name,
-                                 itemcond.GotoId, isok),
+                                 itemcond.GotoId, isok, tocond!),
                              "Error handler condition",
                              ex);
                         _abort = true;
@@ -300,7 +494,7 @@ namespace PipeFilterCore
                         sta,
                         elapsed,
                         itemcond.Name,
-                        itemcond.GotoId, isok));
+                        itemcond.GotoId, isok, tocond!));
                     if (!IsEnd && ((!isok && condpipeType == HandlerType.Condition) || (isok && condpipeType == HandlerType.ConditionGoto)))
                     {
                         if (!string.IsNullOrEmpty(itemcond.GotoId))
@@ -372,33 +566,33 @@ namespace PipeFilterCore
             }
         }
 
-        private async Task ExecuteTasksPipes(List<PipeTask<T>> tasks,int maxDegreeProcess)
+        private async Task ExecuteTasksPipes(bool isAfter, List<PipeTask<T>> tasks,int maxDegreeProcess,string? previd,string curid)
         {
             var i = 0;
             _savedtaskvalues.Clear();
+            string? aliasprev = null;
+            if (!string.IsNullOrEmpty(previd))
+            {
+                aliasprev = _parameters.IdToAlias[previd];
+            }
+            string? aliascur = _parameters.IdToAlias[curid];
             do
             {
                 var degreecount = 0;
                 do
                 {
                     var isvalidtask = true;
+                    var tocond = _parameters.IdToAlias[tasks[i].Id];
                     foreach (var item in tasks[i].Condtitions)
                     {
                         HandlerStatus sta;
-                        string? aliasprev = null;
-                        if (!string.IsNullOrEmpty(_prevPipe))
-                        {
-                            aliasprev = _parameters.IdToAlias[_prevPipe];
-                        };
-                        string? aliascur = _parameters.IdToAlias[_currentPipe!];
-
                         var evt = new EventPipe<T>(
                             _cid,
                             _logger,
                             ChangeContract!,
                             _savedvalues.ToImmutableDictionary(),
-                            _prevPipe,
-                            _currentPipe!,
+                            previd,
+                            curid,
                             aliasprev, aliascur);
 
                         var elapsed = TimeSpan.Zero;
@@ -422,12 +616,12 @@ namespace PipeFilterCore
                             sta = HandlerStatus.Faulted;
                             _lastexception = new PipeAndFilterException(
                                 new PipeStatus(
-                                    HandlerType.ConditionTask,
+                                    isAfter?HandlerType.AfterConditionTask:HandlerType.ConditionTask,
                                     sta,
                                     elapsed,
                                     tasks[i].Name,
-                                    null, isvalidtask),
-                                "Error handler Condition Task",
+                                    null, isvalidtask,tocond!),
+                                isAfter ? "Error handler after condition task" : "Error handler condition task",
                                 ex);
                             _abort = true;
                             _finished = true;
@@ -435,11 +629,11 @@ namespace PipeFilterCore
                         }
                         tm.Stop();
                         _status[_currentPipe!].Add(new PipeStatus(
-                            HandlerType.ConditionTask,
+                             isAfter ? HandlerType.AfterConditionTask: HandlerType.ConditionTask,
                             sta,
                             elapsed,
                             item.Name,
-                            null, isvalidtask));
+                            null, isvalidtask, tocond!));
                         if (IsEnd)
                         {
                             isvalidtask = false;
@@ -454,21 +648,16 @@ namespace PipeFilterCore
                     {
                         _tasks.Add(new Task((param) =>
                         {
-                            string? aliasprev = null;
-                            string? aliascur = null;
                             EventPipe<T> evt;
                             Func<EventPipe<T>, CancellationToken, Task> handle;
                             string? taskname;
+                            bool isAftertask;
                             lock (_lockObj)
                             {
+                                isAftertask = isAfter;
                                 var index = (int)param!;
                                 handle = tasks[index].Handler;
                                 taskname = tasks[index].Name;
-                                if (!string.IsNullOrEmpty(_prevPipe))
-                                {
-                                    aliasprev = _parameters.IdToAlias[_prevPipe];
-                                };
-                                aliascur = _parameters.IdToAlias[_currentPipe!];
                                 evt = new EventPipe<T>(
                                     _cid,
                                     _logger,
@@ -505,12 +694,12 @@ namespace PipeFilterCore
                                 {
                                     _lastexception = new PipeAndFilterException(
                                         new PipeStatus(
-                                            HandlerType.ConditionTask,
+                                            isAftertask?HandlerType.AfterTask: HandlerType.Task,
                                             sta,
                                             elapsed,
                                             taskname,
-                                            null, isvalidtask),
-                                        "Error handler Task",
+                                            null, isvalidtask, tocond!),
+                                        isAftertask ? "Error handler after Task" : "Error handler Task",
                                         ex);
                                     _abort = true;
                                     _finished = true;
@@ -520,11 +709,11 @@ namespace PipeFilterCore
                             lock (_lockObj)
                             {
                                 _status[_currentPipe!].Add(new PipeStatus(
-                                    HandlerType.Task,
+                                    isAftertask ? HandlerType.AfterTask : HandlerType.Task,
                                     sta,
                                     elapsed,
                                     taskname,
-                                    null, isvalidtask));
+                                    null, isvalidtask, tocond!));
                                 if (_lastexception != null)
                                 {
                                     _pipects!.Cancel();

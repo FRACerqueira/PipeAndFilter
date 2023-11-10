@@ -6,27 +6,27 @@
 namespace PipeFilterCore
 {
     /// <summary>
-    /// Represents commands for conditions.
+    /// Represents command conditions for after pipe Aggregate.
     /// </summary>
     /// <typeparam name="T">Type of contract.</typeparam>
-    public interface IPipeAndFilterTaskCondition<T>: IPipeAndFilterBuild<T> where T : class
+    public interface IPipeAndFilterAfterAggregateCondition<T>: IPipeAndFilterBuild<T> where T : class
     {
         /// <summary>
         /// Add new pipe.
         /// </summary>
-        /// <param name="command">The handler pipe to execute.</param>
+        /// <param name="command">The handler to execute.</param>
         /// <param name="alias">
         /// The unique alias for pipe.
         /// <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).</br>
         /// <br>Alias ​​is used to reference in another pipe.</br>
         /// </param>
-        /// <returns><see cref="IPipeAndFilterAdd{T}"/></returns>
-        IPipeAndFilterAdd<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
+        /// <returns><see cref="IPipeAndFilterPipe{T}"/></returns>
+        IPipeAndFilterPipe<T> AddPipe(Func<EventPipe<T>, CancellationToken, Task>? command = null, string? alias = null);
 
         /// <summary>
-        /// Add new pipe aggregate tasks.
+        /// Add new aggregate pipe.
         /// </summary>
-        /// <param name="command">The handler pipe aggregate to execute.
+        /// <param name="command">The handler to execute.
         /// <br>The handler command will run after all tasks are executed.</br>
         /// </param>
         /// <param name="alias">
@@ -34,25 +34,25 @@ namespace PipeFilterCore
         /// <br>If the alias is omitted, the alias will be the handler name followed by the reference quantity (if any).</br>
         /// <br>Alias ​​is used to reference in another pipe.</br>
         /// </param>
-        /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
-        IPipeAndFilterTasks<T> AddPipeTasks(Func<EventPipe<T>, CancellationToken, Task> command, string? alias = null);
+        /// <returns><see cref="IPipeAndFilterAggregate{T}"/></returns>
+        IPipeAndFilterAggregate<T> AddAggregatePipe(Func<EventPipe<T>, CancellationToken, Task>? command = null, string? alias = null);
 
 
         /// <summary>
-        /// Add new task (execution in parallel) through pipe.
+        /// Add new task (execution in parallel) for after pipe Aggregate.
         /// </summary>
-        /// <param name="command">The handler task to execute.</param>
+        /// <param name="command">The handler to execute.</param>
         /// <param name="nametask">The name for task (optional).</param>
-        /// <returns><see cref="IPipeAndFilterTasks{T}"/></returns>
-        IPipeAndFilterTasks<T> AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask = null);
+        /// <returns><see cref="IPipeAndFilterAfterAggregate{T}"/></returns>
+        IPipeAndFilterAfterAggregate<T> AddTask(Func<EventPipe<T>, CancellationToken, Task> command, string? nametask = null);
 
         /// <summary>
         /// Add new condition for task.
         /// </summary>
-        /// <param name="condition">The handle condition to execute.</param>
+        /// <param name="condition">The handleto execute.</param>
         /// <param name="namecondition">The name for condition(optional).</param>
-        /// <returns><see cref="IPipeAndFilterTaskCondition{T}"/></returns>
-        IPipeAndFilterTaskCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition = null);
+        /// <returns><see cref="IPipeAndFilterAfterAggregateCondition{T}"/></returns>
+        IPipeAndFilterAfterAggregateCondition<T> WithCondition(Func<EventPipe<T>, CancellationToken, ValueTask<bool>> condition, string? namecondition = null);
      }
 
 }

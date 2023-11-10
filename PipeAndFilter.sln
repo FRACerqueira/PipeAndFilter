@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0EE631D9-C
 		LICENSE = LICENSE
 		docs\LICENSE.md = docs\LICENSE.md
 		SECURITY.md = SECURITY.md
-		whatsnewprev.md = whatsnewprev.md
+		docs\whatsnewprev.md = docs\whatsnewprev.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeAndFilter", "Src\PipeAndFilter.csproj", "{27DC4458-EAEB-4C93-ACAF-25F25C404DBC}"
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeAndFilterSampleConsole"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeAndFilterSampleApi", "Samples\SampleApi\PipeAndFilterSampleApi.csproj", "{6696533B-7288-4B59-ADBC-919D875DA5F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipeandFIlterBenchmarking", "Samples\PipeandFIlterBenchmarking\PipeandFIlterBenchmarking.csproj", "{1DA0127C-8DB8-4DBA-854F-668F0DBE8289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PipeandFIlterBenchmarking", "Samples\PipeandFIlterBenchmarking\PipeandFIlterBenchmarking.csproj", "{1DA0127C-8DB8-4DBA-854F-668F0DBE8289}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
