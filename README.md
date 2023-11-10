@@ -15,7 +15,7 @@
 
 ## Table of Contents
 
-- [What's new - previous versions]()
+- [What's new - previous versions](./docs/whatsnewprev.md)
 - [Features](#features)
 - [Installing](#installing)
 - [Examples](#examples)
