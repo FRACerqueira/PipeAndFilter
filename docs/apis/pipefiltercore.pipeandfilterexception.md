@@ -161,6 +161,20 @@ The message that describes the error.
 `innerException` [Exception](https://docs.microsoft.com/en-us/dotnet/api/system.exception)<br>
 The exception that is the cause of the current exception, or a null reference.
 
+## Methods
+
+### <a id="methods-getobjectdata"/>**GetObjectData(SerializationInfo, StreamingContext)**
+
+```csharp
+public void GetObjectData(SerializationInfo info, StreamingContext context)
+```
+
+#### Parameters
+
+`info` [SerializationInfo](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.serialization.serializationinfo)<br>
+
+`context` [StreamingContext](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.serialization.streamingcontext)<br>
+
 
 - - -
 [**Back to List Api**](./apis.md)

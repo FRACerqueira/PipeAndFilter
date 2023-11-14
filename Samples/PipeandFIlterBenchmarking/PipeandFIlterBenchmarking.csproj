@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
+	  <TargetFrameworks>net8.0;net7.0;net6.0;netstandard2.1</TargetFrameworks>
+	  <Nullable>enable</Nullable>
     <StartupObject>PipeandFIlterBenchmarking.Program</StartupObject>
   </PropertyGroup>
 
@@ -13,10 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Src\PipeAndFilter.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="BenchmarkDotNet.Artifacts\" />
   </ItemGroup>
 
 </Project>
