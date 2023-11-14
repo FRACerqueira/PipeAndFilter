@@ -7,10 +7,6 @@
 ## V1.0.4 
 
 - Release G.A with .NET8 
-
-## V1.0.3 
-
-- First Release G.A
  
 ## Features
 

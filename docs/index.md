@@ -29,13 +29,9 @@ and the ability to parallel execute tasks over a pipe.
 
 ## What's new in the latest version 
 ### V1.0.4 
-
-- Release G.A with .NET8 
-
-### V1.0.3 
 [**Top**](#table-of-contents)
 
-- First Release G.A
+- Release G.A with .NET8 
 
 ## Features
 [**Top**](#table-of-contents)
