@@ -45,12 +45,6 @@ PipeAndFilter was developed in C# with target frameworks:
 
 - Release G.A with .NET8 
 
-
-*** What's new in V1.0.3 ***
-----------------------------
-
-- First Release G.A
-
 **PipeAndFilter Sample-console Usage (Full features)**
 ------------------------------------------------------
 await PipeAndFilter.New<MyClass>()

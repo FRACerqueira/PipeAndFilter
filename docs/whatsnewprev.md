@@ -5,6 +5,11 @@
 [![NuGet](https://img.shields.io/nuget/v/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 [![Downloads](https://img.shields.io/nuget/dt/PipeAndFilter)](https://www.nuget.org/packages/PipeAndFilter/)
 
+### V1.0.3 
+[**Main**](index.md) | [**Top**](#pipeandfilter-whats-new)
+
+- First Release G.A
+
 ### V1.0.2
 [**Main**](index.md) | [**Top**](#pipeandfilter-whats-new)
 
