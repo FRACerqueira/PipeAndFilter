@@ -173,24 +173,44 @@ All pipes, conditions and tasks do not perform any task, they are only called an
 See folder [**Samples/PipeandFIlterBenchmarking**](https://github.com/FRACerqueira/PipeAndFilter/tree/main/Samples/PipeandFIlterBenchmarking).
 
 ```
-------------------------------------------------------------------------------------------------------
 BenchmarkDotNet v0.13.10, Windows 10 (10.0.19044.3570/21H2/November2021Update)
 Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
-.NET SDK 8.0.100-rc.2.23502.2
-  [Host]     : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
-  DefaultJob : .NET 7.0.13 (7.0.1323.51816), X64 RyuJIT AVX2
-------------------------------------------------------------------------------------------------------
-| Method                       | Mean      | Error     | StdDev    | Median    | Gen0    | Allocated |
-|----------------------------- |----------:|----------:|----------:|----------:|--------:|----------:|
-| PipeAsync                    |  3.990 us | 0.0460 us | 0.0384 us |  3.992 us |  0.8698 |   3.57 KB |
-| PipeWith10Async              | 97.574 us | 1.7283 us | 1.7748 us | 97.153 us | 15.0146 |  61.37 KB |
-| PipeWithConditionAsync       |  5.003 us | 0.0591 us | 0.0524 us |  5.003 us |  1.0834 |   4.45 KB |
-| PipeWith10ConditionAsync     | 13.157 us | 0.1262 us | 0.0985 us | 13.155 us |  3.1891 |  13.05 KB |
-| PipeWith10ConditionGotoAsync | 18.253 us | 0.3007 us | 0.2347 us | 18.211 us |  3.9978 |  16.34 KB |
-| PipeTaskAsync                |  9.741 us | 0.1923 us | 0.3517 us |  9.649 us |  1.3275 |   5.45 KB |
-| PipeWith10TaskAsync          | 45.064 us | 0.7313 us | 0.8981 us | 44.984 us |  4.5166 |  18.58 KB |
-| PipeTaskConditionAsync       | 11.280 us | 0.1956 us | 0.1830 us | 11.312 us |  1.5564 |   6.39 KB |
-| PipeWith10TaskConditionAsync | 48.034 us | 0.9578 us | 2.5895 us | 47.222 us |  4.5166 |  18.58 KB |
+.NET SDK 8.0.100
+  [Host]     : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX2
+  DefaultJob : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX2
+
+
+| Method                       | Mean       | Error     | StdDev     | Median     | Gen0    | Allocated |
+|----------------------------- |-----------:|----------:|-----------:|-----------:|--------:|----------:|
+| PipeAsync                    |   6.043 us | 0.1453 us |  0.4240 us |   5.929 us |  0.9842 |   4.03 KB |
+| PipeWith10Async              | 219.920 us | 9.0387 us | 26.2230 us | 213.204 us | 20.7520 |  85.45 KB |
+| PipeWithConditionAsync       |   8.561 us | 0.1803 us |  0.5203 us |   8.458 us |  1.2970 |    5.3 KB |
+| PipeWith10ConditionAsync     |  54.716 us | 2.4453 us |  7.2099 us |  51.169 us |  6.4697 |  26.84 KB |
+| PipeWith10ConditionGotoAsync |  88.367 us | 2.2634 us |  6.4942 us |  88.401 us |  8.4229 |  34.75 KB |
+| PipeTaskAsync                |  16.670 us | 0.3316 us |  0.9297 us |  16.466 us |  1.5869 |   6.49 KB |
+| PipeWith10TaskAsync          | 179.862 us | 5.2544 us | 14.9910 us | 175.589 us |  7.8125 |  32.68 KB |
+| PipeTaskConditionAsync       |  20.225 us | 0.4035 us |  1.0344 us |  20.082 us |  1.8921 |   7.73 KB |
+| PipeWith10TaskConditionAsync | 183.540 us | 4.5200 us | 13.1851 us | 180.380 us |  7.8125 |  32.68 KB |
+```
+
+```
+Intel Core i7-8565U CPU 1.80GHz (Whiskey Lake), 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.100
+  [Host]     : .NET 6.0.25 (6.0.2523.51912), X64 RyuJIT AVX2
+  DefaultJob : .NET 6.0.25 (6.0.2523.51912), X64 RyuJIT AVX2
+
+
+| Method                       | Mean       | Error      | StdDev     | Median     | Gen0    | Allocated |
+|----------------------------- |-----------:|-----------:|-----------:|-----------:|--------:|----------:|
+| PipeAsync                    |   7.779 us |  0.3361 us |  0.9752 us |   7.439 us |  1.0071 |   4.13 KB |
+| PipeWith10Async              | 233.087 us | 11.3821 us | 33.2020 us | 221.658 us | 20.9961 |  86.47 KB |
+| PipeWithConditionAsync       |  10.678 us |  0.2496 us |  0.7122 us |  10.448 us |  1.3428 |   5.51 KB |
+| PipeWith10ConditionAsync     |  72.872 us |  2.1928 us |  6.1489 us |  71.057 us |  6.8359 |  27.95 KB |
+| PipeWith10ConditionGotoAsync |  94.723 us |  1.8764 us |  4.6729 us |  93.935 us |  8.7891 |  35.98 KB |
+| PipeTaskAsync                |  20.262 us |  0.5102 us |  1.4555 us |  19.804 us |  1.6174 |   6.64 KB |
+| PipeWith10TaskAsync          | 252.078 us |  4.9050 us |  6.7141 us | 250.701 us |  7.8125 |  33.21 KB |
+| PipeTaskConditionAsync       |  28.370 us |  0.9535 us |  2.7662 us |  28.128 us |  1.9531 |   7.99 KB |
+| PipeWith10TaskConditionAsync | 257.651 us |  5.1477 us |  6.5102 us | 260.074 us |  7.8125 |  33.21 KB |
 ```
 
 ## Code of Conduct
