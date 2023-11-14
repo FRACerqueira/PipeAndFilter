@@ -38,6 +38,13 @@ PipeAndFilter was developed in C# with target frameworks:
 - netstandard2.1
 - .NET 6
 - .NET 7
+- .NET 8
+
+*** What's new in V1.0.4 ***
+----------------------------
+
+- Release G.A with .NET8 
+
 
 *** What's new in V1.0.3 ***
 ----------------------------

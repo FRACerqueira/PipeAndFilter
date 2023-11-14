@@ -9,7 +9,7 @@
 and the ability to parallel execute tasks over a pipe.
 .**
 
-**PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
+**PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** , **.NET 7** and **.NET 8** target frameworks.
 
 <img src="./images/PipeAndFilterFeature.png"> 
 
@@ -28,8 +28,11 @@ and the ability to parallel execute tasks over a pipe.
 - [API Reference](https://fracerqueira.github.io/PipeAndFilter/apis/apis.html)
 
 ## What's new in the latest version 
-### V1.0.3 
+### V1.0.4 
 
+- Release G.A with .NET8 
+
+### V1.0.3 
 [**Top**](#table-of-contents)
 
 - First Release G.A
