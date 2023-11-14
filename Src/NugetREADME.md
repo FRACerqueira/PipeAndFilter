@@ -2,9 +2,13 @@
 
 ### **PipeAndFilter component for .NET Core with flexible conditions for each step (pipe) and the ability to parallel execute tasks over a pipe.**
 
-**PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** and **.NET 7** target frameworks.
+**PipeAndFilter** was developed in C# with the **netstandard2.1**, **.NET 6** , **.NET 7** and **.NET 8** target frameworks.
 
-## What's new in V1.0.3
+## V1.0.4 
+
+- Release G.A with .NET8 
+
+## V1.0.3 
 
 - First Release G.A
  

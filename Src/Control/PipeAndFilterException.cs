@@ -52,8 +52,22 @@ namespace PipeFilterCore
         }
 
         ///<inheritdoc cref="Exception"/>
-        protected PipeAndFilterException(SerializationInfo info, StreamingContext context) : base(info, context)
+#if NET8_0_OR_GREATER
+    [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
+#endif
+        protected PipeAndFilterException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
+        }
+
+        ///<inheritdoc cref="Exception"/>
+#if NET8_0_OR_GREATER
+    [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to GetObjectData
+#endif
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            /* your dehydration here */
+            base.GetObjectData(info, context);
         }
     }
 }
